@@ -3,11 +3,17 @@ name = "popcorn-remake"
 version = "0.1.0"
 description = "NBA game stats data pipeline"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 dependencies = [
     "nba_api",
+    "pandas>=2.3.3",
 ]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]
