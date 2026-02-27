@@ -1,0 +1,19 @@
+name: Data Pipeline
+
+on:
+  schedule:
+    - cron: "0 6,14 * * *"  # 6 AM and 2 PM UTC
+  workflow_dispatch: {}
+
+jobs:
+  fetch-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+      - name: Install dependencies
+        run: uv sync
+      - name: Run pipeline
+        run: echo "Pipeline placeholder — will be implemented in Phase 2"
+      # TODO Phase 7: Add git commit and push steps
