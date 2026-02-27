@@ -30,7 +30,7 @@ def main(date: str | None = None, data_dir: str = "data") -> None:
 
     # 2. Transform scores
     print("Transforming scores...")
-    scores = transform_scores(scoreboard)
+    scores = transform_scores(scoreboard, date)
     if not scores:
         print(f"No games found for {date}")
         return

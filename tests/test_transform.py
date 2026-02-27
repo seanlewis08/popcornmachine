@@ -116,14 +116,14 @@ class TestTransformScores:
 
     def test_transform_scores_groups_games(self, sample_scoreboard_data):
         """Test that transform_scores produces list of games."""
-        result = transform_scores(sample_scoreboard_data)
+        result = transform_scores(sample_scoreboard_data, "2026-01-19")
         assert isinstance(result, list)
         assert len(result) == 2
         assert all("gameId" in game for game in result)
 
     def test_transform_scores_includes_team_names(self, sample_scoreboard_data):
         """Test that games include team names and tricodes."""
-        result = transform_scores(sample_scoreboard_data)
+        result = transform_scores(sample_scoreboard_data, "2026-01-19")
         assert len(result) > 0
         game = result[0]
         assert "homeTeam" in game
@@ -134,13 +134,21 @@ class TestTransformScores:
 
     def test_transform_scores_includes_final_score(self, sample_scoreboard_data):
         """Test that games include final scores."""
-        result = transform_scores(sample_scoreboard_data)
+        result = transform_scores(sample_scoreboard_data, "2026-01-19")
         assert len(result) > 0
         game = result[0]
         assert isinstance(game["homeTeam"]["score"], int)
         assert isinstance(game["awayTeam"]["score"], int)
         assert game["homeTeam"]["score"] == 104
         assert game["awayTeam"]["score"] == 103
+
+    def test_transform_scores_includes_correct_date(self, sample_scoreboard_data):
+        """Test that games include the correct date parameter."""
+        test_date = "2026-02-27"
+        result = transform_scores(sample_scoreboard_data, test_date)
+        assert len(result) > 0
+        for game in result:
+            assert game["date"] == test_date
 
 
 class TestTransformBoxscore:
@@ -209,6 +217,61 @@ class TestTransformBoxscore:
         assert "hv" in totals
         assert "prod" in totals
         assert "eff" in totals
+
+    def test_transform_boxscore_stint_stats_populated(
+        self, sample_scoreboard_data, sample_boxscore_data,
+        sample_rotation_data, sample_playbyplay_data
+    ):
+        """Test that stint stats are populated from PBP events."""
+        result = transform_boxscore(
+            "0022500001",
+            "2026-01-19",
+            sample_scoreboard_data,
+            sample_boxscore_data,
+            sample_rotation_data,
+            sample_playbyplay_data,
+        )
+
+        assert len(result["players"]) > 0
+        player = result["players"][0]
+        assert "stints" in player
+        if len(player["stints"]) > 0:
+            stint = player["stints"][0]
+            # Verify stint stats have proper structure
+            assert "fgm" in stint
+            assert "fga" in stint
+            assert "pts" in stint
+            assert isinstance(stint["fgm"], int)
+            assert isinstance(stint["fga"], int)
+            assert isinstance(stint["pts"], int)
+
+    def test_transform_boxscore_period_totals_use_team_stats(
+        self, sample_scoreboard_data, sample_boxscore_data,
+        sample_rotation_data, sample_playbyplay_data
+    ):
+        """Test that period totals are derived from actual team stats."""
+        result = transform_boxscore(
+            "0022500001",
+            "2026-01-19",
+            sample_scoreboard_data,
+            sample_boxscore_data,
+            sample_rotation_data,
+            sample_playbyplay_data,
+        )
+
+        period_totals = result["periodTotals"]
+        assert "home" in period_totals
+        assert "away" in period_totals
+        assert len(period_totals["home"]) > 0
+        assert len(period_totals["away"]) > 0
+
+        # Verify period totals match team totals
+        home_period = period_totals["home"][0]
+        away_period = period_totals["away"][0]
+        assert home_period["fgm"] == 38  # From sample_boxscore_data
+        assert home_period["fga"] == 88
+        assert away_period["fgm"] == 33
+        assert away_period["fga"] == 83
 
 
 class TestTransformGameflow:

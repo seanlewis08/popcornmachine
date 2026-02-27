@@ -72,6 +72,7 @@ def _filter_pbp_for_stint(
 
     # Convert clock strings to seconds for comparison
     def clock_to_seconds(clock_str: str) -> int:
+        # Handle potential NaN values in case of malformed data
         if pd.isna(clock_str):
             return 0
         parts = str(clock_str).split(":")
@@ -127,7 +128,7 @@ def _pbp_event_to_type(event_msg_type: int, event_msg_action_type: int) -> str:
         return "other"
 
 
-def _aggregate_stint_stats(pbp_events: pd.DataFrame) -> dict:
+def _aggregate_stint_stats(pbp_events: pd.DataFrame) -> dict[str, int]:
     """
     Count stat categories from PBP event types.
 
@@ -191,7 +192,7 @@ def _aggregate_stint_stats(pbp_events: pd.DataFrame) -> dict:
     return stats
 
 
-def transform_scores(scoreboard_data: dict) -> list[dict]:
+def transform_scores(scoreboard_data: dict, date: str) -> list[dict]:
     """
     Transform ScoreBoardV2 response into scores/YYYY-MM-DD.json contract.
 
@@ -199,6 +200,7 @@ def transform_scores(scoreboard_data: dict) -> list[dict]:
 
     Args:
         scoreboard_data: Dict with 'game_header' and 'line_score' DataFrames
+        date: Game date as YYYY-MM-DD string
 
     Returns:
         List of game dicts with team names, tricodes, and scores
@@ -234,7 +236,7 @@ def transform_scores(scoreboard_data: dict) -> list[dict]:
 
         game = {
             "gameId": str(game_id),
-            "date": "2026-01-19",  # Placeholder - would come from game_date param
+            "date": date,
             "homeTeam": {
                 "tricode": home_team["TEAM_ABBREVIATION"],
                 "name": home_team["TEAM_NAME"],
@@ -283,18 +285,31 @@ def transform_boxscore(
     player_stats = boxscore_data["player_stats"]
     team_stats = boxscore_data["team_stats"]
 
+    # Validate required data is not empty
+    if len(scoreboard_data["game_header"]) == 0:
+        raise ValueError(f"Game header is empty for game {game_id}")
+    if len(line_score) == 0:
+        raise ValueError(f"Line score is empty for game {game_id}")
+
     # Get home/away team info
     game_info = scoreboard_data["game_header"][
         scoreboard_data["game_header"]["GAME_ID"] == game_id
-    ].iloc[0]
+    ]
+    if len(game_info) == 0:
+        raise ValueError(f"Game info not found for game {game_id}")
+    game_info = game_info.iloc[0]
     home_team_id = game_info["HOME_TEAM_ID"]
 
     home_line = line_score[
         (line_score["GAME_ID"] == game_id) & (line_score["TEAM_ID"] == home_team_id)
-    ].iloc[0]
+    ]
     away_line = line_score[
         (line_score["GAME_ID"] == game_id) & (line_score["TEAM_ID"] != home_team_id)
-    ].iloc[0]
+    ]
+    if len(home_line) == 0 or len(away_line) == 0:
+        raise ValueError(f"Home or away line score not found for game {game_id}")
+    home_line = home_line.iloc[0]
+    away_line = away_line.iloc[0]
 
     # Build player list
     players = []
@@ -344,26 +359,30 @@ def transform_boxscore(
                 stint["IN_TIME_REAL"], stint["OUT_TIME_REAL"]
             )
 
+            # Filter PBP events for this stint and aggregate stats
+            pbp_stint = _filter_pbp_for_stint(pbp_data, player_id, period, in_clock, out_clock)
+            stint_stats = _aggregate_stint_stats(pbp_stint)
+
             stint_dict = {
                 "period": int(period),
                 "inTime": in_clock,
                 "outTime": out_clock,
                 "minutes": minutes_stint,
                 "plusMinus": int(stint.get("PT_DIFF", 0)),
-                "fgm": 0,
-                "fga": 0,
-                "fg3m": 0,
-                "fg3a": 0,
-                "ftm": 0,
-                "fta": 0,
-                "oreb": 0,
-                "reb": 0,
-                "ast": 0,
-                "blk": 0,
-                "stl": 0,
-                "tov": 0,
-                "pf": 0,
-                "pts": 0,
+                "fgm": stint_stats["fgm"],
+                "fga": stint_stats["fga"],
+                "fg3m": stint_stats["fg3m"],
+                "fg3a": stint_stats["fg3a"],
+                "ftm": stint_stats["ftm"],
+                "fta": stint_stats["fta"],
+                "oreb": stint_stats["oreb"],
+                "reb": stint_stats["reb"],
+                "ast": stint_stats["ast"],
+                "blk": stint_stats["blk"],
+                "stl": stint_stats["stl"],
+                "tov": stint_stats["tov"],
+                "pf": stint_stats["pf"],
+                "pts": stint_stats["pts"],
             }
             stints.append(stint_dict)
 
@@ -446,30 +465,32 @@ def transform_boxscore(
         },
     }
 
-    # Placeholder for period totals (simplified for phase 2)
+    # Build period totals using game-level team stats
+    # Since BoxScoreTraditionalV2 doesn't provide per-period data,
+    # we use a single "Game" entry with actual team totals (phase 2 limitation)
     period_totals = {
         "home": [
             {
-                "period": 1,
-                "fgm": 8,
-                "fga": 24,
-                "fg3m": 1,
-                "fg3a": 7,
-                "ftm": 9,
-                "fta": 12,
-                "pts": 26,
+                "period": "Game",
+                "fgm": int(home_team_stats["FGM"]),
+                "fga": int(home_team_stats["FGA"]),
+                "fg3m": int(home_team_stats["FG3M"]),
+                "fg3a": int(home_team_stats["FG3A"]),
+                "ftm": int(home_team_stats["FTM"]),
+                "fta": int(home_team_stats["FTA"]),
+                "pts": int(home_team_stats["PTS"]),
             }
         ],
         "away": [
             {
-                "period": 1,
-                "fgm": 9,
-                "fga": 25,
-                "fg3m": 4,
-                "fg3a": 12,
-                "ftm": 7,
-                "fta": 8,
-                "pts": 29,
+                "period": "Game",
+                "fgm": int(away_team_stats["FGM"]),
+                "fga": int(away_team_stats["FGA"]),
+                "fg3m": int(away_team_stats["FG3M"]),
+                "fg3a": int(away_team_stats["FG3A"]),
+                "ftm": int(away_team_stats["FTM"]),
+                "fta": int(away_team_stats["FTA"]),
+                "pts": int(away_team_stats["PTS"]),
             }
         ],
     }

@@ -102,7 +102,7 @@ def _write_json_atomic(file_path: Path, data: dict | list) -> None:
 
         # Atomic rename
         os.replace(temp_path, file_path)
-    except Exception:
+    except (OSError, IOError):
         # Clean up temp file on error
         if os.path.exists(temp_path):
             os.unlink(temp_path)
