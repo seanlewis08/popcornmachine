@@ -1,4 +1,4 @@
-import { StintData } from "@/types/api";
+import type { StintData } from "@/types/api";
 import {
   Table,
   TableBody,

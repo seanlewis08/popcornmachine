@@ -2,11 +2,10 @@ import { describe, it, expect } from "vitest";
 import { screen, fireEvent } from "@testing-library/react";
 import { render } from "@testing-library/react";
 import { PlayerStatsTable } from "@/components/PlayerStatsTable";
-import {
+import type {
   PlayerData,
   TeamTotals,
   PeriodTotals,
-  StintData,
 } from "@/types/api";
 
 // Fixture data from design plan

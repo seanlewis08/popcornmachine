@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { screen } from "@testing-library/react";
 import { render } from "@testing-library/react";
 import { StintBreakdown } from "@/components/StintBreakdown";
-import { StintData } from "@/types/api";
+import type { StintData } from "@/types/api";
 
 const createFixtureStint = (
   period: number,

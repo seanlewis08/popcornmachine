@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useJsonData } from "@/hooks/useJsonData";
-import { BoxScoreData } from "@/types/api";
+import type { BoxScoreData } from "@/types/api";
 import { PlayerStatsTable } from "@/components/PlayerStatsTable";
 import { Card } from "@/components/ui/card";
 

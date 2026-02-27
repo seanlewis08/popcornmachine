@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react";
-import { PlayerData, TeamTotals, PeriodTotals } from "@/types/api";
+import type { PlayerData, TeamTotals, PeriodTotals } from "@/types/api";
 import {
   Table,
   TableBody,
