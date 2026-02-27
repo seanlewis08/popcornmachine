@@ -9,7 +9,7 @@ describe("HomePage", () => {
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   it("renders games grouped by date, most recent first", async () => {
@@ -46,25 +46,28 @@ describe("HomePage", () => {
       },
     ];
 
-    (globalThis.fetch as any) = vi.fn((url: string) => {
-      if (url === "/data/index.json") {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve(indexData),
-        } as Response);
-      } else if (url === "/data/scores/2026-01-20.json") {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve(scoresForDate1),
-        } as Response);
-      } else if (url === "/data/scores/2026-01-19.json") {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve(scoresForDate2),
-        } as Response);
-      }
-      return Promise.reject(new Error("Unknown URL"));
-    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string) => {
+        if (url === "/data/index.json") {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(indexData),
+          } as Response);
+        } else if (url === "/data/scores/2026-01-20.json") {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(scoresForDate1),
+          } as Response);
+        } else if (url === "/data/scores/2026-01-19.json") {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(scoresForDate2),
+          } as Response);
+        }
+        return Promise.reject(new Error("Unknown URL"));
+      })
+    );
 
     renderWithRouter(<HomePage />);
 
@@ -99,20 +102,23 @@ describe("HomePage", () => {
       },
     ];
 
-    (globalThis.fetch as any) = vi.fn((url: string) => {
-      if (url === "/data/index.json") {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve(indexData),
-        } as Response);
-      } else if (url === "/data/scores/2026-01-19.json") {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve(scoresData),
-        } as Response);
-      }
-      return Promise.reject(new Error("Unknown URL"));
-    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string) => {
+        if (url === "/data/index.json") {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(indexData),
+          } as Response);
+        } else if (url === "/data/scores/2026-01-19.json") {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(scoresData),
+          } as Response);
+        }
+        return Promise.reject(new Error("Unknown URL"));
+      })
+    );
 
     renderWithRouter(<HomePage />);
 
@@ -146,20 +152,23 @@ describe("HomePage", () => {
       },
     ];
 
-    (globalThis.fetch as any) = vi.fn((url: string) => {
-      if (url === "/data/index.json") {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve(indexData),
-        } as Response);
-      } else if (url === "/data/scores/2026-01-19.json") {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve(scoresData),
-        } as Response);
-      }
-      return Promise.reject(new Error("Unknown URL"));
-    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string) => {
+        if (url === "/data/index.json") {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(indexData),
+          } as Response);
+        } else if (url === "/data/scores/2026-01-19.json") {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(scoresData),
+          } as Response);
+        }
+        return Promise.reject(new Error("Unknown URL"));
+      })
+    );
 
     renderWithRouter(<HomePage />);
 
@@ -183,15 +192,18 @@ describe("HomePage", () => {
   it("shows 'No games available' when index returns empty dates", async () => {
     const indexData = { dates: [] };
 
-    (globalThis.fetch as any) = vi.fn((url: string) => {
-      if (url === "/data/index.json") {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve(indexData),
-        } as Response);
-      }
-      return Promise.reject(new Error("Unknown URL"));
-    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string) => {
+        if (url === "/data/index.json") {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(indexData),
+          } as Response);
+        }
+        return Promise.reject(new Error("Unknown URL"));
+      })
+    );
 
     renderWithRouter(<HomePage />);
 
@@ -201,15 +213,18 @@ describe("HomePage", () => {
   });
 
   it("shows 'No games available' when fetch fails (404 on index)", async () => {
-    (globalThis.fetch as any) = vi.fn((url: string) => {
-      if (url === "/data/index.json") {
-        return Promise.resolve({
-          ok: false,
-          status: 404,
-        } as Response);
-      }
-      return Promise.reject(new Error("Unknown URL"));
-    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string) => {
+        if (url === "/data/index.json") {
+          return Promise.resolve({
+            ok: false,
+            status: 404,
+          } as Response);
+        }
+        return Promise.reject(new Error("Unknown URL"));
+      })
+    );
 
     renderWithRouter(<HomePage />);
 
@@ -220,8 +235,9 @@ describe("HomePage", () => {
 
   it("shows error message when fetch fails", async () => {
     const errorMsg = "Network error";
-    (globalThis.fetch as any) = vi.fn(() =>
-      Promise.reject(new Error(errorMsg))
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() => Promise.reject(new Error(errorMsg)))
     );
 
     renderWithRouter(<HomePage />);
@@ -257,26 +273,29 @@ describe("HomePage", () => {
       },
     ];
 
-    (globalThis.fetch as any) = vi.fn((url: string) => {
-      if (url === "/data/index.json") {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve(indexData),
-        } as Response);
-      } else if (url === "/data/scores/2026-01-20.json") {
-        // This date's file doesn't exist (404)
-        return Promise.resolve({
-          ok: false,
-          status: 404,
-        } as Response);
-      } else if (url === "/data/scores/2026-01-19.json") {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve(scoresForDate1),
-        } as Response);
-      }
-      return Promise.reject(new Error("Unknown URL"));
-    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string) => {
+        if (url === "/data/index.json") {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(indexData),
+          } as Response);
+        } else if (url === "/data/scores/2026-01-20.json") {
+          // This date's file doesn't exist (404)
+          return Promise.resolve({
+            ok: false,
+            status: 404,
+          } as Response);
+        } else if (url === "/data/scores/2026-01-19.json") {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(scoresForDate1),
+          } as Response);
+        }
+        return Promise.reject(new Error("Unknown URL"));
+      })
+    );
 
     renderWithRouter(<HomePage />);
 

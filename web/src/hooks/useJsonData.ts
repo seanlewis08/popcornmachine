@@ -15,17 +15,17 @@ export function useJsonData<T>(url: string | null) {
   useEffect(() => {
     // If no URL, return idle state
     if (!url) {
-      setData(null);
-      setLoading(false);
-      setError(null);
       return;
     }
 
+    const abortController = new AbortController();
+
     // Start loading
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     setError(null);
 
-    fetch(url)
+    fetch(url, { signal: abortController.signal })
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: Failed to fetch ${url}`);
@@ -37,10 +37,17 @@ export function useJsonData<T>(url: string | null) {
         setLoading(false);
       })
       .catch((err) => {
+        if (err instanceof Error && err.name === "AbortError") {
+          return;
+        }
         setError(err instanceof Error ? err : new Error(String(err)));
         setLoading(false);
         setData(null);
       });
+
+    return () => {
+      abortController.abort();
+    };
   }, [url]);
 
   return { data, loading, error };

@@ -8,7 +8,7 @@ describe("useJsonData hook", () => {
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   it("returns idle state when url is null", () => {
@@ -21,11 +21,14 @@ describe("useJsonData hook", () => {
 
   it("fetches and returns data successfully", async () => {
     const mockData = { gameId: "123", homeTeam: "DET" };
-    (globalThis.fetch as any) = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(mockData),
-      } as Response)
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockData),
+        } as Response)
+      )
     );
 
     const { result } = renderHook(() =>
@@ -43,12 +46,15 @@ describe("useJsonData hook", () => {
 
     expect(result.current.data).toEqual(mockData);
     expect(result.current.error).toBeNull();
-    expect(globalThis.fetch).toHaveBeenCalledWith("http://example.com/data.json");
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "http://example.com/data.json",
+      expect.objectContaining({ signal: expect.any(AbortSignal) })
+    );
   });
 
   it("handles fetch errors gracefully", async () => {
     const errorMessage = "Network error";
-    (globalThis.fetch as any) = vi.fn(() => Promise.reject(new Error(errorMessage)));
+    vi.stubGlobal("fetch", vi.fn(() => Promise.reject(new Error(errorMessage))));
 
     const { result } = renderHook(() =>
       useJsonData<{ test: string }>("http://example.com/data.json")
@@ -68,11 +74,14 @@ describe("useJsonData hook", () => {
   });
 
   it("handles HTTP error responses gracefully", async () => {
-    (globalThis.fetch as any) = vi.fn(() =>
-      Promise.resolve({
-        ok: false,
-        status: 404,
-      } as Response)
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() =>
+        Promise.resolve({
+          ok: false,
+          status: 404,
+        } as Response)
+      )
     );
 
     const { result } = renderHook(() =>
@@ -92,18 +101,21 @@ describe("useJsonData hook", () => {
     const data1 = { gameId: "1" };
     const data2 = { gameId: "2" };
 
-    (globalThis.fetch as any) = vi.fn((url: string) => {
-      if (url.includes("1.json")) {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string) => {
+        if (url.includes("1.json")) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(data1),
+          } as Response);
+        }
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve(data1),
+          json: () => Promise.resolve(data2),
         } as Response);
-      }
-      return Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(data2),
-      } as Response);
-    });
+      })
+    );
 
     const { result, rerender } = renderHook(
       ({ url }) => useJsonData<typeof data1>(url),
@@ -127,7 +139,7 @@ describe("useJsonData hook", () => {
   });
 
   it("handles non-Error objects thrown during fetch", async () => {
-    (globalThis.fetch as any) = vi.fn(() => Promise.reject("string error"));
+    vi.stubGlobal("fetch", vi.fn(() => Promise.reject("string error")));
 
     const { result } = renderHook(() =>
       useJsonData<{ test: string }>("http://example.com/data.json")
@@ -142,15 +154,18 @@ describe("useJsonData hook", () => {
   });
 
   it("clears error when URL changes from error state to valid URL", async () => {
-    (globalThis.fetch as any) = vi.fn((url: string) => {
-      if (url.includes("error")) {
-        return Promise.reject(new Error("Bad URL"));
-      }
-      return Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ gameId: "123" }),
-      } as Response);
-    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string) => {
+        if (url.includes("error")) {
+          return Promise.reject(new Error("Bad URL"));
+        }
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ gameId: "123" }),
+        } as Response);
+      })
+    );
 
     const { result, rerender } = renderHook(
       ({ url }) => useJsonData<{ gameId: string }>(url),
