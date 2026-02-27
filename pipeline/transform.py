@@ -48,30 +48,42 @@ def _rotation_time_to_period_clock(
     in_time_real: int, out_time_real: int
 ) -> tuple[int, str, str]:
     """
-    Convert millisecond timestamps to (period, in_clock, out_clock) format.
+    Convert rotation timestamps to (period, in_clock, out_clock) format.
 
+    The NBA GameRotation API returns IN_TIME_REAL/OUT_TIME_REAL in
+    deciseconds (tenths of a second) elapsed from game start.
+
+    Uses countdown clock format (12:00 = start of quarter, 0:00 = end).
     Each regulation period is 720 seconds (12 minutes).
-    Period 1 starts at t=0, Period 2 at t=720000ms, etc.
+    Period 1 starts at t=0, Period 2 at t=7200 deciseconds, etc.
 
     Args:
-        in_time_real: In-time in milliseconds
-        out_time_real: Out-time in milliseconds
+        in_time_real: In-time in deciseconds (elapsed from game start)
+        out_time_real: Out-time in deciseconds (elapsed from game start)
 
     Returns:
-        Tuple of (period, in_clock_str, out_clock_str)
+        Tuple of (period, in_clock_str, out_clock_str) in countdown format
     """
-    ms_per_period = 720000  # 12 minutes in milliseconds
+    decisecs_per_period = 7200  # 720 seconds * 10
     in_time_real = int(in_time_real)
     out_time_real = int(out_time_real)
-    period = (in_time_real // ms_per_period) + 1
-    period_start_ms = (period - 1) * ms_per_period
+    period = (in_time_real // decisecs_per_period) + 1
+    period_start = (period - 1) * decisecs_per_period
 
-    # Convert to seconds within the period
-    in_seconds = (in_time_real - period_start_ms) // 1000
-    out_seconds = (out_time_real - period_start_ms) // 1000
+    # Convert to elapsed seconds within the period (deciseconds / 10)
+    in_elapsed = (in_time_real - period_start) // 10
+    out_elapsed = (out_time_real - period_start) // 10
 
-    in_clock = _seconds_to_clock(in_seconds)
-    out_clock = _seconds_to_clock(out_seconds)
+    # Convert to countdown clock (12:00 = start, 0:00 = end)
+    period_duration = 720  # seconds for regulation
+    # For OT periods (5+), use 300 seconds (5 minutes)
+    if period > 4:
+        period_duration = 300
+    in_remaining = max(0, period_duration - in_elapsed)
+    out_remaining = max(0, period_duration - out_elapsed)
+
+    in_clock = _seconds_to_clock(in_remaining)
+    out_clock = _seconds_to_clock(out_remaining)
 
     return int(period), in_clock, out_clock
 
@@ -85,9 +97,9 @@ def _seconds_to_clock(seconds) -> str:
 
 
 def _compute_stint_minutes(in_time_real, out_time_real) -> float:
-    """Compute stint duration in minutes."""
-    duration_ms = int(out_time_real) - int(in_time_real)
-    return round(duration_ms / 60000, 1)
+    """Compute stint duration in minutes from decisecond timestamps."""
+    duration_decisecs = int(out_time_real) - int(in_time_real)
+    return round(duration_decisecs / 600, 1)  # 600 deciseconds per minute
 
 
 def _filter_pbp_for_stint(
@@ -129,10 +141,12 @@ def _filter_pbp_for_stint(
     in_sec = clock_to_seconds(in_clock)
     out_sec = clock_to_seconds(out_clock)
 
-    # Filter by time within period (note: clock counts down)
+    # Clock counts down: inTime >= event clock >= outTime
+    # e.g., player enters at 10:30 (630s), exits at 6:15 (375s)
+    # Events happen between 630s and 375s on the countdown clock
     filtered = filtered[
-        (filtered["PCTIMESTRING"].apply(clock_to_seconds) >= out_sec)
-        & (filtered["PCTIMESTRING"].apply(clock_to_seconds) <= in_sec)
+        (filtered["PCTIMESTRING"].apply(clock_to_seconds) <= in_sec)
+        & (filtered["PCTIMESTRING"].apply(clock_to_seconds) >= out_sec)
     ]
 
     return filtered
@@ -155,8 +169,10 @@ def _pbp_event_to_type(event_msg_type, event_msg_action_type) -> str:
     """
     # Handle V3 string action types first
     if isinstance(event_msg_type, str):
-        emt_lower = event_msg_type.lower()
+        emt_lower = event_msg_type.lower().strip()
         if emt_lower == "2pt":
+            # V3: use shotResult if available (passed as extra_info),
+            # otherwise check description for MISS prefix
             desc = str(event_msg_action_type).lower() if event_msg_action_type else ""
             if "miss" in desc:
                 return "miss2"
@@ -172,7 +188,9 @@ def _pbp_event_to_type(event_msg_type, event_msg_action_type) -> str:
             return "reb"
         elif emt_lower == "turnover":
             return "tov"
-        elif emt_lower == "foul":
+        elif emt_lower in ("foul", "personalfoul", "shootingfoul",
+                           "offensivefoul", "technicalfoul", "flagrantfoul",
+                           "looseball foul", "personal foul"):
             return "foul"
         elif emt_lower == "steal":
             return "stl"
@@ -180,6 +198,10 @@ def _pbp_event_to_type(event_msg_type, event_msg_action_type) -> str:
             return "blk"
         elif emt_lower == "assist":
             return "ast"
+        elif emt_lower in ("substitution", "timeout", "period",
+                           "game", "jumpball", "violation", "ejection",
+                           "instantreplay", "stoppage"):
+            return "other"
         else:
             # Try to convert string to int for backward compatibility
             try:
@@ -229,7 +251,11 @@ def _pbp_event_to_type(event_msg_type, event_msg_action_type) -> str:
 
 def _aggregate_stint_stats(pbp_events: pd.DataFrame) -> dict[str, int]:
     """
-    Count stat categories from PBP event types.
+    Count stat categories from PBP events.
+
+    Uses V3-specific columns (isFieldGoal, shotResult, shotValue) when
+    available for reliable field goal detection, with fallback to
+    actionType/description parsing for non-shot events (rebounds, etc.).
 
     Args:
         pbp_events: Filtered play-by-play events for a stint
@@ -254,41 +280,218 @@ def _aggregate_stint_stats(pbp_events: pd.DataFrame) -> dict[str, int]:
         "pts": 0,
     }
 
-    for _, event in pbp_events.iterrows():
-        event_type = _pbp_event_to_type(
-            event.get("EVENTMSGTYPE", 0), event.get("EVENTMSGACTIONTYPE", 0)
-        )
+    has_v3_fields = "isFieldGoal" in pbp_events.columns
 
-        if event_type == "make2":
-            stats["fgm"] += 1
-            stats["fga"] += 1
-            stats["pts"] += 2
-        elif event_type == "make3":
-            stats["fgm"] += 1
-            stats["fga"] += 1
-            stats["fg3m"] += 1
-            stats["fg3a"] += 1
-            stats["pts"] += 3
-        elif event_type == "miss2":
-            stats["fga"] += 1
-        elif event_type == "miss3":
-            stats["fga"] += 1
-            stats["fg3a"] += 1
-        elif event_type == "fta":
-            stats["fta"] += 1
-            # PBP doesn't distinguish made/missed FTs, so we count conservatively
-            if "MADE" in str(event.get("HOMEDESCRIPTION", "")) or \
-               "MADE" in str(event.get("VISITORDESCRIPTION", "")):
-                stats["ftm"] += 1
-                stats["pts"] += 1
-        elif event_type == "reb":
+    for _, event in pbp_events.iterrows():
+        # --- V3 path: use isFieldGoal + shotResult + shotValue ---
+        if has_v3_fields:
+            is_fg = event.get("isFieldGoal", False)
+            if is_fg is True or is_fg == 1:
+                shot_result = str(event.get("shotResult", "")).strip()
+                shot_value = event.get("shotValue", 0)
+                try:
+                    shot_value = int(shot_value) if not pd.isna(shot_value) else 0
+                except (ValueError, TypeError):
+                    shot_value = 0
+
+                is_three = shot_value == 3
+                is_made = shot_result.lower() == "made"
+
+                stats["fga"] += 1
+                if is_three:
+                    stats["fg3a"] += 1
+
+                if is_made:
+                    stats["fgm"] += 1
+                    stats["pts"] += shot_value if shot_value else 2
+                    if is_three:
+                        stats["fg3m"] += 1
+                continue
+
+            # Free throws: check actionType or EVENTMSGTYPE
+            action_type = str(event.get("EVENTMSGTYPE", "")).lower()
+            if action_type in ("freethrow", "free throw", "ft") or \
+               (action_type == "3" and not has_v3_fields):
+                stats["fta"] += 1
+                shot_result = str(event.get("shotResult", "")).strip().lower()
+                desc = str(event.get("HOMEDESCRIPTION", "") or "")
+                if shot_result == "made" or "(1 PTS)" in desc or \
+                   "PTS)" in desc or "MADE" in desc.upper():
+                    stats["ftm"] += 1
+                    stats["pts"] += 1
+                continue
+
+        else:
+            # --- V2 fallback path ---
+            event_type = _pbp_event_to_type(
+                event.get("EVENTMSGTYPE", 0), event.get("EVENTMSGACTIONTYPE", 0)
+            )
+
+            if event_type == "make2":
+                stats["fgm"] += 1
+                stats["fga"] += 1
+                stats["pts"] += 2
+            elif event_type == "make3":
+                stats["fgm"] += 1
+                stats["fga"] += 1
+                stats["fg3m"] += 1
+                stats["fg3a"] += 1
+                stats["pts"] += 3
+            elif event_type == "miss2":
+                stats["fga"] += 1
+            elif event_type == "miss3":
+                stats["fga"] += 1
+                stats["fg3a"] += 1
+            elif event_type == "fta":
+                stats["fta"] += 1
+                if "MADE" in str(event.get("HOMEDESCRIPTION", "")) or \
+                   "MADE" in str(event.get("VISITORDESCRIPTION", "")):
+                    stats["ftm"] += 1
+                    stats["pts"] += 1
+                continue
+            elif event_type in ("make", "miss"):
+                # Generic make/miss without 2/3 distinction
+                stats["fga"] += 1
+                if event_type == "make":
+                    stats["fgm"] += 1
+                    stats["pts"] += 2
+                continue
+            else:
+                pass  # Fall through to non-shot event handling below
+
+            if event_type not in ("reb", "tov", "foul", "stl", "blk", "ast"):
+                continue
+
+        # --- Non-shot events (common to both V3 and V2 paths) ---
+        action_type = str(event.get("EVENTMSGTYPE", "")).lower()
+        if action_type == "rebound" or (not has_v3_fields and _pbp_event_to_type(
+                event.get("EVENTMSGTYPE", 0), event.get("EVENTMSGACTIONTYPE", 0)) == "reb"):
             stats["reb"] += 1
-        elif event_type == "tov":
+            # Check for offensive rebound
+            desc = str(event.get("HOMEDESCRIPTION", "") or
+                       event.get("VISITORDESCRIPTION", "") or "")
+            if "Off:" in desc:
+                # Parse "Off:1" from description
+                try:
+                    off_part = desc.split("Off:")[1].split(")")[0].split(" ")[0]
+                    if int(off_part) > 0:
+                        stats["oreb"] += 1
+                except (IndexError, ValueError):
+                    pass
+        elif action_type == "turnover":
             stats["tov"] += 1
-        elif event_type == "foul":
+        elif action_type == "foul":
             stats["pf"] += 1
+        elif action_type == "steal":
+            stats["stl"] += 1
+        elif action_type == "block":
+            stats["blk"] += 1
+        elif action_type == "assist":
+            stats["ast"] += 1
+        elif not has_v3_fields:
+            # V2 fallback for non-shot events
+            event_type = _pbp_event_to_type(
+                event.get("EVENTMSGTYPE", 0), event.get("EVENTMSGACTIONTYPE", 0)
+            )
+            if event_type == "reb":
+                stats["reb"] += 1
+            elif event_type == "tov":
+                stats["tov"] += 1
+            elif event_type == "foul":
+                stats["pf"] += 1
 
     return stats
+
+
+def _build_score_changes(pbp_data: pd.DataFrame) -> list[dict]:
+    """
+    Extract score changes from PBP data for the momentum line.
+
+    Returns a list of {ts, homeScore, awayScore} dicts where ts is
+    elapsed game minutes (0 = start of Q1, 12 = start of Q2, etc.).
+
+    Args:
+        pbp_data: Play-by-play DataFrame with SCORE_HOME, SCORE_AWAY,
+                  PERIOD, PCTIMESTRING columns
+
+    Returns:
+        List of score change points in chronological order
+    """
+    changes = [{"ts": 0.0, "homeScore": 0, "awayScore": 0}]
+
+    if pbp_data.empty:
+        return changes
+
+    # Check for V3 score columns
+    has_score_cols = "SCORE_HOME" in pbp_data.columns and "SCORE_AWAY" in pbp_data.columns
+
+    if not has_score_cols:
+        # V2 fallback: try parsing SCORE column "away-home" format
+        if "SCORE" in pbp_data.columns:
+            prev_home, prev_away = 0, 0
+            for _, row in pbp_data.iterrows():
+                score_str = str(row.get("SCORE", ""))
+                if "-" not in score_str or pd.isna(row.get("SCORE")):
+                    continue
+                try:
+                    parts = score_str.split("-")
+                    away_score = int(parts[0].strip())
+                    home_score = int(parts[1].strip())
+                except (ValueError, IndexError):
+                    continue
+                if home_score != prev_home or away_score != prev_away:
+                    period = int(row.get("PERIOD", 1))
+                    clock_str = str(row.get("PCTIMESTRING", "12:00"))
+                    ts = _clock_to_elapsed_minutes(period, clock_str)
+                    changes.append({
+                        "ts": round(ts, 2),
+                        "homeScore": home_score,
+                        "awayScore": away_score,
+                    })
+                    prev_home, prev_away = home_score, away_score
+        return changes
+
+    # V3 path: use SCORE_HOME and SCORE_AWAY columns
+    prev_home, prev_away = 0, 0
+    for _, row in pbp_data.iterrows():
+        try:
+            home_score = int(row["SCORE_HOME"]) if not pd.isna(row.get("SCORE_HOME")) else prev_home
+            away_score = int(row["SCORE_AWAY"]) if not pd.isna(row.get("SCORE_AWAY")) else prev_away
+        except (ValueError, TypeError):
+            continue
+
+        if home_score != prev_home or away_score != prev_away:
+            period = int(row.get("PERIOD", 1))
+            clock_str = str(row.get("PCTIMESTRING", "12:00"))
+            ts = _clock_to_elapsed_minutes(period, clock_str)
+            changes.append({
+                "ts": round(ts, 2),
+                "homeScore": home_score,
+                "awayScore": away_score,
+            })
+            prev_home, prev_away = home_score, away_score
+
+    return changes
+
+
+def _clock_to_elapsed_minutes(period: int, clock_str: str) -> float:
+    """Convert period + countdown clock to elapsed game minutes."""
+    try:
+        parts = clock_str.split(":")
+        remaining_secs = int(parts[0]) * 60 + int(parts[1])
+    except (ValueError, IndexError):
+        remaining_secs = 0
+
+    period_duration = 720 if period <= 4 else 300
+    elapsed_in_period = period_duration - remaining_secs
+
+    # Add elapsed minutes from completed periods
+    if period <= 4:
+        base_minutes = (period - 1) * 12
+    else:
+        base_minutes = 48 + (period - 5) * 5
+
+    return base_minutes + (elapsed_in_period / 60)
 
 
 def transform_scores(scoreboard_data: dict, date: str) -> list[dict]:
@@ -482,7 +685,7 @@ def transform_boxscore(
                 "inTime": in_clock,
                 "outTime": out_clock,
                 "minutes": minutes_stint,
-                "plusMinus": int(stint.get("PT_DIFF", 0)),
+                "plusMinus": _safe_int(stint.get("PT_DIFF", 0)),
                 "fgm": stint_stats["fgm"],
                 "fga": stint_stats["fga"],
                 "fg3m": stint_stats["fg3m"],
@@ -710,98 +913,105 @@ def transform_gameflow(
     home_line = home_line_df.iloc[0]
     away_line = away_line_df.iloc[0]
 
-    players = []
+    # Group stints by player using dict keyed by player_id
+    player_map: dict[str, dict] = {}
 
-    # Process home team
-    for _, player_stint in rotation_data["home_team"].iterrows():
-        player_id = player_stint["PERSON_ID"]
-        period, in_clock, out_clock = _rotation_time_to_period_clock(
-            player_stint["IN_TIME_REAL"], player_stint["OUT_TIME_REAL"]
-        )
-        minutes = _compute_stint_minutes(
-            player_stint["IN_TIME_REAL"], player_stint["OUT_TIME_REAL"]
-        )
+    def _process_rotation(rotation_df: pd.DataFrame, team_tricode: str) -> None:
+        """Process rotation data for one team, grouping stints by player."""
+        for _, player_stint in rotation_df.iterrows():
+            player_id = str(int(player_stint["PERSON_ID"]))
+            period, in_clock, out_clock = _rotation_time_to_period_clock(
+                player_stint["IN_TIME_REAL"], player_stint["OUT_TIME_REAL"]
+            )
+            minutes = _compute_stint_minutes(
+                player_stint["IN_TIME_REAL"], player_stint["OUT_TIME_REAL"]
+            )
 
-        # Filter PBP for this player and stint
-        pbp_stint = _filter_pbp_for_stint(pbp_data, player_id, period, in_clock, out_clock)
+            # Filter PBP for this player and stint
+            pbp_stint = _filter_pbp_for_stint(
+                pbp_data, player_stint["PERSON_ID"], period, in_clock, out_clock
+            )
 
-        # Convert PBP events to simple format
-        events = []
-        for _, event in pbp_stint.iterrows():
-            event_dict = {
-                "clock": event.get("PCTIMESTRING", ""),
-                "type": _pbp_event_to_type(
-                    event.get("EVENTMSGTYPE", 0), event.get("EVENTMSGACTIONTYPE", 0)
-                ),
-                "description": event.get("HOMEDESCRIPTION", "")
-                or event.get("VISITORDESCRIPTION", ""),
-            }
-            events.append(event_dict)
+            # Convert PBP events to simple format
+            events = []
+            for _, event in pbp_stint.iterrows():
+                # Determine event type using V3 fields when available
+                evt_type = _pbp_event_to_type(
+                    event.get("EVENTMSGTYPE", 0),
+                    event.get("EVENTMSGACTIONTYPE", 0),
+                )
+                # V3: override make/miss detection using isFieldGoal + shotResult
+                if "isFieldGoal" in pbp_stint.columns:
+                    is_fg = event.get("isFieldGoal", False)
+                    if is_fg is True or is_fg == 1:
+                        shot_result = str(event.get("shotResult", "")).lower()
+                        shot_value = event.get("shotValue", 0)
+                        try:
+                            shot_value = int(shot_value) if not pd.isna(shot_value) else 2
+                        except (ValueError, TypeError):
+                            shot_value = 2
+                        if shot_result == "made":
+                            evt_type = "Make3" if shot_value == 3 else "Make2"
+                        else:
+                            evt_type = "miss3" if shot_value == 3 else "miss2"
+                    else:
+                        action = str(event.get("EVENTMSGTYPE", "")).lower()
+                        if action in ("freethrow", "free throw", "ft"):
+                            shot_result = str(event.get("shotResult", "")).lower()
+                            evt_type = "MakeFT" if shot_result == "made" else "missFT"
+                        elif action == "rebound":
+                            desc = str(event.get("HOMEDESCRIPTION", "") or "")
+                            evt_type = "OffReb" if "Off:" in desc else "DefReb"
+                        elif action == "steal":
+                            evt_type = "Steal"
+                        elif action == "block":
+                            evt_type = "Block"
+                        elif action == "assist":
+                            evt_type = "Assist"
+                        elif action == "turnover":
+                            evt_type = "TO"
+                        elif action in ("foul",):
+                            evt_type = "PF"
 
-        # Aggregate stint stats
-        stint_stats = _aggregate_stint_stats(pbp_stint)
-
-        player_dict = {
-            "playerId": str(player_id),
-            "name": f"{player_stint.get('PLAYER_FIRST', '')} {player_stint.get('PLAYER_LAST', '')}",
-            "team": home_line["TEAM_ABBREVIATION"],
-            "stints": [
-                {
-                    "period": int(period),
-                    "inTime": in_clock,
-                    "outTime": out_clock,
-                    "minutes": minutes,
-                    "plusMinus": int(player_stint.get("PT_DIFF", 0)),
-                    "stats": stint_stats,
-                    "events": events,
+                event_dict = {
+                    "clock": event.get("PCTIMESTRING", ""),
+                    "type": evt_type,
+                    "description": event.get("HOMEDESCRIPTION", "")
+                    or event.get("VISITORDESCRIPTION", ""),
                 }
-            ],
-        }
-        players.append(player_dict)
+                events.append(event_dict)
 
-    # Process away team
-    for _, player_stint in rotation_data["away_team"].iterrows():
-        player_id = player_stint["PERSON_ID"]
-        period, in_clock, out_clock = _rotation_time_to_period_clock(
-            player_stint["IN_TIME_REAL"], player_stint["OUT_TIME_REAL"]
-        )
-        minutes = _compute_stint_minutes(
-            player_stint["IN_TIME_REAL"], player_stint["OUT_TIME_REAL"]
-        )
+            # Aggregate stint stats
+            stint_stats = _aggregate_stint_stats(pbp_stint)
 
-        pbp_stint = _filter_pbp_for_stint(pbp_data, player_id, period, in_clock, out_clock)
-
-        events = []
-        for _, event in pbp_stint.iterrows():
-            event_dict = {
-                "clock": event.get("PCTIMESTRING", ""),
-                "type": _pbp_event_to_type(
-                    event.get("EVENTMSGTYPE", 0), event.get("EVENTMSGACTIONTYPE", 0)
-                ),
-                "description": event.get("HOMEDESCRIPTION", "")
-                or event.get("VISITORDESCRIPTION", ""),
+            stint_dict = {
+                "period": int(period),
+                "inTime": in_clock,
+                "outTime": out_clock,
+                "minutes": minutes,
+                "plusMinus": _safe_int(player_stint.get("PT_DIFF", 0)),
+                "stats": stint_stats,
+                "events": events,
             }
-            events.append(event_dict)
 
-        stint_stats = _aggregate_stint_stats(pbp_stint)
-
-        player_dict = {
-            "playerId": str(player_id),
-            "name": f"{player_stint.get('PLAYER_FIRST', '')} {player_stint.get('PLAYER_LAST', '')}",
-            "team": away_line["TEAM_ABBREVIATION"],
-            "stints": [
-                {
-                    "period": int(period),
-                    "inTime": in_clock,
-                    "outTime": out_clock,
-                    "minutes": minutes,
-                    "plusMinus": int(player_stint.get("PT_DIFF", 0)),
-                    "stats": stint_stats,
-                    "events": events,
+            # Group under existing player entry or create new one
+            if player_id in player_map:
+                player_map[player_id]["stints"].append(stint_dict)
+            else:
+                player_map[player_id] = {
+                    "playerId": player_id,
+                    "name": f"{player_stint.get('PLAYER_FIRST', '')} {player_stint.get('PLAYER_LAST', '')}",
+                    "team": team_tricode,
+                    "stints": [stint_dict],
                 }
-            ],
-        }
-        players.append(player_dict)
+
+    _process_rotation(rotation_data["home_team"], home_line["TEAM_ABBREVIATION"])
+    _process_rotation(rotation_data["away_team"], away_line["TEAM_ABBREVIATION"])
+
+    players = list(player_map.values())
+
+    # Build score changes for momentum line
+    score_changes = _build_score_changes(pbp_data)
 
     return {
         "gameId": str(game_id),
@@ -814,4 +1024,5 @@ def transform_gameflow(
             "name": away_line["TEAM_NAME"],
         },
         "players": players,
+        "scoreChanges": score_changes,
     }

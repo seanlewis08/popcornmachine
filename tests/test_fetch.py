@@ -80,14 +80,68 @@ class TestFetchScoreboard:
 class TestFetchBoxscore:
     """Tests for fetch_boxscore function."""
 
-    def test_fetch_boxscore_success(self, sample_boxscore_data):
-        """Test successful box score fetch."""
-        with patch("pipeline.fetch.BoxScoreTraditionalV2") as mock_bs:
+    def _make_v3_mock_data(self):
+        """Create V3-shaped mock DataFrames (camelCase columns)."""
+        player_stats_v3 = pd.DataFrame({
+            "gameId": ["0022500001", "0022500001", "0022500001"],
+            "personId": [203507, 203999, 2544],
+            "firstName": ["Cade", "Danilo", "Kawhi"],
+            "familyName": ["Cunningham", "Gallinari", "Leonard"],
+            "teamTricode": ["DET", "DET", "BOS"],
+            "teamId": [1610612765, 1610612765, 1610612738],
+            "teamName": ["Pistons", "Pistons", "Celtics"],
+            "minutes": ["40:18", "35:00", "38:30"],
+            "fieldGoalsMade": [4, 8, 10],
+            "fieldGoalsAttempted": [17, 20, 22],
+            "threePointersMade": [0, 2, 3],
+            "threePointersAttempted": [4, 6, 9],
+            "freeThrowsMade": [8, 4, 5],
+            "freeThrowsAttempted": [10, 5, 6],
+            "reboundsOffensive": [1, 2, 0],
+            "reboundsDefensive": [2, 3, 5],
+            "reboundsTotal": [3, 5, 5],
+            "assists": [14, 7, 4],
+            "steals": [1, 2, 1],
+            "blocks": [2, 0, 2],
+            "turnovers": [0, 3, 2],
+            "foulsPersonal": [3, 2, 4],
+            "points": [16, 22, 28],
+            "plusMinusPoints": [2.0, 5.0, -3.0],
+        })
+        starter_bench_v3 = pd.DataFrame({
+            "gameId": ["0022500001"] * 4,
+            "startersBench": ["Starters", "Bench", "Starters", "Bench"],
+        })
+        team_stats_v3 = pd.DataFrame({
+            "gameId": ["0022500001", "0022500001"],
+            "teamTricode": ["DET", "BOS"],
+            "teamId": [1610612765, 1610612738],
+            "teamName": ["Pistons", "Celtics"],
+            "minutes": ["240:00", "240:00"],
+            "fieldGoalsMade": [38, 33],
+            "fieldGoalsAttempted": [88, 83],
+            "threePointersMade": [11, 13],
+            "threePointersAttempted": [33, 41],
+            "freeThrowsMade": [17, 24],
+            "freeThrowsAttempted": [23, 30],
+            "reboundsOffensive": [9, 16],
+            "reboundsDefensive": [31, 31],
+            "reboundsTotal": [40, 47],
+            "assists": [24, 13],
+            "steals": [9, 5],
+            "blocks": [9, 4],
+            "turnovers": [5, 11],
+            "foulsPersonal": [26, 26],
+            "points": [104, 103],
+            "plusMinusPoints": [0.0, 0.0],
+        })
+        return [player_stats_v3, starter_bench_v3, team_stats_v3]
+
+    def test_fetch_boxscore_success(self):
+        """Test successful box score fetch with V3 API."""
+        with patch("pipeline.fetch.BoxScoreTraditionalV3") as mock_bs:
             mock_instance = MagicMock()
-            mock_instance.get_data_frames.return_value = [
-                sample_boxscore_data["player_stats"],
-                sample_boxscore_data["team_stats"],
-            ]
+            mock_instance.get_data_frames.return_value = self._make_v3_mock_data()
             mock_bs.return_value = mock_instance
 
             result = fetch_boxscore("0022500001", delay=0)
@@ -98,14 +152,11 @@ class TestFetchBoxscore:
             assert len(result["player_stats"]) == 3
             assert len(result["team_stats"]) == 2
 
-    def test_fetch_boxscore_has_required_columns(self, sample_boxscore_data):
-        """Test that box score data includes required columns."""
-        with patch("pipeline.fetch.BoxScoreTraditionalV2") as mock_bs:
+    def test_fetch_boxscore_has_required_columns(self):
+        """Test that V3 box score data is mapped to V2 column names."""
+        with patch("pipeline.fetch.BoxScoreTraditionalV3") as mock_bs:
             mock_instance = MagicMock()
-            mock_instance.get_data_frames.return_value = [
-                sample_boxscore_data["player_stats"],
-                sample_boxscore_data["team_stats"],
-            ]
+            mock_instance.get_data_frames.return_value = self._make_v3_mock_data()
             mock_bs.return_value = mock_instance
 
             result = fetch_boxscore("0022500001", delay=0)
@@ -117,7 +168,7 @@ class TestFetchBoxscore:
 
     def test_fetch_boxscore_failure(self):
         """Test box score fetch on API error."""
-        with patch("pipeline.fetch.BoxScoreTraditionalV2") as mock_bs:
+        with patch("pipeline.fetch.BoxScoreTraditionalV3") as mock_bs:
             mock_bs.side_effect = requests.exceptions.RequestException("API Error")
 
             result = fetch_boxscore("0022500001", delay=0)
@@ -126,7 +177,7 @@ class TestFetchBoxscore:
 
     def test_fetch_boxscore_unexpected_error(self):
         """Test box score fetch on unexpected error."""
-        with patch("pipeline.fetch.BoxScoreTraditionalV2") as mock_bs:
+        with patch("pipeline.fetch.BoxScoreTraditionalV3") as mock_bs:
             mock_bs.side_effect = KeyError("resultSet")
 
             result = fetch_boxscore("0022500001", delay=0)

@@ -19,22 +19,24 @@ class TestRotationTimeConversion:
     """Tests for time conversion utilities."""
 
     def test_rotation_time_to_period_clock_period_1(self):
-        """Test conversion of period 1 time."""
-        period, in_clock, out_clock = _rotation_time_to_period_clock(0, 606000)
+        """Test period 1 (countdown clock). Rotation API uses deciseconds."""
+        # 0 decisecs = game start, 6060 decisecs = 606 seconds elapsed
+        period, in_clock, out_clock = _rotation_time_to_period_clock(0, 6060)
         assert period == 1
-        assert in_clock == "0:00"
-        assert out_clock == "10:06"
+        assert in_clock == "12:00"  # 720-0 = 720s = 12:00
+        assert out_clock == "1:54"  # 720-606 = 114s = 1:54
 
     def test_rotation_time_to_period_clock_period_2(self):
-        """Test conversion of period 2 time."""
-        period, in_clock, out_clock = _rotation_time_to_period_clock(720000, 1200000)
+        """Test period 2 (countdown clock). 7200 decisecs = start of Q2."""
+        # 7200 = 720s = start of Q2, 12000 = 1200s = 480s into Q2
+        period, in_clock, out_clock = _rotation_time_to_period_clock(7200, 12000)
         assert period == 2
-        assert in_clock == "0:00"
-        assert out_clock == "8:00"
+        assert in_clock == "12:00"  # 720-0 = 720s
+        assert out_clock == "4:00"  # 720-480 = 240s = 4:00
 
     def test_compute_stint_minutes(self):
-        """Test stint duration calculation."""
-        minutes = _compute_stint_minutes(0, 606000)
+        """Test stint duration in deciseconds. 6060 decisecs = 10.1 min."""
+        minutes = _compute_stint_minutes(0, 6060)
         assert minutes == 10.1
 
 

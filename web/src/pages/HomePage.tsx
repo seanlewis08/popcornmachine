@@ -61,30 +61,67 @@ export default function HomePage() {
   }, [indexError, indexLoading]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-2xl mx-auto p-4">
-        <h1 className="text-4xl font-bold mb-8">NBA Scores</h1>
+    <div style={{ minHeight: "calc(100vh - 60px)" }}>
+      <div style={{ maxWidth: 640, margin: "0 auto", padding: "24px 16px" }}>
+        <h1
+          style={{
+            fontFamily: "'Oswald', sans-serif",
+            fontSize: 32,
+            fontWeight: 700,
+            color: "#C9A84C",
+            marginBottom: 24,
+            textTransform: "uppercase",
+            letterSpacing: 2,
+          }}
+        >
+          NBA Scores
+        </h1>
 
         {loading && (
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-            <span className="ml-3 text-gray-600">Loading games...</span>
+          <div style={{ textAlign: "center", padding: "48px 0", color: "#E8D5B7" }}>
+            <div
+              style={{
+                width: 40,
+                height: 40,
+                border: "3px solid #5C3A21",
+                borderTopColor: "#C9A84C",
+                borderRadius: "50%",
+                margin: "0 auto 12px",
+                animation: "spin 1s linear infinite",
+              }}
+            />
+            Loading games...
           </div>
         )}
 
         {error && !loading && (
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-            <p className="text-red-800 font-medium">
-              Unable to load games. Please try again later.
-            </p>
-            <p className="text-red-600 text-sm mt-1">{error.message}</p>
+          <div
+            style={{
+              border: "1px solid #EB003C",
+              background: "rgba(235, 0, 60, 0.1)",
+              borderRadius: 6,
+              padding: 16,
+              color: "#F5F0E8",
+            }}
+          >
+            <p style={{ fontWeight: 600 }}>Unable to load games. Please try again later.</p>
+            <p style={{ fontSize: 13, marginTop: 4, opacity: 0.7 }}>{error.message}</p>
           </div>
         )}
 
         {!loading && !error && games.length === 0 && (
-          <div className="rounded-lg border border-gray-200 bg-gray-100 p-8 text-center">
-            <p className="text-gray-700 font-medium">No games available</p>
-            <p className="text-gray-500 text-sm mt-1">
+          <div
+            style={{
+              border: "1px solid #5C3A21",
+              background: "rgba(92, 58, 33, 0.3)",
+              borderRadius: 6,
+              padding: 32,
+              textAlign: "center",
+              color: "#E8D5B7",
+            }}
+          >
+            <p style={{ fontWeight: 600 }}>No games available</p>
+            <p style={{ fontSize: 13, marginTop: 4, opacity: 0.7 }}>
               Check back soon for upcoming NBA games.
             </p>
           </div>
@@ -97,8 +134,18 @@ export default function HomePage() {
               if (dateGames.length === 0) return null;
 
               return (
-                <div key={dateEntry.date} className="mb-8">
-                  <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                <div key={dateEntry.date} style={{ marginBottom: 32 }}>
+                  <h2
+                    style={{
+                      fontFamily: "'Oswald', sans-serif",
+                      fontSize: 20,
+                      fontWeight: 500,
+                      color: "#E8D5B7",
+                      marginBottom: 12,
+                      borderBottom: "1px solid #5C3A21",
+                      paddingBottom: 8,
+                    }}
+                  >
                     {new Date(dateEntry.date + "T00:00:00").toLocaleDateString(
                       "en-US",
                       { weekday: "long", month: "short", day: "numeric" }

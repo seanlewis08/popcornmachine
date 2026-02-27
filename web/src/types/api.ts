@@ -186,6 +186,12 @@ export interface GameflowPlayer {
   stints: GameflowStint[];
 }
 
+export interface ScoreChange {
+  ts: number;        // Elapsed game minutes (0 = start, 12 = end of Q1, etc.)
+  homeScore: number;
+  awayScore: number;
+}
+
 export interface GameflowData {
   gameId: string;
   homeTeam: {
@@ -197,4 +203,5 @@ export interface GameflowData {
     name: string;
   };
   players: GameflowPlayer[];
+  scoreChanges?: ScoreChange[];
 }

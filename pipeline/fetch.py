@@ -7,11 +7,10 @@ from typing import Optional
 
 import pandas as pd
 import requests
-from nba_api.stats.endpoints.boxscoretraditionalv2 import BoxScoreTraditionalV2
+from nba_api.stats.endpoints import BoxScoreTraditionalV3
 from nba_api.stats.endpoints.gamerotation import GameRotation
 from nba_api.stats.endpoints.playbyplayv3 import PlayByPlayV3
 from nba_api.stats.endpoints.scoreboardv2 import ScoreboardV2
-from nba_api.stats.library.http import NBAStatsHTTP
 
 
 def _log_error(msg: str) -> None:
@@ -54,9 +53,84 @@ def fetch_scoreboard(game_date: str, delay: float = 1.5) -> Optional[dict]:
             return None
 
 
+def _map_v3_boxscore_player_stats(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Map BoxScoreTraditionalV3 player stats (DataFrame[0]) to V2 column names.
+
+    V3 uses camelCase columns; transform.py expects V2 UPPER_SNAKE_CASE names.
+    """
+    # Synthesize PLAYER_NAME from firstName + familyName
+    if "firstName" in df.columns and "familyName" in df.columns:
+        df["PLAYER_NAME"] = df["firstName"] + " " + df["familyName"]
+
+    column_map = {
+        "personId": "PLAYER_ID",
+        "teamTricode": "TEAM_ABBREVIATION",
+        "teamId": "TEAM_ID",
+        "teamName": "TEAM_NAME",
+        "gameId": "GAME_ID",
+        "minutes": "MIN",
+        "fieldGoalsMade": "FGM",
+        "fieldGoalsAttempted": "FGA",
+        "threePointersMade": "FG3M",
+        "threePointersAttempted": "FG3A",
+        "freeThrowsMade": "FTM",
+        "freeThrowsAttempted": "FTA",
+        "reboundsOffensive": "OREB",
+        "reboundsDefensive": "DREB",
+        "reboundsTotal": "REB",
+        "assists": "AST",
+        "steals": "STL",
+        "blocks": "BLK",
+        "turnovers": "TO",
+        "foulsPersonal": "PF",
+        "points": "PTS",
+        "plusMinusPoints": "PLUS_MINUS",
+    }
+    df = df.rename(columns=column_map)
+    return df
+
+
+def _map_v3_boxscore_team_stats(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Map BoxScoreTraditionalV3 team stats (DataFrame[2]) to V2 column names.
+
+    V3 uses camelCase columns; transform.py expects V2 UPPER_SNAKE_CASE names.
+    """
+    column_map = {
+        "teamTricode": "TEAM_ABBREVIATION",
+        "teamId": "TEAM_ID",
+        "teamName": "TEAM_NAME",
+        "gameId": "GAME_ID",
+        "minutes": "MIN",
+        "fieldGoalsMade": "FGM",
+        "fieldGoalsAttempted": "FGA",
+        "threePointersMade": "FG3M",
+        "threePointersAttempted": "FG3A",
+        "freeThrowsMade": "FTM",
+        "freeThrowsAttempted": "FTA",
+        "reboundsOffensive": "OREB",
+        "reboundsDefensive": "DREB",
+        "reboundsTotal": "REB",
+        "assists": "AST",
+        "steals": "STL",
+        "blocks": "BLK",
+        "turnovers": "TO",
+        "foulsPersonal": "PF",
+        "points": "PTS",
+        "plusMinusPoints": "PLUS_MINUS",
+    }
+    df = df.rename(columns=column_map)
+    return df
+
+
 def fetch_boxscore(game_id: str, delay: float = 1.5) -> Optional[dict]:
     """
     Fetch box score data for a given game with retry logic.
+
+    Uses BoxScoreTraditionalV3 (V2 is deprecated and returns empty DataFrames
+    as of the 2025-26 NBA season) and maps V3 camelCase column names to V2
+    UPPER_SNAKE_CASE format so transform.py works unchanged.
 
     Args:
         game_id: Game ID string
@@ -69,13 +143,14 @@ def fetch_boxscore(game_id: str, delay: float = 1.5) -> Optional[dict]:
     for attempt in range(max_retries + 1):
         try:
             time.sleep(delay)
-            response = BoxScoreTraditionalV2(
-                game_id=game_id, start_period=1, end_period=10,
-                start_range=0, end_range=0, range_type=0
-            )
+            response = BoxScoreTraditionalV3(game_id=game_id)
+            dfs = response.get_data_frames()
+            # V3 returns: [0] player stats, [1] starter/bench splits, [2] team stats
+            player_stats = _map_v3_boxscore_player_stats(dfs[0])
+            team_stats = _map_v3_boxscore_team_stats(dfs[2])
             return {
-                "player_stats": response.get_data_frames()[0],
-                "team_stats": response.get_data_frames()[1],
+                "player_stats": player_stats,
+                "team_stats": team_stats,
             }
         except requests.exceptions.RequestException as e:
             _log_error(f"Error fetching box score for {game_id}: {e}")
@@ -108,6 +183,8 @@ def _map_v3_to_v2_columns(df: pd.DataFrame) -> pd.DataFrame:
         "teamTricode": "PLAYER1_TEAM_ABBREVIATION",
         "playerName": "PLAYER1_NAME",
         "description": "HOMEDESCRIPTION",
+        "scoreHome": "SCORE_HOME",
+        "scoreAway": "SCORE_AWAY",
     }
     df = df.rename(columns=column_map)
 

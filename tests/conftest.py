@@ -95,13 +95,16 @@ def sample_playbyplay_data() -> pd.DataFrame:
 @pytest.fixture
 def sample_rotation_data() -> dict:
     """Sample GameRotation response with away_team and home_team DataFrames."""
+    # Rotation API uses deciseconds (1/10 second)
+    # 6060 decisecs = 606 seconds = ~10.1 min
+    # 7200 decisecs = 720 seconds = end of Q1 / start of Q2
     home_team = pd.DataFrame({
         "GAME_ID": ["0022500001", "0022500001"],
         "PERSON_ID": [203507, 203999],
         "PLAYER_FIRST": ["Cade", "Danilo"],
         "PLAYER_LAST": ["Cunningham", "Gallinari"],
         "IN_TIME_REAL": [0, 0],
-        "OUT_TIME_REAL": [606000, 1200000],  # 606000ms = ~10.1 min, 1200000ms = 20 min
+        "OUT_TIME_REAL": [6060, 12000],  # 6060 decisecs = ~10.1 min, 12000 = 20 min
         "PLAYER_PTS": [16, 22],
         "PT_DIFF": [2, 5],
     })
@@ -111,8 +114,8 @@ def sample_rotation_data() -> dict:
         "PERSON_ID": [2544, 201939],
         "PLAYER_FIRST": ["Kawhi", "Jaylen"],
         "PLAYER_LAST": ["Leonard", "Brown"],
-        "IN_TIME_REAL": [0, 600000],
-        "OUT_TIME_REAL": [1200000, 1800000],
+        "IN_TIME_REAL": [0, 6000],
+        "OUT_TIME_REAL": [12000, 18000],
         "PLAYER_PTS": [28, 15],
         "PT_DIFF": [-3, 2],
     })

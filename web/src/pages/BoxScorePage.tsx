@@ -2,7 +2,6 @@ import { useParams } from "react-router-dom";
 import { useJsonData } from "@/hooks/useJsonData";
 import type { BoxScoreData } from "@/types/api";
 import { PlayerStatsTable } from "@/components/PlayerStatsTable";
-import { Card } from "@/components/ui/card";
 
 export default function BoxScorePage() {
   const { gameId } = useParams<{ gameId: string }>();
@@ -11,7 +10,7 @@ export default function BoxScorePage() {
 
   if (loading) {
     return (
-      <div className="p-4">
+      <div style={{ padding: 24, color: "#E8D5B7" }}>
         <p>Loading box score...</p>
       </div>
     );
@@ -19,18 +18,25 @@ export default function BoxScorePage() {
 
   if (error) {
     return (
-      <div className="p-4">
-        <Card className="border-red-200 bg-red-50 p-4">
-          <h2 className="text-lg font-bold text-red-800">Game not found</h2>
-          <p className="text-red-700">Unable to load box score for game {gameId}</p>
-        </Card>
+      <div style={{ padding: 24 }}>
+        <div
+          style={{
+            border: "1px solid #EB003C",
+            background: "rgba(235, 0, 60, 0.1)",
+            borderRadius: 6,
+            padding: 16,
+          }}
+        >
+          <h2 style={{ fontSize: 18, fontWeight: 700, color: "#EB003C" }}>Game not found</h2>
+          <p style={{ color: "#C4956A" }}>Unable to load box score for game {gameId}</p>
+        </div>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="p-4">
+      <div style={{ padding: 24, color: "#E8D5B7" }}>
         <p>No data available</p>
       </div>
     );
@@ -45,17 +51,37 @@ export default function BoxScorePage() {
   const awayPeriodTotals = data.periodTotals.away;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="p-4">
+    <div style={{ minHeight: "calc(100vh - 60px)" }}>
+      <div style={{ padding: "16px 24px" }}>
         {/* Game Header */}
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold mb-2">{data.date}</h1>
-          <div className="text-xl font-semibold">
-            <span>{data.homeTeam.name}</span>
-            <span className="mx-4">{data.homeTeam.score}</span>
-            <span>-</span>
-            <span className="mx-4">{data.awayTeam.score}</span>
-            <span>{data.awayTeam.name}</span>
+        <div style={{ marginBottom: 32, textAlign: "center" }}>
+          <h1
+            style={{
+              fontFamily: "'Oswald', sans-serif",
+              fontSize: 18,
+              fontWeight: 500,
+              color: "#C4956A",
+              marginBottom: 8,
+            }}
+          >
+            {data.date}
+          </h1>
+          <div
+            style={{
+              fontFamily: "'Oswald', sans-serif",
+              fontSize: 24,
+              fontWeight: 700,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 16,
+            }}
+          >
+            <span style={{ color: "#C9A84C" }}>{data.homeTeam.name}</span>
+            <span style={{ color: "#F5F0E8" }}>{data.homeTeam.score}</span>
+            <span style={{ color: "#5C3A21" }}>-</span>
+            <span style={{ color: "#F5F0E8" }}>{data.awayTeam.score}</span>
+            <span style={{ color: "#C9A84C" }}>{data.awayTeam.name}</span>
           </div>
         </div>
 

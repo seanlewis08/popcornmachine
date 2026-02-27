@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
 import type { ScoreEntry } from "@/types/api";
 
 interface GameCardProps {
@@ -8,48 +7,117 @@ interface GameCardProps {
 
 export function GameCard({ game }: GameCardProps) {
   return (
-    <Card className="mb-4">
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between gap-4">
-          {/* Home Team */}
-          <div className="flex-1 text-center">
-            <div className="text-lg font-semibold">{game.homeTeam.tricode}</div>
-            <div className="text-sm text-gray-600">{game.homeTeam.name}</div>
+    <div
+      style={{
+        background: "linear-gradient(135deg, rgba(92, 58, 33, 0.6) 0%, rgba(44, 24, 16, 0.8) 100%)",
+        border: "1px solid #5C3A21",
+        borderRadius: 8,
+        padding: 16,
+        marginBottom: 12,
+        boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+        {/* Home Team */}
+        <div style={{ flex: 1, textAlign: "center" }}>
+          <div
+            style={{
+              fontFamily: "'Oswald', sans-serif",
+              fontSize: 22,
+              fontWeight: 600,
+              color: "#C9A84C",
+            }}
+          >
+            {game.homeTeam.tricode}
           </div>
+          <div style={{ fontSize: 12, color: "#C4956A" }}>{game.homeTeam.name}</div>
+        </div>
 
-          {/* Score */}
-          <div className="flex flex-col items-center gap-1">
-            <div className="text-2xl font-bold">
-              {game.homeTeam.score} - {game.awayTeam.score}
-            </div>
-            <div className="text-xs font-medium text-gray-500">
-              {game.status}
-            </div>
+        {/* Score */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+          <div
+            style={{
+              fontFamily: "'Oswald', sans-serif",
+              fontSize: 28,
+              fontWeight: 700,
+              color: "#F5F0E8",
+              letterSpacing: 2,
+            }}
+          >
+            {game.homeTeam.score} - {game.awayTeam.score}
           </div>
-
-          {/* Away Team */}
-          <div className="flex-1 text-center">
-            <div className="text-lg font-semibold">{game.awayTeam.tricode}</div>
-            <div className="text-sm text-gray-600">{game.awayTeam.name}</div>
+          <div
+            style={{
+              fontSize: 11,
+              fontWeight: 500,
+              color: game.status === "Final" ? "#C9A84C" : "#FF6B35",
+              textTransform: "uppercase",
+              letterSpacing: 1,
+            }}
+          >
+            {game.status}
           </div>
         </div>
 
-        {/* Links */}
-        <div className="mt-4 flex gap-2">
-          <Link
-            to={`/game/${game.gameId}/boxscore`}
-            className="flex-1 rounded bg-blue-500 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-600"
+        {/* Away Team */}
+        <div style={{ flex: 1, textAlign: "center" }}>
+          <div
+            style={{
+              fontFamily: "'Oswald', sans-serif",
+              fontSize: 22,
+              fontWeight: 600,
+              color: "#C9A84C",
+            }}
           >
-            Box Score
-          </Link>
-          <Link
-            to={`/game/${game.gameId}/gameflow`}
-            className="flex-1 rounded bg-green-500 px-3 py-2 text-center text-sm font-medium text-white hover:bg-green-600"
-          >
-            Gameflow
-          </Link>
+            {game.awayTeam.tricode}
+          </div>
+          <div style={{ fontSize: 12, color: "#C4956A" }}>{game.awayTeam.name}</div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      {/* Links */}
+      <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+        <Link
+          to={`/game/${game.gameId}/boxscore`}
+          style={{
+            flex: 1,
+            textAlign: "center",
+            padding: "8px 12px",
+            borderRadius: 4,
+            fontSize: 13,
+            fontWeight: 600,
+            fontFamily: "'Oswald', sans-serif",
+            textTransform: "uppercase",
+            letterSpacing: 1,
+            textDecoration: "none",
+            color: "#F5F0E8",
+            background: "linear-gradient(180deg, #00519A 0%, #003d75 100%)",
+            border: "1px solid #006bcc",
+          }}
+        >
+          Box Score
+        </Link>
+        <Link
+          to={`/game/${game.gameId}/gameflow`}
+          style={{
+            flex: 1,
+            textAlign: "center",
+            padding: "8px 12px",
+            borderRadius: 4,
+            fontSize: 13,
+            fontWeight: 600,
+            fontFamily: "'Oswald', sans-serif",
+            textTransform: "uppercase",
+            letterSpacing: 1,
+            textDecoration: "none",
+            color: "#F5F0E8",
+            background: "linear-gradient(180deg, #008348 0%, #005d33 100%)",
+            border: "1px solid #00a85a",
+          }}
+        >
+          Gameflow
+        </Link>
+      </div>
+    </div>
   );
 }

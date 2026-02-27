@@ -1,12 +1,4 @@
 import type { StintData } from "@/types/api";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 interface StintBreakdownProps {
   stints: StintData[];
@@ -21,61 +13,76 @@ function formatMinutes(decimalMinutes: number): string {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
+const stintThStyle: React.CSSProperties = {
+  padding: "3px 6px",
+  textAlign: "center",
+  fontFamily: "'Oswald', sans-serif",
+  fontSize: 10,
+  fontWeight: 600,
+  color: "#8B6914",
+  textTransform: "uppercase",
+  borderBottom: "1px solid rgba(92, 58, 33, 0.4)",
+};
+
+const stintTdStyle: React.CSSProperties = {
+  padding: "2px 6px",
+  textAlign: "center",
+  fontSize: 11,
+  fontFamily: "'Roboto Condensed', Arial",
+  color: "#C4956A",
+  borderBottom: "1px solid rgba(92, 58, 33, 0.2)",
+};
+
 export function StintBreakdown({ stints }: StintBreakdownProps) {
+  const headers = ["Period", "In", "Out", "Min", "FG", "3PT", "FT", "OREB", "REB", "AST", "BLK", "STL", "TO", "PF", "PTS", "+/-"];
+
   return (
-    <div className="bg-muted/30 p-3 ml-4">
-      <Table className="text-xs">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="px-2 py-1">Period</TableHead>
-            <TableHead className="px-2 py-1">In</TableHead>
-            <TableHead className="px-2 py-1">Out</TableHead>
-            <TableHead className="px-2 py-1">Min</TableHead>
-            <TableHead className="px-2 py-1">FG</TableHead>
-            <TableHead className="px-2 py-1">3PT</TableHead>
-            <TableHead className="px-2 py-1">FT</TableHead>
-            <TableHead className="px-2 py-1">OREB</TableHead>
-            <TableHead className="px-2 py-1">REB</TableHead>
-            <TableHead className="px-2 py-1">AST</TableHead>
-            <TableHead className="px-2 py-1">BLK</TableHead>
-            <TableHead className="px-2 py-1">STL</TableHead>
-            <TableHead className="px-2 py-1">TO</TableHead>
-            <TableHead className="px-2 py-1">PF</TableHead>
-            <TableHead className="px-2 py-1">PTS</TableHead>
-            <TableHead className="px-2 py-1">+/-</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+    <div
+      style={{
+        background: "rgba(44, 24, 16, 0.5)",
+        padding: "8px 0 8px 16px",
+        borderLeft: "3px solid #C9A84C",
+      }}
+    >
+      <table style={{ borderCollapse: "collapse", width: "100%" }}>
+        <thead>
+          <tr>
+            {headers.map((h) => (
+              <th key={h} style={stintThStyle}>{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
           {stints.map((stint, idx) => (
-            <TableRow key={idx} className="text-xs">
-              <TableCell className="px-2 py-1">{stint.period}</TableCell>
-              <TableCell className="px-2 py-1">{stint.inTime}</TableCell>
-              <TableCell className="px-2 py-1">{stint.outTime}</TableCell>
-              <TableCell className="px-2 py-1">
-                {formatMinutes(stint.minutes)}
-              </TableCell>
-              <TableCell className="px-2 py-1">
-                {stint.fgm}-{stint.fga}
-              </TableCell>
-              <TableCell className="px-2 py-1">
-                {stint.fg3m}-{stint.fg3a}
-              </TableCell>
-              <TableCell className="px-2 py-1">
-                {stint.ftm}-{stint.fta}
-              </TableCell>
-              <TableCell className="px-2 py-1">{stint.oreb}</TableCell>
-              <TableCell className="px-2 py-1">{stint.reb}</TableCell>
-              <TableCell className="px-2 py-1">{stint.ast}</TableCell>
-              <TableCell className="px-2 py-1">{stint.blk}</TableCell>
-              <TableCell className="px-2 py-1">{stint.stl}</TableCell>
-              <TableCell className="px-2 py-1">{stint.tov}</TableCell>
-              <TableCell className="px-2 py-1">{stint.pf}</TableCell>
-              <TableCell className="px-2 py-1">{stint.pts}</TableCell>
-              <TableCell className="px-2 py-1">{stint.plusMinus}</TableCell>
-            </TableRow>
+            <tr key={idx}>
+              <td style={stintTdStyle}>{stint.period}</td>
+              <td style={stintTdStyle}>{stint.inTime}</td>
+              <td style={stintTdStyle}>{stint.outTime}</td>
+              <td style={stintTdStyle}>{formatMinutes(stint.minutes)}</td>
+              <td style={stintTdStyle}>{stint.fgm}-{stint.fga}</td>
+              <td style={stintTdStyle}>{stint.fg3m}-{stint.fg3a}</td>
+              <td style={stintTdStyle}>{stint.ftm}-{stint.fta}</td>
+              <td style={stintTdStyle}>{stint.oreb}</td>
+              <td style={stintTdStyle}>{stint.reb}</td>
+              <td style={stintTdStyle}>{stint.ast}</td>
+              <td style={stintTdStyle}>{stint.blk}</td>
+              <td style={stintTdStyle}>{stint.stl}</td>
+              <td style={stintTdStyle}>{stint.tov}</td>
+              <td style={stintTdStyle}>{stint.pf}</td>
+              <td style={{ ...stintTdStyle, fontWeight: 600, color: "#FF6B35" }}>{stint.pts}</td>
+              <td
+                style={{
+                  ...stintTdStyle,
+                  fontWeight: 600,
+                  color: stint.plusMinus > 0 ? "#4ade80" : stint.plusMinus < 0 ? "#f87171" : "#C4956A",
+                }}
+              >
+                {stint.plusMinus > 0 ? "+" : ""}{stint.plusMinus}
+              </td>
+            </tr>
           ))}
-        </TableBody>
-      </Table>
+        </tbody>
+      </table>
     </div>
   );
 }

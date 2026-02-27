@@ -1,13 +1,5 @@
 import { Fragment, useState } from "react";
 import type { PlayerData, TeamTotals, PeriodTotals } from "@/types/api";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { StintBreakdown } from "@/components/StintBreakdown";
 
 interface PlayerStatsTableProps {
@@ -28,13 +20,37 @@ function formatMinutes(decimalMinutes: number): string {
 }
 
 /**
- * Returns color class for +/- value
+ * Returns color for +/- value
  */
 function getPlusMinusColor(value: number): string {
-  if (value > 0) return "text-green-600";
-  if (value < 0) return "text-red-600";
-  return "";
+  if (value > 0) return "#4ade80";
+  if (value < 0) return "#f87171";
+  return "#E8D5B7";
 }
+
+const thStyle: React.CSSProperties = {
+  padding: "6px 8px",
+  textAlign: "center",
+  fontFamily: "'Oswald', sans-serif",
+  fontSize: 12,
+  fontWeight: 600,
+  color: "#C9A84C",
+  textTransform: "uppercase",
+  letterSpacing: 0.5,
+  borderBottom: "2px solid #5C3A21",
+  background: "#2C1810",
+  whiteSpace: "nowrap",
+};
+
+const tdStyle: React.CSSProperties = {
+  padding: "4px 8px",
+  textAlign: "center",
+  fontSize: 13,
+  fontFamily: "'Roboto Condensed', Arial",
+  color: "#E8D5B7",
+  borderBottom: "1px solid rgba(92, 58, 33, 0.3)",
+  whiteSpace: "nowrap",
+};
 
 export function PlayerStatsTable({
   players,
@@ -57,44 +73,58 @@ export function PlayerStatsTable({
     setExpandedPlayers(newSet);
   };
 
+  const headers = ["Player", "Min", "FG", "3PT", "FT", "OREB", "REB", "AST", "BLK", "STL", "TO", "PF", "PTS", "+/-", "HV", "PROD", "EFF"];
+
   return (
-    <div className="mb-8">
-      <div className="mb-4">
-        <h2 className="text-xl font-bold">
+    <div style={{ marginBottom: 32 }}>
+      <div style={{ marginBottom: 12 }}>
+        <h2
+          style={{
+            fontFamily: "'Oswald', sans-serif",
+            fontSize: 20,
+            fontWeight: 700,
+            color: "#C9A84C",
+            textTransform: "uppercase",
+          }}
+        >
           {teamName} ({teamTricode})
         </h2>
       </div>
 
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="sticky left-0 z-10 bg-muted w-32">
-                Player
-              </TableHead>
-              <TableHead>Min</TableHead>
-              <TableHead>FG</TableHead>
-              <TableHead>3PT</TableHead>
-              <TableHead>FT</TableHead>
-              <TableHead>OREB</TableHead>
-              <TableHead>REB</TableHead>
-              <TableHead>AST</TableHead>
-              <TableHead>BLK</TableHead>
-              <TableHead>STL</TableHead>
-              <TableHead>TO</TableHead>
-              <TableHead>PF</TableHead>
-              <TableHead>PTS</TableHead>
-              <TableHead>+/-</TableHead>
-              <TableHead>HV</TableHead>
-              <TableHead>PROD</TableHead>
-              <TableHead>EFF</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+      <div style={{ overflowX: "auto" }}>
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            border: "1px solid #5C3A21",
+            borderRadius: 4,
+            overflow: "hidden",
+          }}
+        >
+          <thead>
+            <tr>
+              {headers.map((h, i) => (
+                <th
+                  key={h}
+                  style={{
+                    ...thStyle,
+                    textAlign: i === 0 ? "left" : "center",
+                    position: i === 0 ? "sticky" : undefined,
+                    left: i === 0 ? 0 : undefined,
+                    zIndex: i === 0 ? 10 : undefined,
+                    minWidth: i === 0 ? 130 : undefined,
+                  }}
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
             {/* Player rows */}
             {players.map((player) => (
               <Fragment key={player.playerId}>
-                <TableRow
+                <tr
                   onClick={() => togglePlayer(player.playerId)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
@@ -104,111 +134,144 @@ export function PlayerStatsTable({
                   }}
                   role="button"
                   tabIndex={0}
-                  className="cursor-pointer hover:bg-muted/50"
+                  style={{
+                    cursor: "pointer",
+                    background: expandedPlayers.has(player.playerId)
+                      ? "rgba(92, 58, 33, 0.3)"
+                      : "transparent",
+                  }}
                 >
-                  <TableCell className="sticky left-0 z-10 bg-background font-medium">
+                  <td
+                    style={{
+                      ...tdStyle,
+                      textAlign: "left",
+                      fontWeight: 500,
+                      position: "sticky",
+                      left: 0,
+                      zIndex: 10,
+                      background: expandedPlayers.has(player.playerId)
+                        ? "#3D2415"
+                        : "#2C1810",
+                      color: "#F5F0E8",
+                    }}
+                  >
                     {player.name}
-                  </TableCell>
-                  <TableCell>{formatMinutes(player.totals.min)}</TableCell>
-                  <TableCell>
-                    {player.totals.fgm}-{player.totals.fga}
-                  </TableCell>
-                  <TableCell>
-                    {player.totals.fg3m}-{player.totals.fg3a}
-                  </TableCell>
-                  <TableCell>
-                    {player.totals.ftm}-{player.totals.fta}
-                  </TableCell>
-                  <TableCell>{player.totals.oreb}</TableCell>
-                  <TableCell>{player.totals.reb}</TableCell>
-                  <TableCell>{player.totals.ast}</TableCell>
-                  <TableCell>{player.totals.blk}</TableCell>
-                  <TableCell>{player.totals.stl}</TableCell>
-                  <TableCell>{player.totals.tov}</TableCell>
-                  <TableCell>{player.totals.pf}</TableCell>
-                  <TableCell>{player.totals.pts}</TableCell>
-                  <TableCell
-                    className={getPlusMinusColor(player.totals.plusMinus)}
+                  </td>
+                  <td style={tdStyle}>{formatMinutes(player.totals.min)}</td>
+                  <td style={tdStyle}>{player.totals.fgm}-{player.totals.fga}</td>
+                  <td style={tdStyle}>{player.totals.fg3m}-{player.totals.fg3a}</td>
+                  <td style={tdStyle}>{player.totals.ftm}-{player.totals.fta}</td>
+                  <td style={tdStyle}>{player.totals.oreb}</td>
+                  <td style={tdStyle}>{player.totals.reb}</td>
+                  <td style={tdStyle}>{player.totals.ast}</td>
+                  <td style={tdStyle}>{player.totals.blk}</td>
+                  <td style={tdStyle}>{player.totals.stl}</td>
+                  <td style={tdStyle}>{player.totals.tov}</td>
+                  <td style={tdStyle}>{player.totals.pf}</td>
+                  <td style={{ ...tdStyle, fontWeight: 700, color: "#FF6B35" }}>{player.totals.pts}</td>
+                  <td
+                    style={{
+                      ...tdStyle,
+                      color: getPlusMinusColor(player.totals.plusMinus),
+                      fontWeight: 600,
+                    }}
                     data-testid={`plus-minus-${player.playerId}`}
                   >
-                    {player.totals.plusMinus}
-                  </TableCell>
-                  <TableCell>{player.totals.hv}</TableCell>
-                  <TableCell>{player.totals.prod.toFixed(2)}</TableCell>
-                  <TableCell>{player.totals.eff}</TableCell>
-                </TableRow>
+                    {player.totals.plusMinus > 0 ? "+" : ""}{player.totals.plusMinus}
+                  </td>
+                  <td style={tdStyle}>{player.totals.hv}</td>
+                  <td style={tdStyle}>{player.totals.prod.toFixed(2)}</td>
+                  <td style={tdStyle}>{player.totals.eff}</td>
+                </tr>
                 {/* Stint breakdown - rendered as a full-width row */}
                 {expandedPlayers.has(player.playerId) && (
-                  <TableRow>
-                    <TableCell colSpan={17} className="p-0">
+                  <tr>
+                    <td colSpan={17} style={{ padding: 0 }}>
                       <StintBreakdown stints={player.stints} />
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                  </tr>
                 )}
               </Fragment>
             ))}
 
             {/* Team Totals Row */}
-            <TableRow className="font-bold bg-muted/30">
-              <TableCell className="sticky left-0 z-10 bg-muted/30 font-bold">
+            <tr
+              style={{
+                background: "rgba(201, 168, 76, 0.1)",
+                borderTop: "2px solid #5C3A21",
+              }}
+            >
+              <td
+                style={{
+                  ...tdStyle,
+                  textAlign: "left",
+                  fontWeight: 700,
+                  position: "sticky",
+                  left: 0,
+                  zIndex: 10,
+                  background: "#3D2415",
+                  color: "#C9A84C",
+                  borderBottom: "none",
+                }}
+              >
                 Team Totals
-              </TableCell>
-              <TableCell>-</TableCell>
-              <TableCell>
-                {teamTotals.fgm}-{teamTotals.fga}
-              </TableCell>
-              <TableCell>
-                {teamTotals.fg3m}-{teamTotals.fg3a}
-              </TableCell>
-              <TableCell>
-                {teamTotals.ftm}-{teamTotals.fta}
-              </TableCell>
-              <TableCell>{teamTotals.oreb}</TableCell>
-              <TableCell>{teamTotals.reb}</TableCell>
-              <TableCell>{teamTotals.ast}</TableCell>
-              <TableCell>{teamTotals.blk}</TableCell>
-              <TableCell>{teamTotals.stl}</TableCell>
-              <TableCell>{teamTotals.tov}</TableCell>
-              <TableCell>{teamTotals.pf}</TableCell>
-              <TableCell>{teamTotals.pts}</TableCell>
-              <TableCell>-</TableCell>
-              <TableCell>-</TableCell>
-              <TableCell>-</TableCell>
-              <TableCell>-</TableCell>
-            </TableRow>
+              </td>
+              <td style={{ ...tdStyle, fontWeight: 700, borderBottom: "none" }}>-</td>
+              <td style={{ ...tdStyle, fontWeight: 700, borderBottom: "none" }}>{teamTotals.fgm}-{teamTotals.fga}</td>
+              <td style={{ ...tdStyle, fontWeight: 700, borderBottom: "none" }}>{teamTotals.fg3m}-{teamTotals.fg3a}</td>
+              <td style={{ ...tdStyle, fontWeight: 700, borderBottom: "none" }}>{teamTotals.ftm}-{teamTotals.fta}</td>
+              <td style={{ ...tdStyle, fontWeight: 700, borderBottom: "none" }}>{teamTotals.oreb}</td>
+              <td style={{ ...tdStyle, fontWeight: 700, borderBottom: "none" }}>{teamTotals.reb}</td>
+              <td style={{ ...tdStyle, fontWeight: 700, borderBottom: "none" }}>{teamTotals.ast}</td>
+              <td style={{ ...tdStyle, fontWeight: 700, borderBottom: "none" }}>{teamTotals.blk}</td>
+              <td style={{ ...tdStyle, fontWeight: 700, borderBottom: "none" }}>{teamTotals.stl}</td>
+              <td style={{ ...tdStyle, fontWeight: 700, borderBottom: "none" }}>{teamTotals.tov}</td>
+              <td style={{ ...tdStyle, fontWeight: 700, borderBottom: "none" }}>{teamTotals.pf}</td>
+              <td style={{ ...tdStyle, fontWeight: 700, color: "#FF6B35", borderBottom: "none" }}>{teamTotals.pts}</td>
+              <td style={{ ...tdStyle, fontWeight: 700, borderBottom: "none" }}>-</td>
+              <td style={{ ...tdStyle, fontWeight: 700, borderBottom: "none" }}>-</td>
+              <td style={{ ...tdStyle, fontWeight: 700, borderBottom: "none" }}>-</td>
+              <td style={{ ...tdStyle, fontWeight: 700, borderBottom: "none" }}>-</td>
+            </tr>
 
             {/* Period Breakdown Rows */}
             {periodTotals.map((period) => (
-              <TableRow key={`period-${period.period}`} className="text-sm">
-                <TableCell className="sticky left-0 z-10 bg-background italic">
+              <tr key={`period-${period.period}`}>
+                <td
+                  style={{
+                    ...tdStyle,
+                    textAlign: "left",
+                    fontStyle: "italic",
+                    position: "sticky",
+                    left: 0,
+                    zIndex: 10,
+                    background: "#2C1810",
+                    color: "#8B6914",
+                    fontSize: 12,
+                  }}
+                >
                   Q{period.period}
-                </TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>
-                  {period.fgm}-{period.fga}
-                </TableCell>
-                <TableCell>
-                  {period.fg3m}-{period.fg3a}
-                </TableCell>
-                <TableCell>
-                  {period.ftm}-{period.fta}
-                </TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>{period.pts}</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-              </TableRow>
+                </td>
+                <td style={{ ...tdStyle, fontSize: 12, color: "#8B6914" }}>-</td>
+                <td style={{ ...tdStyle, fontSize: 12, color: "#8B6914" }}>{period.fgm}-{period.fga}</td>
+                <td style={{ ...tdStyle, fontSize: 12, color: "#8B6914" }}>{period.fg3m}-{period.fg3a}</td>
+                <td style={{ ...tdStyle, fontSize: 12, color: "#8B6914" }}>{period.ftm}-{period.fta}</td>
+                <td style={{ ...tdStyle, fontSize: 12, color: "#8B6914" }}>-</td>
+                <td style={{ ...tdStyle, fontSize: 12, color: "#8B6914" }}>-</td>
+                <td style={{ ...tdStyle, fontSize: 12, color: "#8B6914" }}>-</td>
+                <td style={{ ...tdStyle, fontSize: 12, color: "#8B6914" }}>-</td>
+                <td style={{ ...tdStyle, fontSize: 12, color: "#8B6914" }}>-</td>
+                <td style={{ ...tdStyle, fontSize: 12, color: "#8B6914" }}>-</td>
+                <td style={{ ...tdStyle, fontSize: 12, color: "#8B6914" }}>-</td>
+                <td style={{ ...tdStyle, fontSize: 12, color: "#8B6914" }}>{period.pts}</td>
+                <td style={{ ...tdStyle, fontSize: 12, color: "#8B6914" }}>-</td>
+                <td style={{ ...tdStyle, fontSize: 12, color: "#8B6914" }}>-</td>
+                <td style={{ ...tdStyle, fontSize: 12, color: "#8B6914" }}>-</td>
+                <td style={{ ...tdStyle, fontSize: 12, color: "#8B6914" }}>-</td>
+              </tr>
             ))}
-          </TableBody>
-        </Table>
+          </tbody>
+        </table>
       </div>
     </div>
   );

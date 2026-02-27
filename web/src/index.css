@@ -1,1 +1,174 @@
 @import "tailwindcss";
+
+/* ===================================================================
+   BASKETBALL HARDWOOD THEME
+   =================================================================== */
+
+:root {
+  /* Hardwood palette */
+  --hw-dark: #2C1810;        /* Dark walnut */
+  --hw-medium: #5C3A21;      /* Medium hardwood */
+  --hw-light: #8B6914;       /* Light oak accent */
+  --hw-floor: #C4956A;       /* Court floor */
+  --hw-floor-light: #D4A574; /* Light floor */
+  --hw-line: #E8D5B7;        /* Court line cream */
+  --hw-paint: #1a1a2e;       /* Paint/key area */
+  --hw-gold: #C9A84C;        /* Gold accent */
+  --hw-white: #F5F0E8;       /* Warm white */
+  --hw-score: #FF6B35;       /* Score orange */
+}
+
+/* Body with subtle hardwood grain */
+body {
+  background: linear-gradient(
+    180deg,
+    #3D2415 0%,
+    #2C1810 50%,
+    #1F110B 100%
+  );
+  color: var(--hw-white);
+  font-family: 'Roboto Condensed', 'Arial', sans-serif;
+  min-height: 100vh;
+}
+
+/* Hardwood floor texture for main content areas */
+.hardwood-surface {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 60px,
+      rgba(0,0,0,0.03) 60px,
+      rgba(0,0,0,0.03) 61px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 200px,
+      rgba(0,0,0,0.02) 200px,
+      rgba(0,0,0,0.02) 201px
+    ),
+    linear-gradient(
+      90deg,
+      #C4956A 0%,
+      #D4A574 15%,
+      #C4956A 30%,
+      #B8854E 50%,
+      #C4956A 70%,
+      #D4A574 85%,
+      #C4956A 100%
+    );
+}
+
+/* Court-line style borders */
+.court-border {
+  border: 2px solid var(--hw-line);
+  border-radius: 4px;
+}
+
+/* ===================================================================
+   GAMEFLOW TEAM COLORS (kept from original)
+   =================================================================== */
+.hometeamOUT {
+  background-color: #EB003C;
+}
+.hometeamIN {
+  color: white;
+  background-color: #00519A;
+}
+.hometeamENDSTAT {
+  color: white;
+  background-color: #00519A;
+}
+.visitorOUT {
+  background-color: #ECAC88;
+}
+.visitorIN {
+  color: white;
+  background-color: #008348;
+}
+.visitorENDSTAT {
+  color: white;
+  background-color: #008348;
+}
+
+/* ===================================================================
+   STINT TOOLTIP (hidden by default, shown on hover)
+   =================================================================== */
+.gf-stint-tooltip {
+  display: none;
+  position: absolute;
+  width: 240px;
+  border: 2px solid var(--hw-gold);
+  border-radius: 6px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: var(--hw-white);
+  padding: 6px 8px;
+  z-index: 100;
+  left: 0;
+  bottom: 100%;
+  font-size: 12px;
+  font-family: 'Roboto Condensed', Arial, Verdana, Helvetica;
+  pointer-events: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+/* On hover, raise z-index of cell so tooltip escapes any parent clipping */
+.gf-stint-cell {
+  position: relative;
+}
+.gf-stint-cell:hover {
+  z-index: 50;
+  overflow: visible;
+}
+.gf-stint-cell:hover .gf-stint-tooltip {
+  display: block;
+}
+
+/* ===================================================================
+   PLAYER NAME TOOLTIP (hidden by default, shown on hover)
+   =================================================================== */
+.gf-player-tooltip {
+  display: none;
+  position: absolute;
+  width: 180px;
+  min-height: 60px;
+  border: 2px solid var(--hw-gold);
+  border-radius: 6px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: var(--hw-white);
+  padding: 6px 8px;
+  z-index: 100;
+  left: 0;
+  bottom: 100%;
+  font-size: 12px;
+  font-family: 'Roboto Condensed', Arial, Verdana, Helvetica;
+  pointer-events: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+.gf-name-cell:hover .gf-player-tooltip {
+  display: block;
+}
+.gf-player-tooltip:hover {
+  display: block;
+}
+
+/* ===================================================================
+   MINUTE SELECTION HIGHLIGHT
+   =================================================================== */
+.gf-minute-highlight {
+  background-color: rgba(201, 168, 76, 0.4) !important;
+  box-shadow: inset 0 0 0 1px rgba(201, 168, 76, 0.6);
+}
+
+/* Minute selector bar */
+.gf-minute-selector {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.gf-minute-selector:hover {
+  background-color: rgba(201, 168, 76, 0.3) !important;
+}
+.gf-minute-selected {
+  background-color: rgba(201, 168, 76, 0.5) !important;
+  border-bottom: 2px solid var(--hw-gold);
+}
