@@ -57,7 +57,7 @@ export function Layout() {
             </Link>
           )}
           <a
-            href="https://seanlewis.github.io"
+            href="https://seanlewis08.github.io"
             target="_blank"
             rel="noopener noreferrer"
             style={{
