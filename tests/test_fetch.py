@@ -1,6 +1,5 @@
 """Tests for the fetch module."""
 
-import json
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
@@ -178,19 +177,21 @@ class TestFetchPlaybyplay:
 
     def test_fetch_playbyplay_success(self, sample_playbyplay_data):
         """Test successful play-by-play fetch."""
-        # Build a raw JSON response matching what the NBA API would return
-        raw_response = json.dumps({
+        # Build a mock NBAStatsResponse with .get_dict()
+        response_dict = {
             "resultSets": [
                 {
                     "headers": list(sample_playbyplay_data.columns),
                     "rowSet": sample_playbyplay_data.values.tolist(),
                 }
             ]
-        })
+        }
+        mock_response = MagicMock()
+        mock_response.get_dict.return_value = response_dict
 
         with patch("pipeline.fetch.NBAStatsHTTP") as mock_http_cls:
             mock_http = MagicMock()
-            mock_http.send_api_request.return_value = raw_response
+            mock_http.send_api_request.return_value = mock_response
             mock_http_cls.return_value = mock_http
 
             result = fetch_playbyplay("0022500001", delay=0)
@@ -201,18 +202,20 @@ class TestFetchPlaybyplay:
 
     def test_fetch_playbyplay_has_required_columns(self, sample_playbyplay_data):
         """Test that play-by-play data includes required columns."""
-        raw_response = json.dumps({
+        response_dict = {
             "resultSets": [
                 {
                     "headers": list(sample_playbyplay_data.columns),
                     "rowSet": sample_playbyplay_data.values.tolist(),
                 }
             ]
-        })
+        }
+        mock_response = MagicMock()
+        mock_response.get_dict.return_value = response_dict
 
         with patch("pipeline.fetch.NBAStatsHTTP") as mock_http_cls:
             mock_http = MagicMock()
-            mock_http.send_api_request.return_value = raw_response
+            mock_http.send_api_request.return_value = mock_response
             mock_http_cls.return_value = mock_http
 
             result = fetch_playbyplay("0022500001", delay=0)
@@ -234,9 +237,12 @@ class TestFetchPlaybyplay:
 
     def test_fetch_playbyplay_unexpected_error(self):
         """Test play-by-play fetch on unexpected error."""
+        mock_response = MagicMock()
+        mock_response.get_dict.return_value = {"bad_key": []}
+
         with patch("pipeline.fetch.NBAStatsHTTP") as mock_http_cls:
             mock_http = MagicMock()
-            mock_http.send_api_request.return_value = '{"bad_key": []}'
+            mock_http.send_api_request.return_value = mock_response
             mock_http_cls.return_value = mock_http
 
             result = fetch_playbyplay("0022500001", delay=0)

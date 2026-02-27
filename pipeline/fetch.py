@@ -5,8 +5,6 @@ import time
 from datetime import datetime
 from typing import Optional
 
-import json as json_module
-
 import pandas as pd
 import requests
 from nba_api.stats.endpoints.boxscoretraditionalv2 import BoxScoreTraditionalV2
@@ -137,7 +135,7 @@ def fetch_playbyplay(game_id: str, delay: float = 1.5) -> Optional[pd.DataFrame]
                     "EndPeriod": 10,
                 },
             )
-            raw_json = json_module.loads(response)
+            raw_json = response.get_dict()
             return _parse_pbp_response(raw_json)
         except requests.exceptions.RequestException as e:
             _log_error(f"Error fetching play-by-play for {game_id}: {e}")
