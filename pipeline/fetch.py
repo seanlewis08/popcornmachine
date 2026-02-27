@@ -9,7 +9,7 @@ import pandas as pd
 import requests
 from nba_api.stats.endpoints.boxscoretraditionalv2 import BoxScoreTraditionalV2
 from nba_api.stats.endpoints.gamerotation import GameRotation
-from nba_api.stats.endpoints.playbyplayv2 import PlayByPlayV2
+from nba_api.stats.endpoints.playbyplayv3 import PlayByPlayV3
 from nba_api.stats.endpoints.scoreboardv2 import ScoreboardV2
 from nba_api.stats.library.http import NBAStatsHTTP
 
@@ -89,54 +89,82 @@ def fetch_boxscore(game_id: str, delay: float = 1.5) -> Optional[dict]:
             return None
 
 
-def _parse_pbp_response(raw_json: dict) -> pd.DataFrame:
+def _map_v3_to_v2_columns(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Parse play-by-play JSON handling both 'resultSets' (array) and 'resultSet'
-    (object) response formats from the NBA API.
-    """
-    if "resultSets" in raw_json:
-        result_set = raw_json["resultSets"][0]
-    elif "resultSet" in raw_json:
-        result_set = raw_json["resultSet"]
-    else:
-        raise KeyError("Response has neither 'resultSets' nor 'resultSet'")
+    Map PlayByPlayV3 column names to V2 names so transform.py works unchanged.
 
-    headers = result_set["headers"]
-    rows = result_set["rowSet"]
-    return pd.DataFrame(rows, columns=headers)
+    V3 merged home/away descriptions into a single 'description' field and
+    uses different column naming conventions. This function renames columns
+    and synthesizes the HOMEDESCRIPTION/VISITORDESCRIPTION fields.
+    """
+    column_map = {
+        "period": "PERIOD",
+        "personId": "PLAYER1_ID",
+        "clock": "PCTIMESTRING",
+        "actionType": "EVENTMSGTYPE",
+        "subType": "EVENTMSGACTIONTYPE",
+        "actionNumber": "EVENTNUM",
+        "teamId": "PLAYER1_TEAM_ID",
+        "teamTricode": "PLAYER1_TEAM_ABBREVIATION",
+        "playerName": "PLAYER1_NAME",
+        "description": "HOMEDESCRIPTION",
+    }
+    df = df.rename(columns=column_map)
+
+    # V3 has a single 'description' field; V2 had separate home/away fields.
+    # Set VISITORDESCRIPTION to same value so transform.py's fallback works.
+    if "VISITORDESCRIPTION" not in df.columns:
+        df["VISITORDESCRIPTION"] = df.get("HOMEDESCRIPTION", "")
+
+    # Strip clock format: V3 uses "PT04M30.00S", transform.py expects "4:30"
+    if "PCTIMESTRING" in df.columns:
+        df["PCTIMESTRING"] = df["PCTIMESTRING"].apply(_parse_v3_clock)
+
+    return df
+
+
+def _parse_v3_clock(clock_str: str) -> str:
+    """Convert V3 clock format 'PT04M30.00S' to V2 format '4:30'."""
+    if not isinstance(clock_str, str) or not clock_str.startswith("PT"):
+        return str(clock_str)
+    try:
+        # Remove PT prefix and S suffix
+        time_part = clock_str[2:].rstrip("S")
+        if "M" in time_part:
+            minutes_str, seconds_str = time_part.split("M")
+            minutes = int(minutes_str)
+            seconds = int(float(seconds_str))
+        else:
+            minutes = 0
+            seconds = int(float(time_part))
+        return f"{minutes}:{seconds:02d}"
+    except (ValueError, IndexError):
+        return str(clock_str)
 
 
 def fetch_playbyplay(game_id: str, delay: float = 1.5) -> Optional[pd.DataFrame]:
     """
     Fetch play-by-play data for a given game with retry logic.
 
-    Uses raw HTTP request to handle both 'resultSets' and 'resultSet' response
-    formats from the NBA API (the nba_api library's PlayByPlayV2 only handles
-    'resultSet', which causes KeyError on some games).
+    Uses PlayByPlayV3 (V2 is deprecated and returns empty JSON) and maps
+    the V3 column names to V2 format so transform.py works unchanged.
 
     Args:
         game_id: Game ID string
         delay: Delay in seconds before making the API call (default 1.5)
 
     Returns:
-        DataFrame with play-by-play events, or None on failure
+        DataFrame with play-by-play events (V2-compatible columns), or None on failure
     """
     max_retries = 1
     for attempt in range(max_retries + 1):
         try:
             time.sleep(delay)
-            # Use raw HTTP to avoid nba_api's rigid response parsing
-            nba_http = NBAStatsHTTP()
-            response = nba_http.send_api_request(
-                endpoint="playbyplayv2",
-                parameters={
-                    "GameID": game_id,
-                    "StartPeriod": 1,
-                    "EndPeriod": 10,
-                },
+            response = PlayByPlayV3(
+                game_id=game_id, start_period=1, end_period=10
             )
-            raw_json = response.get_dict()
-            return _parse_pbp_response(raw_json)
+            df = response.play_by_play.get_data_frame()
+            return _map_v3_to_v2_columns(df)
         except requests.exceptions.RequestException as e:
             _log_error(f"Error fetching play-by-play for {game_id}: {e}")
 

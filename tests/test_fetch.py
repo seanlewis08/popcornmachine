@@ -7,7 +7,8 @@ import pytest
 import requests
 
 from pipeline.fetch import (
-    _parse_pbp_response,
+    _map_v3_to_v2_columns,
+    _parse_v3_clock,
     fetch_boxscore,
     fetch_game_rotation,
     fetch_playbyplay,
@@ -48,12 +49,10 @@ class TestFetchScoreboard:
 
             result = fetch_scoreboard("2026-01-19", delay=0)
 
-            # Check game_header columns
             assert "GAME_ID" in result["game_header"].columns
             assert "HOME_TEAM_ID" in result["game_header"].columns
             assert "VISITOR_TEAM_ID" in result["game_header"].columns
 
-            # Check line_score columns
             assert "TEAM_ID" in result["line_score"].columns
             assert "TEAM_ABBREVIATION" in result["line_score"].columns
             assert "TEAM_NAME" in result["line_score"].columns
@@ -111,7 +110,6 @@ class TestFetchBoxscore:
 
             result = fetch_boxscore("0022500001", delay=0)
 
-            # Check player_stats columns
             player_cols = result["player_stats"].columns
             required = ["PLAYER_ID", "PLAYER_NAME", "MIN", "FGM", "FGA", "PTS", "PLUS_MINUS"]
             for col in required:
@@ -136,63 +134,115 @@ class TestFetchBoxscore:
             assert result is None
 
 
-class TestParsePbpResponse:
-    """Tests for _parse_pbp_response helper."""
+class TestParseV3Clock:
+    """Tests for _parse_v3_clock helper."""
 
-    def test_parses_resultSets_format(self):
-        """Test parsing response with 'resultSets' (plural) key."""
-        raw = {
-            "resultSets": [
-                {
-                    "headers": ["EVENTNUM", "PERIOD", "PCTIMESTRING"],
-                    "rowSet": [[1, 1, "12:00"], [2, 1, "11:30"]],
-                }
-            ]
-        }
-        df = _parse_pbp_response(raw)
-        assert isinstance(df, pd.DataFrame)
-        assert len(df) == 2
-        assert list(df.columns) == ["EVENTNUM", "PERIOD", "PCTIMESTRING"]
+    def test_standard_clock(self):
+        assert _parse_v3_clock("PT04M30.00S") == "4:30"
 
-    def test_parses_resultSet_format(self):
-        """Test parsing response with 'resultSet' (singular) key."""
-        raw = {
-            "resultSet": {
-                "headers": ["EVENTNUM", "PERIOD"],
-                "rowSet": [[1, 1]],
-            }
-        }
-        df = _parse_pbp_response(raw)
-        assert isinstance(df, pd.DataFrame)
-        assert len(df) == 1
+    def test_zero_minutes(self):
+        assert _parse_v3_clock("PT00M05.00S") == "0:05"
 
-    def test_raises_on_missing_key(self):
-        """Test that missing both keys raises KeyError."""
-        with pytest.raises(KeyError, match="neither"):
-            _parse_pbp_response({"something_else": []})
+    def test_full_quarter(self):
+        assert _parse_v3_clock("PT12M00.00S") == "12:00"
+
+    def test_seconds_only(self):
+        assert _parse_v3_clock("PT45.00S") == "0:45"
+
+    def test_non_string_passthrough(self):
+        assert _parse_v3_clock(None) == "None"
+
+    def test_already_v2_format(self):
+        assert _parse_v3_clock("4:30") == "4:30"
+
+
+class TestMapV3ToV2Columns:
+    """Tests for _map_v3_to_v2_columns helper."""
+
+    def test_renames_columns(self):
+        df = pd.DataFrame({
+            "period": [1],
+            "personId": [12345],
+            "clock": ["PT04M30.00S"],
+            "actionType": ["2pt"],
+            "subType": ["driving"],
+            "actionNumber": [1],
+            "description": ["Layup Made"],
+        })
+        result = _map_v3_to_v2_columns(df)
+
+        assert "PERIOD" in result.columns
+        assert "PLAYER1_ID" in result.columns
+        assert "PCTIMESTRING" in result.columns
+        assert "EVENTMSGTYPE" in result.columns
+        assert "EVENTMSGACTIONTYPE" in result.columns
+        assert "EVENTNUM" in result.columns
+        assert "HOMEDESCRIPTION" in result.columns
+        assert "VISITORDESCRIPTION" in result.columns
+
+    def test_converts_clock_format(self):
+        df = pd.DataFrame({
+            "period": [1],
+            "personId": [12345],
+            "clock": ["PT04M30.00S"],
+            "actionType": ["2pt"],
+            "subType": ["driving"],
+            "actionNumber": [1],
+            "description": ["Layup Made"],
+        })
+        result = _map_v3_to_v2_columns(df)
+        assert result["PCTIMESTRING"].iloc[0] == "4:30"
+
+    def test_visitor_description_synthesized(self):
+        df = pd.DataFrame({
+            "period": [1],
+            "personId": [12345],
+            "clock": ["PT04M30.00S"],
+            "actionType": ["2pt"],
+            "subType": ["driving"],
+            "actionNumber": [1],
+            "description": ["Layup Made"],
+        })
+        result = _map_v3_to_v2_columns(df)
+        assert result["VISITORDESCRIPTION"].iloc[0] == "Layup Made"
 
 
 class TestFetchPlaybyplay:
     """Tests for fetch_playbyplay function."""
 
-    def test_fetch_playbyplay_success(self, sample_playbyplay_data):
-        """Test successful play-by-play fetch."""
-        # Build a mock NBAStatsResponse with .get_dict()
-        response_dict = {
-            "resultSets": [
-                {
-                    "headers": list(sample_playbyplay_data.columns),
-                    "rowSet": sample_playbyplay_data.values.tolist(),
-                }
-            ]
-        }
-        mock_response = MagicMock()
-        mock_response.get_dict.return_value = response_dict
+    def _make_v3_mock(self, sample_playbyplay_data):
+        """Create a mock PlayByPlayV3 that returns V3-format data."""
+        # Convert V2 sample data column names to V3 format for the mock
+        v3_df = sample_playbyplay_data.rename(columns={
+            "PERIOD": "period",
+            "PLAYER1_ID": "personId",
+            "PCTIMESTRING": "clock",
+            "EVENTMSGTYPE": "actionType",
+            "EVENTMSGACTIONTYPE": "subType",
+            "EVENTNUM": "actionNumber",
+        })
+        # Add description column (V3 merges home/away)
+        if "HOMEDESCRIPTION" in sample_playbyplay_data.columns:
+            v3_df["description"] = sample_playbyplay_data["HOMEDESCRIPTION"]
+        else:
+            v3_df["description"] = ""
 
-        with patch("pipeline.fetch.NBAStatsHTTP") as mock_http_cls:
-            mock_http = MagicMock()
-            mock_http.send_api_request.return_value = mock_response
-            mock_http_cls.return_value = mock_http
+        # Convert clock to V3 format (V2 "4:30" -> V3 "PT04M30.00S")
+        def to_v3_clock(v2_clock):
+            if ":" in str(v2_clock):
+                parts = str(v2_clock).split(":")
+                return f"PT{int(parts[0]):02d}M{int(parts[1]):02d}.00S"
+            return v2_clock
+        v3_df["clock"] = v3_df["clock"].apply(to_v3_clock)
+
+        mock_instance = MagicMock()
+        mock_instance.play_by_play.get_data_frame.return_value = v3_df
+        return mock_instance
+
+    def test_fetch_playbyplay_success(self, sample_playbyplay_data):
+        """Test successful play-by-play fetch via V3."""
+        with patch("pipeline.fetch.PlayByPlayV3") as mock_pbp_cls:
+            mock_pbp_cls.return_value = self._make_v3_mock(sample_playbyplay_data)
 
             result = fetch_playbyplay("0022500001", delay=0)
 
@@ -200,36 +250,22 @@ class TestFetchPlaybyplay:
             assert isinstance(result, pd.DataFrame)
             assert len(result) == 5
 
-    def test_fetch_playbyplay_has_required_columns(self, sample_playbyplay_data):
-        """Test that play-by-play data includes required columns."""
-        response_dict = {
-            "resultSets": [
-                {
-                    "headers": list(sample_playbyplay_data.columns),
-                    "rowSet": sample_playbyplay_data.values.tolist(),
-                }
-            ]
-        }
-        mock_response = MagicMock()
-        mock_response.get_dict.return_value = response_dict
-
-        with patch("pipeline.fetch.NBAStatsHTTP") as mock_http_cls:
-            mock_http = MagicMock()
-            mock_http.send_api_request.return_value = mock_response
-            mock_http_cls.return_value = mock_http
+    def test_fetch_playbyplay_returns_v2_columns(self, sample_playbyplay_data):
+        """Test that V3 data is mapped to V2 column names."""
+        with patch("pipeline.fetch.PlayByPlayV3") as mock_pbp_cls:
+            mock_pbp_cls.return_value = self._make_v3_mock(sample_playbyplay_data)
 
             result = fetch_playbyplay("0022500001", delay=0)
 
+            # These V2 columns should exist after mapping
             required_cols = ["EVENTNUM", "EVENTMSGTYPE", "PERIOD", "PCTIMESTRING"]
             for col in required_cols:
                 assert col in result.columns
 
     def test_fetch_playbyplay_failure(self):
         """Test play-by-play fetch on API error."""
-        with patch("pipeline.fetch.NBAStatsHTTP") as mock_http_cls:
-            mock_http = MagicMock()
-            mock_http.send_api_request.side_effect = requests.exceptions.RequestException("API Error")
-            mock_http_cls.return_value = mock_http
+        with patch("pipeline.fetch.PlayByPlayV3") as mock_pbp_cls:
+            mock_pbp_cls.side_effect = requests.exceptions.RequestException("API Error")
 
             result = fetch_playbyplay("0022500001", delay=0)
 
@@ -237,13 +273,8 @@ class TestFetchPlaybyplay:
 
     def test_fetch_playbyplay_unexpected_error(self):
         """Test play-by-play fetch on unexpected error."""
-        mock_response = MagicMock()
-        mock_response.get_dict.return_value = {"bad_key": []}
-
-        with patch("pipeline.fetch.NBAStatsHTTP") as mock_http_cls:
-            mock_http = MagicMock()
-            mock_http.send_api_request.return_value = mock_response
-            mock_http_cls.return_value = mock_http
+        with patch("pipeline.fetch.PlayByPlayV3") as mock_pbp_cls:
+            mock_pbp_cls.side_effect = RuntimeError("Something broke")
 
             result = fetch_playbyplay("0022500001", delay=0)
 
