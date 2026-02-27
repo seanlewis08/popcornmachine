@@ -1,5 +1,6 @@
 """Tests for the fetch module."""
 
+import json
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
@@ -7,6 +8,7 @@ import pytest
 import requests
 
 from pipeline.fetch import (
+    _parse_pbp_response,
     fetch_boxscore,
     fetch_game_rotation,
     fetch_playbyplay,
@@ -67,6 +69,15 @@ class TestFetchScoreboard:
 
             assert result is None
 
+    def test_fetch_scoreboard_unexpected_error(self):
+        """Test scoreboard fetch on unexpected error (e.g. KeyError)."""
+        with patch("pipeline.fetch.ScoreboardV2") as mock_sb:
+            mock_sb.side_effect = KeyError("resultSet")
+
+            result = fetch_scoreboard("2026-01-19", delay=0)
+
+            assert result is None
+
 
 class TestFetchBoxscore:
     """Tests for fetch_boxscore function."""
@@ -116,16 +127,71 @@ class TestFetchBoxscore:
 
             assert result is None
 
+    def test_fetch_boxscore_unexpected_error(self):
+        """Test box score fetch on unexpected error."""
+        with patch("pipeline.fetch.BoxScoreTraditionalV2") as mock_bs:
+            mock_bs.side_effect = KeyError("resultSet")
+
+            result = fetch_boxscore("0022500001", delay=0)
+
+            assert result is None
+
+
+class TestParsePbpResponse:
+    """Tests for _parse_pbp_response helper."""
+
+    def test_parses_resultSets_format(self):
+        """Test parsing response with 'resultSets' (plural) key."""
+        raw = {
+            "resultSets": [
+                {
+                    "headers": ["EVENTNUM", "PERIOD", "PCTIMESTRING"],
+                    "rowSet": [[1, 1, "12:00"], [2, 1, "11:30"]],
+                }
+            ]
+        }
+        df = _parse_pbp_response(raw)
+        assert isinstance(df, pd.DataFrame)
+        assert len(df) == 2
+        assert list(df.columns) == ["EVENTNUM", "PERIOD", "PCTIMESTRING"]
+
+    def test_parses_resultSet_format(self):
+        """Test parsing response with 'resultSet' (singular) key."""
+        raw = {
+            "resultSet": {
+                "headers": ["EVENTNUM", "PERIOD"],
+                "rowSet": [[1, 1]],
+            }
+        }
+        df = _parse_pbp_response(raw)
+        assert isinstance(df, pd.DataFrame)
+        assert len(df) == 1
+
+    def test_raises_on_missing_key(self):
+        """Test that missing both keys raises KeyError."""
+        with pytest.raises(KeyError, match="neither"):
+            _parse_pbp_response({"something_else": []})
+
 
 class TestFetchPlaybyplay:
     """Tests for fetch_playbyplay function."""
 
     def test_fetch_playbyplay_success(self, sample_playbyplay_data):
         """Test successful play-by-play fetch."""
-        with patch("pipeline.fetch.PlayByPlayV2") as mock_pbp:
-            mock_instance = MagicMock()
-            mock_instance.get_data_frames.return_value = [sample_playbyplay_data]
-            mock_pbp.return_value = mock_instance
+        # Build a raw JSON response matching what the NBA API would return
+        raw_response = json.dumps({
+            "resultSets": [
+                {
+                    "headers": list(sample_playbyplay_data.columns),
+                    "rowSet": sample_playbyplay_data.values.tolist(),
+                }
+            ]
+        })
+
+        with patch("pipeline.fetch.NBAStatsHTTP") as mock_http_cls:
+            mock_http = MagicMock()
+            mock_http.send_api_request.return_value = raw_response
+            mock_http_cls.return_value = mock_http
 
             result = fetch_playbyplay("0022500001", delay=0)
 
@@ -135,10 +201,19 @@ class TestFetchPlaybyplay:
 
     def test_fetch_playbyplay_has_required_columns(self, sample_playbyplay_data):
         """Test that play-by-play data includes required columns."""
-        with patch("pipeline.fetch.PlayByPlayV2") as mock_pbp:
-            mock_instance = MagicMock()
-            mock_instance.get_data_frames.return_value = [sample_playbyplay_data]
-            mock_pbp.return_value = mock_instance
+        raw_response = json.dumps({
+            "resultSets": [
+                {
+                    "headers": list(sample_playbyplay_data.columns),
+                    "rowSet": sample_playbyplay_data.values.tolist(),
+                }
+            ]
+        })
+
+        with patch("pipeline.fetch.NBAStatsHTTP") as mock_http_cls:
+            mock_http = MagicMock()
+            mock_http.send_api_request.return_value = raw_response
+            mock_http_cls.return_value = mock_http
 
             result = fetch_playbyplay("0022500001", delay=0)
 
@@ -148,8 +223,21 @@ class TestFetchPlaybyplay:
 
     def test_fetch_playbyplay_failure(self):
         """Test play-by-play fetch on API error."""
-        with patch("pipeline.fetch.PlayByPlayV2") as mock_pbp:
-            mock_pbp.side_effect = requests.exceptions.RequestException("API Error")
+        with patch("pipeline.fetch.NBAStatsHTTP") as mock_http_cls:
+            mock_http = MagicMock()
+            mock_http.send_api_request.side_effect = requests.exceptions.RequestException("API Error")
+            mock_http_cls.return_value = mock_http
+
+            result = fetch_playbyplay("0022500001", delay=0)
+
+            assert result is None
+
+    def test_fetch_playbyplay_unexpected_error(self):
+        """Test play-by-play fetch on unexpected error."""
+        with patch("pipeline.fetch.NBAStatsHTTP") as mock_http_cls:
+            mock_http = MagicMock()
+            mock_http.send_api_request.return_value = '{"bad_key": []}'
+            mock_http_cls.return_value = mock_http
 
             result = fetch_playbyplay("0022500001", delay=0)
 
@@ -198,6 +286,15 @@ class TestFetchGameRotation:
         """Test game rotation fetch on API error."""
         with patch("pipeline.fetch.GameRotation") as mock_gr:
             mock_gr.side_effect = requests.exceptions.RequestException("API Error")
+
+            result = fetch_game_rotation("0022500001", delay=0)
+
+            assert result is None
+
+    def test_fetch_game_rotation_unexpected_error(self):
+        """Test game rotation fetch on unexpected error."""
+        with patch("pipeline.fetch.GameRotation") as mock_gr:
+            mock_gr.side_effect = KeyError("resultSet")
 
             result = fetch_game_rotation("0022500001", delay=0)
 
