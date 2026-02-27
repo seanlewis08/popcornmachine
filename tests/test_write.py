@@ -1,5 +1,6 @@
 """Tests for the write module."""
 
+import hashlib
 import json
 import tempfile
 from pathlib import Path
@@ -243,3 +244,179 @@ class TestWriteGameData:
             with open(boxscore_path) as f:
                 data = json.load(f)
             assert data["version"] == 2
+
+
+class TestIdempotentWrites:
+    """Tests for idempotent JSON writes."""
+
+    def test_write_scores_produces_deterministic_output(self):
+        """Test that writing same scores twice produces byte-identical JSON."""
+        scores = [
+            {
+                "gameId": "0022500001",
+                "date": "2026-01-19",
+                "homeTeam": {
+                    "tricode": "DET",
+                    "name": "Pistons",
+                    "score": 104,
+                },
+                "awayTeam": {
+                    "tricode": "BOS",
+                    "name": "Celtics",
+                    "score": 103,
+                },
+                "status": "Final",
+            },
+            {
+                "gameId": "0022500002",
+                "date": "2026-01-19",
+                "homeTeam": {
+                    "tricode": "LAL",
+                    "name": "Lakers",
+                    "score": 110,
+                },
+                "awayTeam": {
+                    "tricode": "GSW",
+                    "name": "Warriors",
+                    "score": 108,
+                },
+                "status": "Final",
+            },
+        ]
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # Write first time
+            write_scores("2026-01-19", scores, tmpdir)
+            scores_path = Path(tmpdir) / "scores" / "2026-01-19.json"
+
+            with open(scores_path, "rb") as f:
+                first_bytes = f.read()
+            first_hash = hashlib.md5(first_bytes).hexdigest()
+
+            # Write second time with same data
+            write_scores("2026-01-19", scores, tmpdir)
+            with open(scores_path, "rb") as f:
+                second_bytes = f.read()
+            second_hash = hashlib.md5(second_bytes).hexdigest()
+
+            # Verify byte-identical
+            assert first_hash == second_hash
+            assert first_bytes == second_bytes
+
+    def test_write_index_produces_deterministic_output(self):
+        """Test that writing same index twice produces byte-identical JSON."""
+        dates_data = [
+            {
+                "date": "2026-01-19",
+                "games": [
+                    {
+                        "gameId": "0022500001",
+                        "home": "DET",
+                        "away": "BOS",
+                        "homeScore": 104,
+                        "awayScore": 103,
+                    }
+                ],
+            }
+        ]
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # Write first time
+            write_index(dates_data, tmpdir)
+            index_path = Path(tmpdir) / "index.json"
+
+            with open(index_path, "rb") as f:
+                first_bytes = f.read()
+            first_hash = hashlib.md5(first_bytes).hexdigest()
+
+            # Write second time with same data
+            write_index(dates_data, tmpdir)
+            with open(index_path, "rb") as f:
+                second_bytes = f.read()
+            second_hash = hashlib.md5(second_bytes).hexdigest()
+
+            # Verify byte-identical
+            assert first_hash == second_hash
+            assert first_bytes == second_bytes
+
+    def test_write_game_data_produces_deterministic_output(self):
+        """Test that writing same game data twice produces byte-identical JSON."""
+        boxscore = {
+            "gameId": "0022500001",
+            "date": "2026-01-19",
+            "homeTeam": {"tricode": "DET", "name": "Pistons", "score": 104},
+            "awayTeam": {"tricode": "BOS", "name": "Celtics", "score": 103},
+            "players": [
+                {
+                    "playerId": "203507",
+                    "name": "Cade Cunningham",
+                    "team": "DET",
+                    "totals": {
+                        "min": 40.3,
+                        "fgm": 4,
+                        "fga": 17,
+                    },
+                }
+            ],
+            "teamTotals": {
+                "home": {"fgm": 38, "fga": 88},
+                "away": {"fgm": 33, "fga": 83},
+            },
+            "periodTotals": {},
+        }
+
+        gameflow = {
+            "gameId": "0022500001",
+            "homeTeam": {"tricode": "DET", "name": "Pistons"},
+            "awayTeam": {"tricode": "BOS", "name": "Celtics"},
+            "players": [],
+        }
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # Write first time
+            write_game_data("0022500001", boxscore, gameflow, tmpdir)
+
+            boxscore_path = Path(tmpdir) / "games" / "0022500001" / "boxscore.json"
+            gameflow_path = Path(tmpdir) / "games" / "0022500001" / "gameflow.json"
+
+            with open(boxscore_path, "rb") as f:
+                boxscore_first = f.read()
+            with open(gameflow_path, "rb") as f:
+                gameflow_first = f.read()
+
+            boxscore_hash_1 = hashlib.md5(boxscore_first).hexdigest()
+            gameflow_hash_1 = hashlib.md5(gameflow_first).hexdigest()
+
+            # Write second time
+            write_game_data("0022500001", boxscore, gameflow, tmpdir)
+
+            with open(boxscore_path, "rb") as f:
+                boxscore_second = f.read()
+            with open(gameflow_path, "rb") as f:
+                gameflow_second = f.read()
+
+            boxscore_hash_2 = hashlib.md5(boxscore_second).hexdigest()
+            gameflow_hash_2 = hashlib.md5(gameflow_second).hexdigest()
+
+            # Verify byte-identical
+            assert boxscore_hash_1 == boxscore_hash_2
+            assert gameflow_hash_1 == gameflow_hash_2
+
+    def test_json_uses_sort_keys(self):
+        """Test that JSON output uses sorted keys."""
+        # Create a dict with keys that would be in different order
+        test_data = {"zebra": 1, "apple": 2, "middle": 3}
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            write_scores("2026-01-19", [test_data], tmpdir)
+
+            scores_path = Path(tmpdir) / "scores" / "2026-01-19.json"
+            with open(scores_path) as f:
+                content = f.read()
+
+            # The keys should appear in alphabetical order in the raw JSON
+            apple_pos = content.find('"apple"')
+            middle_pos = content.find('"middle"')
+            zebra_pos = content.find('"zebra"')
+
+            assert apple_pos < middle_pos < zebra_pos

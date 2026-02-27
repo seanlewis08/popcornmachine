@@ -98,7 +98,7 @@ def _write_json_atomic(file_path: Path, data: dict | list) -> None:
 
     try:
         with os.fdopen(temp_fd, "w") as f:
-            json.dump(data, f, indent=2)
+            json.dump(data, f, indent=2, sort_keys=True)
 
         # Atomic rename
         os.replace(temp_path, file_path)
