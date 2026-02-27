@@ -96,9 +96,17 @@ export function PlayerStatsTable({
               <Fragment key={player.playerId}>
                 <TableRow
                   onClick={() => togglePlayer(player.playerId)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      togglePlayer(player.playerId);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
                   className="cursor-pointer hover:bg-muted/50"
                 >
-                  <TableCell className="sticky left-0 z-10 bg-white font-medium">
+                  <TableCell className="sticky left-0 z-10 bg-background font-medium">
                     {player.name}
                   </TableCell>
                   <TableCell>{formatMinutes(player.totals.min)}</TableCell>
@@ -132,7 +140,7 @@ export function PlayerStatsTable({
                 {/* Stint breakdown - rendered as a full-width row */}
                 {expandedPlayers.has(player.playerId) && (
                   <TableRow>
-                    <TableCell colSpan={16} className="p-0">
+                    <TableCell colSpan={17} className="p-0">
                       <StintBreakdown stints={player.stints} />
                     </TableCell>
                   </TableRow>
@@ -172,7 +180,7 @@ export function PlayerStatsTable({
             {/* Period Breakdown Rows */}
             {periodTotals.map((period) => (
               <TableRow key={`period-${period.period}`} className="text-sm">
-                <TableCell className="sticky left-0 z-10 bg-white italic">
+                <TableCell className="sticky left-0 z-10 bg-background italic">
                   Q{period.period}
                 </TableCell>
                 <TableCell>-</TableCell>
