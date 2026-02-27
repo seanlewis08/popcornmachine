@@ -6,6 +6,7 @@ import pytest
 from pipeline.transform import (
     _aggregate_stint_stats,
     _compute_stint_minutes,
+    _parse_minutes,
     _pbp_event_to_type,
     _rotation_time_to_period_clock,
     transform_boxscore,
@@ -79,6 +80,68 @@ class TestPBPEventType:
         """Test foul event."""
         event_type = _pbp_event_to_type(6, 0)
         assert event_type == "foul"
+
+    # V3 string action type tests
+    def test_pbp_event_v3_2pt_make(self):
+        """Test V3 string '2pt' without miss in subtype."""
+        assert _pbp_event_to_type("2pt", "driving") == "make2"
+
+    def test_pbp_event_v3_2pt_miss(self):
+        """Test V3 string '2pt' with miss in subtype."""
+        assert _pbp_event_to_type("2pt", "Miss") == "miss2"
+
+    def test_pbp_event_v3_3pt_make(self):
+        """Test V3 string '3pt' make."""
+        assert _pbp_event_to_type("3pt", "pullup") == "make3"
+
+    def test_pbp_event_v3_3pt_miss(self):
+        """Test V3 string '3pt' miss."""
+        assert _pbp_event_to_type("3pt", "Miss") == "miss3"
+
+    def test_pbp_event_v3_freethrow(self):
+        """Test V3 string 'freethrow'."""
+        assert _pbp_event_to_type("freethrow", "") == "fta"
+
+    def test_pbp_event_v3_rebound(self):
+        """Test V3 string 'rebound'."""
+        assert _pbp_event_to_type("rebound", "") == "reb"
+
+    def test_pbp_event_v3_turnover(self):
+        """Test V3 string 'turnover'."""
+        assert _pbp_event_to_type("turnover", "") == "tov"
+
+    def test_pbp_event_v3_foul(self):
+        """Test V3 string 'foul'."""
+        assert _pbp_event_to_type("foul", "") == "foul"
+
+    def test_pbp_event_v3_unknown(self):
+        """Test V3 unknown string action type."""
+        assert _pbp_event_to_type("substitution", "") == "other"
+
+
+class TestParseMinutes:
+    """Tests for _parse_minutes helper."""
+
+    def test_float_value(self):
+        assert _parse_minutes(34.5) == 34.5
+
+    def test_int_value(self):
+        assert _parse_minutes(34) == 34.0
+
+    def test_mm_ss_string(self):
+        assert _parse_minutes("34:20") == 34.3
+
+    def test_string_float(self):
+        assert _parse_minutes("34.5") == 34.5
+
+    def test_nan(self):
+        assert _parse_minutes(float("nan")) == 0.0
+
+    def test_zero(self):
+        assert _parse_minutes(0) == 0.0
+
+    def test_empty_string(self):
+        assert _parse_minutes("") == 0.0
 
 
 class TestAggregateStintStats:

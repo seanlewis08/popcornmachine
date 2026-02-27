@@ -1,6 +1,7 @@
 """Popcorn Remake data pipeline entry point."""
 
 import argparse
+import traceback
 from datetime import datetime, timedelta
 
 from .cleanup import cleanup_old_data
@@ -68,6 +69,7 @@ def main(date: str | None = None, data_dir: str = "data", cleanup: bool = False)
             successful_games += 1
         except Exception as e:
             print(f"Error processing game {game_id}: {e}")
+            traceback.print_exc()
             skipped_games += 1
 
     # 4. Only write scores and index if any games succeeded

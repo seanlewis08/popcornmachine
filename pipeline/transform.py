@@ -1,8 +1,47 @@
 """Transform module mapping NBA API data to JSON contracts."""
 
+import re
 from typing import Optional
 
 import pandas as pd
+
+
+def _safe_int(val) -> int:
+    """Safely convert a value to int, handling NaN and string types."""
+    if pd.isna(val):
+        return 0
+    return int(val)
+
+
+def _parse_minutes(min_val) -> float:
+    """
+    Parse a minutes value that may be numeric or 'MM:SS' string format.
+
+    BoxScoreTraditionalV2 returns MIN as either a float (e.g. 34.5)
+    or a string like '34:20' depending on the API version.
+    """
+    if pd.isna(min_val) or min_val == 0:
+        return 0.0
+    if isinstance(min_val, (int, float)):
+        return float(min_val)
+    s = str(min_val)
+    if ":" in s:
+        parts = s.split(":")
+        try:
+            return round(int(parts[0]) + int(parts[1]) / 60, 1)
+        except (ValueError, IndexError):
+            return 0.0
+    try:
+        return float(s)
+    except ValueError:
+        return 0.0
+
+
+def _coerce_id(val) -> str:
+    """Coerce an ID value to string for safe comparison."""
+    if pd.isna(val):
+        return ""
+    return str(int(val)) if isinstance(val, float) else str(val)
 
 
 def _rotation_time_to_period_clock(
@@ -49,7 +88,7 @@ def _compute_stint_minutes(in_time_real: int, out_time_real: int) -> float:
 
 
 def _filter_pbp_for_stint(
-    pbp_df: pd.DataFrame, player_id: int, period: int, in_clock: str, out_clock: str
+    pbp_df: pd.DataFrame, player_id, period: int, in_clock: str, out_clock: str
 ) -> pd.DataFrame:
     """
     Filter PBP events by player and time window within a period.
@@ -64,10 +103,16 @@ def _filter_pbp_for_stint(
     Returns:
         Filtered DataFrame
     """
-    # Filter by period and player
+    if pbp_df.empty:
+        return pbp_df
+
+    # Coerce types for safe comparison (API may return int or str)
+    pid_str = str(int(player_id)) if not pd.isna(player_id) else ""
+
+    # Filter by period and player, handling type mismatches
     filtered = pbp_df[
-        (pbp_df["PERIOD"] == period)
-        & (pbp_df["PLAYER1_ID"] == player_id)
+        (pbp_df["PERIOD"].astype(str) == str(period))
+        & (pbp_df["PLAYER1_ID"].astype(str) == pid_str)
     ].copy()
 
     # Convert clock strings to seconds for comparison
@@ -90,39 +135,90 @@ def _filter_pbp_for_stint(
     return filtered
 
 
-def _pbp_event_to_type(event_msg_type: int, event_msg_action_type: int) -> str:
+def _pbp_event_to_type(event_msg_type, event_msg_action_type) -> str:
     """
     Map EVENTMSGTYPE codes to human-readable event types.
 
+    Handles both V2 integer codes (1=make, 2=miss, etc.) and V3 string
+    types (\"2pt\", \"3pt\", \"freethrow\", etc.) since PlayByPlayV3 returns
+    string actionType values that get mapped to EVENTMSGTYPE.
+
     Args:
-        event_msg_type: Event message type code
+        event_msg_type: Event message type code (int for V2, str for V3)
         event_msg_action_type: Event message action type code
 
     Returns:
         Human-readable event type string
     """
-    # Event type codes (simplified for phase 2)
-    if event_msg_type == 1:  # Make
-        if event_msg_action_type == 1:
+    # Handle V3 string action types first
+    if isinstance(event_msg_type, str):
+        emt_lower = event_msg_type.lower()
+        if emt_lower == "2pt":
+            desc = str(event_msg_action_type).lower() if event_msg_action_type else ""
+            if "miss" in desc:
+                return "miss2"
             return "make2"
-        elif event_msg_action_type in [2, 3]:
+        elif emt_lower == "3pt":
+            desc = str(event_msg_action_type).lower() if event_msg_action_type else ""
+            if "miss" in desc:
+                return "miss3"
+            return "make3"
+        elif emt_lower in ("freethrow", "free throw", "ft"):
+            return "fta"
+        elif emt_lower == "rebound":
+            return "reb"
+        elif emt_lower == "turnover":
+            return "tov"
+        elif emt_lower == "foul":
+            return "foul"
+        elif emt_lower == "steal":
+            return "stl"
+        elif emt_lower == "block":
+            return "blk"
+        elif emt_lower == "assist":
+            return "ast"
+        else:
+            # Try to convert string to int for backward compatibility
+            try:
+                event_msg_type = int(event_msg_type)
+            except (ValueError, TypeError):
+                return "other"
+
+    # V2 integer codes (or converted from string above)
+    try:
+        emt = int(event_msg_type)
+    except (ValueError, TypeError):
+        return "other"
+
+    if emt == 1:  # Make
+        try:
+            emat = int(event_msg_action_type) if event_msg_action_type else 0
+        except (ValueError, TypeError):
+            emat = 0
+        if emat == 1:
+            return "make2"
+        elif emat in [2, 3]:
             return "make3"
         else:
             return "make"
-    elif event_msg_type == 2:  # Miss
-        if event_msg_action_type == 1:
+    elif emt == 2:  # Miss
+        try:
+            emat = int(event_msg_action_type) if event_msg_action_type else 0
+        except (ValueError, TypeError):
+            emat = 0
+        if emat == 1:
             return "miss2"
-        elif event_msg_action_type in [2, 3]:
+        elif emat in [2, 3]:
             return "miss3"
         else:
             return "miss"
-    elif event_msg_type == 3:  # Free throw
+    elif emt == 3:  # Free throw
         return "fta"
-    elif event_msg_type == 4:  # Rebound
+    elif emt == 4:  # Rebound
         return "reb"
-    elif event_msg_type == 5:  # Turnover
+    elif emt == 5:  # Turnover
         return "tov"
-    elif event_msg_type == 6:  # Foul
+    elif emt == 6:  # Foul
         return "foul"
     else:
         return "other"
@@ -212,6 +308,13 @@ def transform_scores(scoreboard_data: dict, date: str) -> list[dict]:
     if len(game_header) == 0:
         return []
 
+    # Coerce ID columns to string for safe comparison
+    game_header["GAME_ID"] = game_header["GAME_ID"].astype(str)
+    line_score["GAME_ID"] = line_score["GAME_ID"].astype(str)
+    line_score["TEAM_ID"] = line_score["TEAM_ID"].astype(str)
+    game_header["HOME_TEAM_ID"] = game_header["HOME_TEAM_ID"].astype(str)
+    game_header["VISITOR_TEAM_ID"] = game_header["VISITOR_TEAM_ID"].astype(str)
+
     # Group line_score by game
     games = []
     for game_id in game_header["GAME_ID"].unique():
@@ -281,30 +384,36 @@ def transform_boxscore(
     Returns:
         Boxscore dict matching JSON contract
     """
-    line_score = scoreboard_data["line_score"]
+    line_score = scoreboard_data["line_score"].copy()
+    game_header = scoreboard_data["game_header"].copy()
     player_stats = boxscore_data["player_stats"]
     team_stats = boxscore_data["team_stats"]
 
     # Validate required data is not empty
-    if len(scoreboard_data["game_header"]) == 0:
+    if len(game_header) == 0:
         raise ValueError(f"Game header is empty for game {game_id}")
     if len(line_score) == 0:
         raise ValueError(f"Line score is empty for game {game_id}")
 
+    # Coerce ID columns to string for safe comparison
+    gid = str(game_id)
+    game_header["GAME_ID"] = game_header["GAME_ID"].astype(str)
+    game_header["HOME_TEAM_ID"] = game_header["HOME_TEAM_ID"].astype(str)
+    line_score["GAME_ID"] = line_score["GAME_ID"].astype(str)
+    line_score["TEAM_ID"] = line_score["TEAM_ID"].astype(str)
+
     # Get home/away team info
-    game_info = scoreboard_data["game_header"][
-        scoreboard_data["game_header"]["GAME_ID"] == game_id
-    ]
+    game_info = game_header[game_header["GAME_ID"] == gid]
     if len(game_info) == 0:
         raise ValueError(f"Game info not found for game {game_id}")
     game_info = game_info.iloc[0]
     home_team_id = game_info["HOME_TEAM_ID"]
 
     home_line = line_score[
-        (line_score["GAME_ID"] == game_id) & (line_score["TEAM_ID"] == home_team_id)
+        (line_score["GAME_ID"] == gid) & (line_score["TEAM_ID"] == home_team_id)
     ]
     away_line = line_score[
-        (line_score["GAME_ID"] == game_id) & (line_score["TEAM_ID"] != home_team_id)
+        (line_score["GAME_ID"] == gid) & (line_score["TEAM_ID"] != home_team_id)
     ]
     if len(home_line) == 0 or len(away_line) == 0:
         raise ValueError(f"Home or away line score not found for game {game_id}")
@@ -317,10 +426,10 @@ def transform_boxscore(
         player_id = player["PLAYER_ID"]
 
         # Skip DNPs
-        if pd.isna(player["MIN"]) or player["MIN"] == 0:
+        if pd.isna(player["MIN"]) or player["MIN"] == 0 or str(player["MIN"]).strip() == "":
             continue
 
-        minutes = float(player["MIN"]) if not pd.isna(player["MIN"]) else 0
+        minutes = _parse_minutes(player["MIN"])
 
         # Compute derived metrics
         pts = int(player["PTS"]) if not pd.isna(player["PTS"]) else 0
@@ -348,7 +457,9 @@ def transform_boxscore(
             else rotation_data["away_team"]
         )
 
-        player_rotation = team_rotation[team_rotation["PERSON_ID"] == player_id]
+        player_rotation = team_rotation[
+            team_rotation["PERSON_ID"].astype(str) == str(int(player_id))
+        ]
         stints = []
 
         for _, stint in player_rotation.iterrows():
@@ -532,18 +643,32 @@ def transform_gameflow(
     Returns:
         Gameflow dict matching JSON contract
     """
-    line_score = scoreboard_data["line_score"]
-    game_info = scoreboard_data["game_header"][
-        scoreboard_data["game_header"]["GAME_ID"] == game_id
-    ].iloc[0]
+    line_score = scoreboard_data["line_score"].copy()
+    game_header = scoreboard_data["game_header"].copy()
+
+    # Coerce ID columns to string for safe comparison
+    gid = str(game_id)
+    game_header["GAME_ID"] = game_header["GAME_ID"].astype(str)
+    game_header["HOME_TEAM_ID"] = game_header["HOME_TEAM_ID"].astype(str)
+    line_score["GAME_ID"] = line_score["GAME_ID"].astype(str)
+    line_score["TEAM_ID"] = line_score["TEAM_ID"].astype(str)
+
+    game_info_df = game_header[game_header["GAME_ID"] == gid]
+    if game_info_df.empty:
+        raise ValueError(f"Game info not found for game {game_id}")
+    game_info = game_info_df.iloc[0]
     home_team_id = game_info["HOME_TEAM_ID"]
 
-    home_line = line_score[
-        (line_score["GAME_ID"] == game_id) & (line_score["TEAM_ID"] == home_team_id)
-    ].iloc[0]
-    away_line = line_score[
-        (line_score["GAME_ID"] == game_id) & (line_score["TEAM_ID"] != home_team_id)
-    ].iloc[0]
+    home_line_df = line_score[
+        (line_score["GAME_ID"] == gid) & (line_score["TEAM_ID"] == home_team_id)
+    ]
+    away_line_df = line_score[
+        (line_score["GAME_ID"] == gid) & (line_score["TEAM_ID"] != home_team_id)
+    ]
+    if home_line_df.empty or away_line_df.empty:
+        raise ValueError(f"Home or away line score not found for game {game_id}")
+    home_line = home_line_df.iloc[0]
+    away_line = away_line_df.iloc[0]
 
     players = []
 
