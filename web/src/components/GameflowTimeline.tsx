@@ -540,13 +540,20 @@ function MomentumLine({
   periods,
   selectedMinute,
   onMinuteClick,
+  homeTricode,
+  awayTricode,
 }: {
   scoreChanges: ScoreChange[];
   periods: number[];
   selectedMinute: number | null;
   onMinuteClick: (minute: number | null) => void;
+  homeTricode: string;
+  awayTricode: string;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [hoverInfo, setHoverInfo] = useState<{
+    x: number; y: number; homeScore: number; awayScore: number; diff: number;
+  } | null>(null);
   const numPeriods = periods.length;
   const cWidth = numPeriods <= 4
     ? 4 * QUARTER_PX
@@ -632,6 +639,30 @@ function MomentumLine({
     }
   }, [selectedMinute, onMinuteClick]);
 
+  const handleCanvasHover = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas || scoreChanges.length < 2) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const ts = (x / QUARTER_PX) * 12; // Convert px to game minutes
+
+    // Find the last scoreChange at or before this timestamp
+    let homeScore = 0, awayScore = 0;
+    for (const sc of scoreChanges) {
+      if (sc.ts <= ts) {
+        homeScore = sc.homeScore;
+        awayScore = sc.awayScore;
+      } else {
+        break;
+      }
+    }
+    setHoverInfo({ x: e.clientX - rect.left, y: e.clientY - rect.top, homeScore, awayScore, diff: homeScore - awayScore });
+  }, [scoreChanges]);
+
+  const handleCanvasLeave = useCallback(() => {
+    setHoverInfo(null);
+  }, []);
+
   const finalScore = scoreChanges.length > 0 ? scoreChanges[scoreChanges.length - 1] : null;
 
   return (
@@ -644,6 +675,8 @@ function MomentumLine({
           width={cWidth}
           height={CANVAS_HEIGHT}
           onClick={handleCanvasClick}
+          onMouseMove={handleCanvasHover}
+          onMouseLeave={handleCanvasLeave}
           style={{
             border: "1px solid #5C3A21",
             display: "block",
@@ -651,6 +684,32 @@ function MomentumLine({
             borderRadius: 2,
           }}
         />
+        {hoverInfo && (
+          <div style={{
+            position: "absolute",
+            left: hoverInfo.x,
+            top: -28,
+            transform: "translateX(-50%)",
+            background: "#2a1f14",
+            border: "1px solid #5C3A21",
+            borderRadius: 3,
+            padding: "2px 8px",
+            fontSize: 11,
+            fontFamily: "'Roboto Condensed', Arial",
+            color: "#E8D5B7",
+            whiteSpace: "nowrap",
+            pointerEvents: "none",
+            zIndex: 100,
+          }}>
+            <span style={{ color: hoverInfo.diff > 0 ? "#4CAF50" : hoverInfo.diff < 0 ? "#EB003C" : "#E8D5B7" }}>
+              {homeTricode} {hoverInfo.homeScore}
+            </span>
+            {" – "}
+            <span style={{ color: hoverInfo.diff < 0 ? "#4CAF50" : hoverInfo.diff > 0 ? "#EB003C" : "#E8D5B7" }}>
+              {hoverInfo.awayScore} {awayTricode}
+            </span>
+          </div>
+        )}
       </div>
       <div style={{ width: SPACER_PX }} />
       {finalScore && (
@@ -963,6 +1022,8 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
           periods={periods}
           selectedMinute={selectedMinute}
           onMinuteClick={handleMinuteClick}
+          homeTricode={data.homeTeam.tricode}
+          awayTricode={data.awayTeam.tricode}
         />
       )}
 
