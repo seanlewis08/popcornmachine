@@ -529,50 +529,93 @@ def transform_boxscore(
         players.append(player_dict)
 
     # Build team totals
-    home_team_match = team_stats[team_stats["TEAM_ABBREVIATION"] == home_line["TEAM_ABBREVIATION"]]
-    away_team_match = team_stats[team_stats["TEAM_ABBREVIATION"] == away_line["TEAM_ABBREVIATION"]]
+    # team_stats may be empty if BoxScoreTraditionalV2 returns no team-level data.
+    # Also handle TEAM_ID-based matching as fallback for abbreviation mismatches.
+    if team_stats.empty:
+        # Aggregate from player_stats as last resort
+        home_players = player_stats[
+            player_stats["TEAM_ABBREVIATION"] == home_line["TEAM_ABBREVIATION"]
+        ]
+        away_players = player_stats[
+            player_stats["TEAM_ABBREVIATION"] == away_line["TEAM_ABBREVIATION"]
+        ]
+        _stat_cols = ["FGM", "FGA", "FG3M", "FG3A", "FTM", "FTA",
+                      "OREB", "REB", "AST", "BLK", "STL", "TO", "PF", "PTS"]
 
-    if len(home_team_match) == 0 or len(away_team_match) == 0:
-        # Handle case where team stats don't match
-        # Use the first two rows as home and away fallback
-        home_team_stats = team_stats.iloc[0]
-        away_team_stats = team_stats.iloc[1] if len(team_stats) > 1 else team_stats.iloc[0]
+        def _sum_stats(df: pd.DataFrame) -> dict:
+            result = {}
+            for col in _stat_cols:
+                if col in df.columns:
+                    result[col] = int(df[col].fillna(0).sum())
+                else:
+                    result[col] = 0
+            return result
+
+        home_team_stats_dict = _sum_stats(home_players)
+        away_team_stats_dict = _sum_stats(away_players)
     else:
-        home_team_stats = home_team_match.iloc[0]
-        away_team_stats = away_team_match.iloc[0]
+        # Try matching by TEAM_ABBREVIATION first
+        home_team_match = team_stats[
+            team_stats["TEAM_ABBREVIATION"] == home_line["TEAM_ABBREVIATION"]
+        ]
+        away_team_match = team_stats[
+            team_stats["TEAM_ABBREVIATION"] == away_line["TEAM_ABBREVIATION"]
+        ]
+
+        if home_team_match.empty or away_team_match.empty:
+            # Try matching by TEAM_ID if abbreviation didn't work
+            if "TEAM_ID" in team_stats.columns:
+                team_stats["TEAM_ID"] = team_stats["TEAM_ID"].astype(str)
+                home_team_match = team_stats[team_stats["TEAM_ID"] == home_team_id]
+                away_team_match = team_stats[team_stats["TEAM_ID"] != home_team_id]
+
+            if home_team_match.empty or away_team_match.empty:
+                # Last fallback: use positional index if we have exactly 2 rows
+                if len(team_stats) >= 2:
+                    home_team_match = team_stats.iloc[[0]]
+                    away_team_match = team_stats.iloc[[1]]
+                else:
+                    raise ValueError(
+                        f"Cannot match team stats for game {game_id}. "
+                        f"team_stats has {len(team_stats)} rows, "
+                        f"columns: {list(team_stats.columns)}"
+                    )
+
+        home_team_stats_row = home_team_match.iloc[0]
+        away_team_stats_row = away_team_match.iloc[0]
+        home_team_stats_dict = {
+            col: int(home_team_stats_row[col]) if col in home_team_stats_row.index
+            else 0 for col in ["FGM", "FGA", "FG3M", "FG3A", "FTM", "FTA",
+                               "OREB", "REB", "AST", "BLK", "STL", "TO", "PF", "PTS"]
+        }
+        away_team_stats_dict = {
+            col: int(away_team_stats_row[col]) if col in away_team_stats_row.index
+            else 0 for col in ["FGM", "FGA", "FG3M", "FG3A", "FTM", "FTA",
+                               "OREB", "REB", "AST", "BLK", "STL", "TO", "PF", "PTS"]
+        }
+
+    # Use the dict we built above (works for both empty-team_stats and normal paths)
+    h = home_team_stats_dict
+    a = away_team_stats_dict
 
     team_totals = {
         "home": {
-            "fgm": int(home_team_stats["FGM"]),
-            "fga": int(home_team_stats["FGA"]),
-            "fg3m": int(home_team_stats["FG3M"]),
-            "fg3a": int(home_team_stats["FG3A"]),
-            "ftm": int(home_team_stats["FTM"]),
-            "fta": int(home_team_stats["FTA"]),
-            "oreb": int(home_team_stats["OREB"]),
-            "reb": int(home_team_stats["REB"]),
-            "ast": int(home_team_stats["AST"]),
-            "blk": int(home_team_stats["BLK"]),
-            "stl": int(home_team_stats["STL"]),
-            "tov": int(home_team_stats["TO"]),
-            "pf": int(home_team_stats["PF"]),
-            "pts": int(home_team_stats["PTS"]),
+            "fgm": h["FGM"], "fga": h["FGA"],
+            "fg3m": h["FG3M"], "fg3a": h["FG3A"],
+            "ftm": h["FTM"], "fta": h["FTA"],
+            "oreb": h["OREB"], "reb": h["REB"],
+            "ast": h["AST"], "blk": h["BLK"],
+            "stl": h["STL"], "tov": h["TO"],
+            "pf": h["PF"], "pts": h["PTS"],
         },
         "away": {
-            "fgm": int(away_team_stats["FGM"]),
-            "fga": int(away_team_stats["FGA"]),
-            "fg3m": int(away_team_stats["FG3M"]),
-            "fg3a": int(away_team_stats["FG3A"]),
-            "ftm": int(away_team_stats["FTM"]),
-            "fta": int(away_team_stats["FTA"]),
-            "oreb": int(away_team_stats["OREB"]),
-            "reb": int(away_team_stats["REB"]),
-            "ast": int(away_team_stats["AST"]),
-            "blk": int(away_team_stats["BLK"]),
-            "stl": int(away_team_stats["STL"]),
-            "tov": int(away_team_stats["TO"]),
-            "pf": int(away_team_stats["PF"]),
-            "pts": int(away_team_stats["PTS"]),
+            "fgm": a["FGM"], "fga": a["FGA"],
+            "fg3m": a["FG3M"], "fg3a": a["FG3A"],
+            "ftm": a["FTM"], "fta": a["FTA"],
+            "oreb": a["OREB"], "reb": a["REB"],
+            "ast": a["AST"], "blk": a["BLK"],
+            "stl": a["STL"], "tov": a["TO"],
+            "pf": a["PF"], "pts": a["PTS"],
         },
     }
 
@@ -583,25 +626,19 @@ def transform_boxscore(
         "home": [
             {
                 "period": "Game",
-                "fgm": int(home_team_stats["FGM"]),
-                "fga": int(home_team_stats["FGA"]),
-                "fg3m": int(home_team_stats["FG3M"]),
-                "fg3a": int(home_team_stats["FG3A"]),
-                "ftm": int(home_team_stats["FTM"]),
-                "fta": int(home_team_stats["FTA"]),
-                "pts": int(home_team_stats["PTS"]),
+                "fgm": h["FGM"], "fga": h["FGA"],
+                "fg3m": h["FG3M"], "fg3a": h["FG3A"],
+                "ftm": h["FTM"], "fta": h["FTA"],
+                "pts": h["PTS"],
             }
         ],
         "away": [
             {
                 "period": "Game",
-                "fgm": int(away_team_stats["FGM"]),
-                "fga": int(away_team_stats["FGA"]),
-                "fg3m": int(away_team_stats["FG3M"]),
-                "fg3a": int(away_team_stats["FG3A"]),
-                "ftm": int(away_team_stats["FTM"]),
-                "fta": int(away_team_stats["FTA"]),
-                "pts": int(away_team_stats["PTS"]),
+                "fgm": a["FGM"], "fga": a["FGA"],
+                "fg3m": a["FG3M"], "fg3a": a["FG3A"],
+                "ftm": a["FTM"], "fta": a["FTA"],
+                "pts": a["PTS"],
             }
         ],
     }
