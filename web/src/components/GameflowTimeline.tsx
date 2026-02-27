@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import { useState, useMemo, useRef, useEffect, useCallback, type MouseEvent as ReactMouseEvent } from "react";
 import type { GameflowData, GameflowPlayer, GameflowStint, BoxScoreData, ScoreChange } from "../types/api";
 
 interface GameflowTimelineProps {
@@ -116,6 +116,25 @@ function getBoxscoreTotals(playerId: string, boxscore?: BoxScoreData) {
     hv: p.totals.hv,
     pm: p.totals.plusMinus,
   };
+}
+
+/**
+ * Flip tooltip below the cell when it would be clipped by the top of the viewport.
+ * Called on mouseEnter for stint cells and player name cells.
+ */
+function adjustTooltipPosition(e: ReactMouseEvent<HTMLDivElement>) {
+  const tooltip = e.currentTarget.querySelector(
+    ".gf-stint-tooltip, .gf-player-tooltip",
+  ) as HTMLElement | null;
+  if (!tooltip) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  if (rect.top < 260) {
+    tooltip.style.bottom = "auto";
+    tooltip.style.top = "100%";
+  } else {
+    tooltip.style.bottom = "100%";
+    tooltip.style.top = "auto";
+  }
 }
 
 /**
@@ -255,6 +274,37 @@ function PlayerRow({ player, periods, isHome, boxscore, selectedMinute, lineups 
 
   const isHighlighted = selectedMinute !== null && (lineups.get(selectedMinute)?.has(player.playerId) ?? false);
 
+  // Compute which minutes per period the player is "on court" (per lineup tracking)
+  // but has NO stint data covering that minute — these are carry-over minutes
+  // that need a visual indicator.
+  const carriedMinutes = useMemo(() => {
+    const result = new Map<number, number[]>();
+    for (const period of periods) {
+      const periodLengthMins = period > 4 ? 5 : 12;
+      const baseMinute = period <= 4 ? (period - 1) * 12 : 48 + (period - 5) * 5;
+      const mins: number[] = [];
+
+      for (let m = 0; m < periodLengthMins; m++) {
+        const gameMinute = baseMinute + m;
+        if (!(lineups.get(gameMinute)?.has(player.playerId))) continue;
+
+        // Check if player has a stint covering this minute's midpoint
+        const point = gameMinute + 0.5;
+        let hasStint = false;
+        for (const stint of player.stints) {
+          const sPd = stint.period > 4 ? OT_SECONDS : QUARTER_SECONDS;
+          const sBase = stint.period <= 4 ? (stint.period - 1) * 12 : 48 + (stint.period - 5) * 5;
+          const startMin = sBase + clockToElapsed(stint.inTime, sPd) / 60;
+          const endMin = sBase + clockToElapsed(stint.outTime, sPd) / 60;
+          if (startMin <= point && point < endMin) { hasStint = true; break; }
+        }
+        if (!hasStint) mins.push(m);
+      }
+      if (mins.length > 0) result.set(period, mins);
+    }
+    return result;
+  }, [periods, lineups, player]);
+
   let stintCounter = 0;
 
   return (
@@ -271,6 +321,7 @@ function PlayerRow({ player, periods, isHome, boxscore, selectedMinute, lineups 
       {/* Player name with CSS hover tooltip */}
       <div
         className="gf-name-cell"
+        onMouseEnter={adjustTooltipPosition}
         style={{
           width: NAME_COL_PX,
           flexShrink: 0,
@@ -298,65 +349,87 @@ function PlayerRow({ player, periods, isHome, boxscore, selectedMinute, lineups 
       {/* Quarters */}
       {periods.map((period, pIdx) => {
         const segments = buildQuarterSegments(player.stints, period);
+        const carried = carriedMinutes.get(period) ?? [];
+        const periodDuration = period > 4 ? OT_SECONDS : QUARTER_SECONDS;
+        const minuteWidth = (60 / periodDuration) * QUARTER_PX;
         return (
           <div key={pIdx} style={{ display: "flex" }}>
             {pIdx > 0 && <div style={{ width: SPACER_PX, background: "#2C1810" }} />}
-            {segments.map((seg, sIdx) => {
-              if (seg.type === "out") {
+            <div style={{ display: "flex", position: "relative" }}>
+              {segments.map((seg, sIdx) => {
+                if (seg.type === "out") {
+                  return (
+                    <div
+                      key={sIdx}
+                      className={outClass}
+                      style={{ width: seg.widthPx, height: ROW_HEIGHT, overflow: "hidden" }}
+                    >
+                      &nbsp;
+                    </div>
+                  );
+                }
+                const currentStintNum = ++stintCounter;
+                const stint = seg.stint!;
                 return (
                   <div
                     key={sIdx}
-                    className={outClass}
-                    style={{ width: seg.widthPx, height: ROW_HEIGHT, overflow: "hidden" }}
+                    className={`${inClass} gf-stint-cell`}
+                    onMouseEnter={adjustTooltipPosition}
+                    style={{
+                      width: seg.widthPx,
+                      height: ROW_HEIGHT,
+                      position: "relative",
+                      cursor: "default",
+                      fontSize: 12,
+                      fontFamily: "'Roboto Condensed', Arial, Verdana, Helvetica",
+                      whiteSpace: "nowrap",
+                    }}
                   >
-                    &nbsp;
+                    {seg.widthPx > 20 && (
+                      <span>&nbsp;{stint.stats.pts}&nbsp;&nbsp;{stint.plusMinus > 0 ? "+" : ""}{stint.plusMinus}</span>
+                    )}
+                    {/* CSS hover tooltip */}
+                    <div className="gf-stint-tooltip">
+                      <strong>{player.name} Stint {currentStintNum}</strong><br />
+                      Period {stint.period}&nbsp;&nbsp;{stint.inTime} &rarr; {stint.outTime}<br />
+                      Min:&nbsp;{stint.minutes.toFixed(1)}&nbsp;&nbsp;(+/-):{stint.plusMinus > 0 ? "+" : ""}{stint.plusMinus}<br />
+                      {(stint.stats.fgm > 0 || stint.stats.fga > 0) && <>FG {stint.stats.fgm}-{stint.stats.fga}&nbsp;&nbsp;&nbsp;</>}
+                      {(stint.stats.fg3m > 0 || stint.stats.fg3a > 0) && <>3FG {stint.stats.fg3m}-{stint.stats.fg3a}<br /></>}
+                      {(stint.stats.ftm > 0 || stint.stats.fta > 0) && <>FT {stint.stats.ftm}-{stint.stats.fta}<br /></>}
+                      {stint.stats.reb > 0 && <>Reb {stint.stats.reb}<br /></>}
+                      {stint.stats.ast > 0 && <>Ast {stint.stats.ast}<br /></>}
+                      {stint.stats.stl > 0 && <>Stl {stint.stats.stl}<br /></>}
+                      {stint.stats.blk > 0 && <>Blk {stint.stats.blk}<br /></>}
+                      {stint.stats.tov > 0 && <>Tov {stint.stats.tov}<br /></>}
+                      {stint.stats.pf > 0 && <>PF {stint.stats.pf}<br /></>}
+                      {stint.events.length > 0 && (
+                        <div style={{ marginTop: 4, borderTop: "1px solid rgba(201,168,76,0.3)", paddingTop: 2 }}>
+                          {stint.events.map((ev, i) => (
+                            <div key={i}>{ev.clock} {ev.type}</div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 );
-              }
-              const currentStintNum = ++stintCounter;
-              const stint = seg.stint!;
-              return (
+              })}
+              {/* Carried-over overlays: player is on court but has no stint data */}
+              {carried.map((m) => (
                 <div
-                  key={sIdx}
-                  className={`${inClass} gf-stint-cell`}
+                  key={`carried-${m}`}
                   style={{
-                    width: seg.widthPx,
+                    position: "absolute",
+                    left: m * minuteWidth,
+                    width: minuteWidth,
                     height: ROW_HEIGHT,
-                    position: "relative",
-                    cursor: "default",
-                    fontSize: 12,
-                    fontFamily: "'Roboto Condensed', Arial, Verdana, Helvetica",
-                    whiteSpace: "nowrap",
+                    background: isHome
+                      ? "repeating-linear-gradient(45deg, rgba(0,81,154,0.55), rgba(0,81,154,0.55) 2px, rgba(0,81,154,0.25) 2px, rgba(0,81,154,0.25) 4px)"
+                      : "repeating-linear-gradient(45deg, rgba(0,131,72,0.55), rgba(0,131,72,0.55) 2px, rgba(0,131,72,0.25) 2px, rgba(0,131,72,0.25) 4px)",
+                    pointerEvents: "none",
                   }}
-                >
-                  {seg.widthPx > 20 && (
-                    <span>&nbsp;{stint.stats.pts}&nbsp;&nbsp;{stint.plusMinus > 0 ? "+" : ""}{stint.plusMinus}</span>
-                  )}
-                  {/* CSS hover tooltip */}
-                  <div className="gf-stint-tooltip">
-                    <strong>{player.name} Stint {currentStintNum}</strong><br />
-                    Period {stint.period}&nbsp;&nbsp;{stint.inTime} &rarr; {stint.outTime}<br />
-                    Min:&nbsp;{stint.minutes.toFixed(1)}&nbsp;&nbsp;(+/-):{stint.plusMinus > 0 ? "+" : ""}{stint.plusMinus}<br />
-                    {(stint.stats.fgm > 0 || stint.stats.fga > 0) && <>FG {stint.stats.fgm}-{stint.stats.fga}&nbsp;&nbsp;&nbsp;</>}
-                    {(stint.stats.fg3m > 0 || stint.stats.fg3a > 0) && <>3FG {stint.stats.fg3m}-{stint.stats.fg3a}<br /></>}
-                    {(stint.stats.ftm > 0 || stint.stats.fta > 0) && <>FT {stint.stats.ftm}-{stint.stats.fta}<br /></>}
-                    {stint.stats.reb > 0 && <>Reb {stint.stats.reb}<br /></>}
-                    {stint.stats.ast > 0 && <>Ast {stint.stats.ast}<br /></>}
-                    {stint.stats.stl > 0 && <>Stl {stint.stats.stl}<br /></>}
-                    {stint.stats.blk > 0 && <>Blk {stint.stats.blk}<br /></>}
-                    {stint.stats.tov > 0 && <>Tov {stint.stats.tov}<br /></>}
-                    {stint.stats.pf > 0 && <>PF {stint.stats.pf}<br /></>}
-                    {stint.events.length > 0 && (
-                      <div style={{ marginTop: 4, borderTop: "1px solid rgba(201,168,76,0.3)", paddingTop: 2 }}>
-                        {stint.events.map((e, i) => (
-                          <div key={i}>{e.clock} {e.type}</div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+                />
+              ))}
+            </div>
           </div>
         );
       })}

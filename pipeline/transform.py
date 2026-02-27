@@ -44,11 +44,92 @@ def _coerce_id(val) -> str:
     return str(int(val)) if isinstance(val, float) else str(val)
 
 
+def _period_boundary_decisecs(period: int) -> int:
+    """Return the ending decisecond timestamp for a given period.
+
+    Regulation periods (1-4) are each 7200 deciseconds (720 seconds).
+    OT periods (5+) are each 3000 deciseconds (300 seconds).
+    """
+    if period <= 4:
+        return period * 7200
+    else:
+        return 4 * 7200 + (period - 4) * 3000
+
+
+def _period_duration_secs(period: int) -> int:
+    """Return the duration of a period in seconds (720 for regulation, 300 for OT)."""
+    return 300 if period > 4 else 720
+
+
+def _decisecs_to_period(decisecs: int) -> int:
+    """Determine which period a decisecond timestamp falls in."""
+    if decisecs < 4 * 7200:
+        return decisecs // 7200 + 1
+    else:
+        return 5 + (decisecs - 4 * 7200) // 3000
+
+
+def _split_rotation_stint(
+    in_time_real: int, out_time_real: int
+) -> list[tuple[int, str, str, int, int]]:
+    """
+    Split a rotation stint that may cross period boundaries into per-period segments.
+
+    The NBA GameRotation API returns IN_TIME_REAL/OUT_TIME_REAL in deciseconds.
+    When a player stays on court across a period boundary (e.g., Q2 into Q3),
+    the API returns a single row spanning both periods. This function splits
+    such stints at period boundaries.
+
+    Args:
+        in_time_real: In-time in deciseconds (elapsed from game start)
+        out_time_real: Out-time in deciseconds (elapsed from game start)
+
+    Returns:
+        List of (period, in_clock, out_clock, segment_in_real, segment_out_real)
+        tuples — one per period the stint covers. The last two values are the
+        raw decisecond boundaries for the segment (used for PBP filtering and
+        minutes calculation).
+    """
+    in_time_real = int(in_time_real)
+    out_time_real = int(out_time_real)
+
+    segments: list[tuple[int, str, str, int, int]] = []
+
+    current = in_time_real
+    while current < out_time_real:
+        period = _decisecs_to_period(current)
+        period_end = _period_boundary_decisecs(period)
+        period_start_decisecs = period_end - _period_duration_secs(period) * 10
+        period_dur_secs = _period_duration_secs(period)
+
+        # This segment ends at the earlier of: the stint end, or the period end
+        segment_end = min(out_time_real, period_end)
+
+        # Convert to countdown clocks within this period
+        in_elapsed_secs = (current - period_start_decisecs) // 10
+        out_elapsed_secs = (segment_end - period_start_decisecs) // 10
+
+        in_remaining = max(0, period_dur_secs - in_elapsed_secs)
+        out_remaining = max(0, period_dur_secs - out_elapsed_secs)
+
+        in_clock = _seconds_to_clock(in_remaining)
+        out_clock = _seconds_to_clock(out_remaining)
+
+        segments.append((period, in_clock, out_clock, current, segment_end))
+        current = segment_end
+
+    return segments
+
+
 def _rotation_time_to_period_clock(
     in_time_real: int, out_time_real: int
 ) -> tuple[int, str, str]:
     """
     Convert rotation timestamps to (period, in_clock, out_clock) format.
+
+    NOTE: This function does NOT split period-crossing stints. Use
+    _split_rotation_stint() for correct multi-period handling. This
+    function is kept for backward compatibility with tests.
 
     The NBA GameRotation API returns IN_TIME_REAL/OUT_TIME_REAL in
     deciseconds (tenths of a second) elapsed from game start.
@@ -64,28 +145,12 @@ def _rotation_time_to_period_clock(
     Returns:
         Tuple of (period, in_clock_str, out_clock_str) in countdown format
     """
-    decisecs_per_period = 7200  # 720 seconds * 10
-    in_time_real = int(in_time_real)
-    out_time_real = int(out_time_real)
-    period = (in_time_real // decisecs_per_period) + 1
-    period_start = (period - 1) * decisecs_per_period
-
-    # Convert to elapsed seconds within the period (deciseconds / 10)
-    in_elapsed = (in_time_real - period_start) // 10
-    out_elapsed = (out_time_real - period_start) // 10
-
-    # Convert to countdown clock (12:00 = start, 0:00 = end)
-    period_duration = 720  # seconds for regulation
-    # For OT periods (5+), use 300 seconds (5 minutes)
-    if period > 4:
-        period_duration = 300
-    in_remaining = max(0, period_duration - in_elapsed)
-    out_remaining = max(0, period_duration - out_elapsed)
-
-    in_clock = _seconds_to_clock(in_remaining)
-    out_clock = _seconds_to_clock(out_remaining)
-
-    return int(period), in_clock, out_clock
+    segments = _split_rotation_stint(in_time_real, out_time_real)
+    if segments:
+        # Return just the first segment for backward compat
+        return segments[0][0], segments[0][1], segments[0][2]
+    # Fallback (should never happen)
+    return 1, "12:00", "12:00"
 
 
 def _seconds_to_clock(seconds) -> str:
@@ -669,39 +734,43 @@ def transform_boxscore(
         stints = []
 
         for _, stint in player_rotation.iterrows():
-            period, in_clock, out_clock = _rotation_time_to_period_clock(
+            # Split stints that cross period boundaries into per-period segments
+            segments = _split_rotation_stint(
                 stint["IN_TIME_REAL"], stint["OUT_TIME_REAL"]
             )
-            minutes_stint = _compute_stint_minutes(
-                stint["IN_TIME_REAL"], stint["OUT_TIME_REAL"]
-            )
+            raw_pt_diff = _safe_int(stint.get("PT_DIFF", 0))
 
-            # Filter PBP events for this stint and aggregate stats
-            pbp_stint = _filter_pbp_for_stint(pbp_data, player_id, period, in_clock, out_clock)
-            stint_stats = _aggregate_stint_stats(pbp_stint)
+            for period, in_clock, out_clock, seg_in, seg_out in segments:
+                minutes_stint = _compute_stint_minutes(seg_in, seg_out)
 
-            stint_dict = {
-                "period": int(period),
-                "inTime": in_clock,
-                "outTime": out_clock,
-                "minutes": minutes_stint,
-                "plusMinus": _safe_int(stint.get("PT_DIFF", 0)),
-                "fgm": stint_stats["fgm"],
-                "fga": stint_stats["fga"],
-                "fg3m": stint_stats["fg3m"],
-                "fg3a": stint_stats["fg3a"],
-                "ftm": stint_stats["ftm"],
-                "fta": stint_stats["fta"],
-                "oreb": stint_stats["oreb"],
-                "reb": stint_stats["reb"],
-                "ast": stint_stats["ast"],
-                "blk": stint_stats["blk"],
-                "stl": stint_stats["stl"],
-                "tov": stint_stats["tov"],
-                "pf": stint_stats["pf"],
-                "pts": stint_stats["pts"],
-            }
-            stints.append(stint_dict)
+                # Filter PBP events for this segment
+                pbp_stint = _filter_pbp_for_stint(
+                    pbp_data, player_id, period, in_clock, out_clock
+                )
+                stint_stats = _aggregate_stint_stats(pbp_stint)
+
+                stint_dict = {
+                    "period": int(period),
+                    "inTime": in_clock,
+                    "outTime": out_clock,
+                    "minutes": minutes_stint,
+                    "plusMinus": raw_pt_diff if len(segments) == 1 else 0,
+                    "fgm": stint_stats["fgm"],
+                    "fga": stint_stats["fga"],
+                    "fg3m": stint_stats["fg3m"],
+                    "fg3a": stint_stats["fg3a"],
+                    "ftm": stint_stats["ftm"],
+                    "fta": stint_stats["fta"],
+                    "oreb": stint_stats["oreb"],
+                    "reb": stint_stats["reb"],
+                    "ast": stint_stats["ast"],
+                    "blk": stint_stats["blk"],
+                    "stl": stint_stats["stl"],
+                    "tov": stint_stats["tov"],
+                    "pf": stint_stats["pf"],
+                    "pts": stint_stats["pts"],
+                }
+                stints.append(stint_dict)
 
         player_dict = {
             "playerId": str(player_id),
@@ -917,92 +986,99 @@ def transform_gameflow(
     player_map: dict[str, dict] = {}
 
     def _process_rotation(rotation_df: pd.DataFrame, team_tricode: str) -> None:
-        """Process rotation data for one team, grouping stints by player."""
+        """Process rotation data for one team, grouping stints by player.
+
+        Splits stints that cross period boundaries into per-period segments
+        so every period where a player is on court gets its own stint entry.
+        """
         for _, player_stint in rotation_df.iterrows():
             player_id = str(int(player_stint["PERSON_ID"]))
-            period, in_clock, out_clock = _rotation_time_to_period_clock(
-                player_stint["IN_TIME_REAL"], player_stint["OUT_TIME_REAL"]
-            )
-            minutes = _compute_stint_minutes(
+            raw_pt_diff = _safe_int(player_stint.get("PT_DIFF", 0))
+
+            # Split period-crossing stints
+            segments = _split_rotation_stint(
                 player_stint["IN_TIME_REAL"], player_stint["OUT_TIME_REAL"]
             )
 
-            # Filter PBP for this player and stint
-            pbp_stint = _filter_pbp_for_stint(
-                pbp_data, player_stint["PERSON_ID"], period, in_clock, out_clock
-            )
+            for period, in_clock, out_clock, seg_in, seg_out in segments:
+                minutes = _compute_stint_minutes(seg_in, seg_out)
 
-            # Convert PBP events to simple format
-            events = []
-            for _, event in pbp_stint.iterrows():
-                # Determine event type using V3 fields when available
-                evt_type = _pbp_event_to_type(
-                    event.get("EVENTMSGTYPE", 0),
-                    event.get("EVENTMSGACTIONTYPE", 0),
+                # Filter PBP for this player and segment
+                pbp_stint = _filter_pbp_for_stint(
+                    pbp_data, player_stint["PERSON_ID"], period, in_clock, out_clock
                 )
-                # V3: override make/miss detection using isFieldGoal + shotResult
-                if "isFieldGoal" in pbp_stint.columns:
-                    is_fg = event.get("isFieldGoal", False)
-                    if is_fg is True or is_fg == 1:
-                        shot_result = str(event.get("shotResult", "")).lower()
-                        shot_value = event.get("shotValue", 0)
-                        try:
-                            shot_value = int(shot_value) if not pd.isna(shot_value) else 2
-                        except (ValueError, TypeError):
-                            shot_value = 2
-                        if shot_result == "made":
-                            evt_type = "Make3" if shot_value == 3 else "Make2"
-                        else:
-                            evt_type = "miss3" if shot_value == 3 else "miss2"
-                    else:
-                        action = str(event.get("EVENTMSGTYPE", "")).lower()
-                        if action in ("freethrow", "free throw", "ft"):
+
+                # Convert PBP events to simple format
+                events = []
+                for _, event in pbp_stint.iterrows():
+                    # Determine event type using V3 fields when available
+                    evt_type = _pbp_event_to_type(
+                        event.get("EVENTMSGTYPE", 0),
+                        event.get("EVENTMSGACTIONTYPE", 0),
+                    )
+                    # V3: override make/miss detection using isFieldGoal + shotResult
+                    if "isFieldGoal" in pbp_stint.columns:
+                        is_fg = event.get("isFieldGoal", False)
+                        if is_fg is True or is_fg == 1:
                             shot_result = str(event.get("shotResult", "")).lower()
-                            evt_type = "MakeFT" if shot_result == "made" else "missFT"
-                        elif action == "rebound":
-                            desc = str(event.get("HOMEDESCRIPTION", "") or "")
-                            evt_type = "OffReb" if "Off:" in desc else "DefReb"
-                        elif action == "steal":
-                            evt_type = "Steal"
-                        elif action == "block":
-                            evt_type = "Block"
-                        elif action == "assist":
-                            evt_type = "Assist"
-                        elif action == "turnover":
-                            evt_type = "TO"
-                        elif action in ("foul",):
-                            evt_type = "PF"
+                            shot_value = event.get("shotValue", 0)
+                            try:
+                                shot_value = int(shot_value) if not pd.isna(shot_value) else 2
+                            except (ValueError, TypeError):
+                                shot_value = 2
+                            if shot_result == "made":
+                                evt_type = "Make3" if shot_value == 3 else "Make2"
+                            else:
+                                evt_type = "miss3" if shot_value == 3 else "miss2"
+                        else:
+                            action = str(event.get("EVENTMSGTYPE", "")).lower()
+                            if action in ("freethrow", "free throw", "ft"):
+                                shot_result = str(event.get("shotResult", "")).lower()
+                                evt_type = "MakeFT" if shot_result == "made" else "missFT"
+                            elif action == "rebound":
+                                desc = str(event.get("HOMEDESCRIPTION", "") or "")
+                                evt_type = "OffReb" if "Off:" in desc else "DefReb"
+                            elif action == "steal":
+                                evt_type = "Steal"
+                            elif action == "block":
+                                evt_type = "Block"
+                            elif action == "assist":
+                                evt_type = "Assist"
+                            elif action == "turnover":
+                                evt_type = "TO"
+                            elif action in ("foul",):
+                                evt_type = "PF"
 
-                event_dict = {
-                    "clock": event.get("PCTIMESTRING", ""),
-                    "type": evt_type,
-                    "description": event.get("HOMEDESCRIPTION", "")
-                    or event.get("VISITORDESCRIPTION", ""),
+                    event_dict = {
+                        "clock": event.get("PCTIMESTRING", ""),
+                        "type": evt_type,
+                        "description": event.get("HOMEDESCRIPTION", "")
+                        or event.get("VISITORDESCRIPTION", ""),
+                    }
+                    events.append(event_dict)
+
+                # Aggregate stint stats
+                stint_stats = _aggregate_stint_stats(pbp_stint)
+
+                stint_dict = {
+                    "period": int(period),
+                    "inTime": in_clock,
+                    "outTime": out_clock,
+                    "minutes": minutes,
+                    "plusMinus": raw_pt_diff if len(segments) == 1 else 0,
+                    "stats": stint_stats,
+                    "events": events,
                 }
-                events.append(event_dict)
 
-            # Aggregate stint stats
-            stint_stats = _aggregate_stint_stats(pbp_stint)
-
-            stint_dict = {
-                "period": int(period),
-                "inTime": in_clock,
-                "outTime": out_clock,
-                "minutes": minutes,
-                "plusMinus": _safe_int(player_stint.get("PT_DIFF", 0)),
-                "stats": stint_stats,
-                "events": events,
-            }
-
-            # Group under existing player entry or create new one
-            if player_id in player_map:
-                player_map[player_id]["stints"].append(stint_dict)
-            else:
-                player_map[player_id] = {
-                    "playerId": player_id,
-                    "name": f"{player_stint.get('PLAYER_FIRST', '')} {player_stint.get('PLAYER_LAST', '')}",
-                    "team": team_tricode,
-                    "stints": [stint_dict],
+                # Group under existing player entry or create new one
+                if player_id in player_map:
+                    player_map[player_id]["stints"].append(stint_dict)
+                else:
+                    player_map[player_id] = {
+                        "playerId": player_id,
+                        "name": f"{player_stint.get('PLAYER_FIRST', '')} {player_stint.get('PLAYER_LAST', '')}",
+                        "team": team_tricode,
+                        "stints": [stint_dict],
                 }
 
     _process_rotation(rotation_data["home_team"], home_line["TEAM_ABBREVIATION"])
