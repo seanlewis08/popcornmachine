@@ -95,6 +95,8 @@ export interface PlayerData {
   playerId: string;
   name: string;
   team: string;
+  position?: string;   // "G", "F", "C" for starters; empty for bench
+  starter?: boolean;    // true if player started the game
   totals: PlayerTotals;
   stints: StintData[];
 }
@@ -183,6 +185,8 @@ export interface GameflowPlayer {
   playerId: string;
   name: string;
   team: string;
+  position?: string;   // "G", "F", "C" for starters; empty for bench
+  starter?: boolean;    // true if player started the game
   stints: GameflowStint[];
 }
 

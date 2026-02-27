@@ -87,7 +87,10 @@ function buildQuarterSegments(
   return segments;
 }
 
-/** Compute total minutes, points, hv, +/- from all stints */
+/** Number of end-stat columns */
+const NUM_STAT_COLS = 8; // MIN, PTS, REB, AST, STL, BLK, TOV, +/-
+
+/** Compute total minutes, points, individual stats, +/- from all stints */
 function computePlayerTotals(stints: GameflowStint[]) {
   let min = 0, pts = 0, pm = 0;
   let reb = 0, ast = 0, blk = 0, stl = 0, tov = 0;
@@ -101,8 +104,7 @@ function computePlayerTotals(stints: GameflowStint[]) {
     stl += s.stats.stl;
     tov += s.stats.tov;
   }
-  const hv = reb + ast + blk + stl - tov;
-  return { min: Math.round(min * 10) / 10, pts, hv, pm };
+  return { min: Math.round(min * 10) / 10, pts, reb, ast, stl, blk, tov, pm };
 }
 
 /** Try to get totals from boxscore data if available */
@@ -113,28 +115,42 @@ function getBoxscoreTotals(playerId: string, boxscore?: BoxScoreData) {
   return {
     min: p.totals.min,
     pts: p.totals.pts,
-    hv: p.totals.hv,
+    reb: p.totals.reb,
+    ast: p.totals.ast,
+    stl: p.totals.stl,
+    blk: p.totals.blk,
+    tov: p.totals.tov,
     pm: p.totals.plusMinus,
   };
 }
 
 /**
- * Flip tooltip below the cell when it would be clipped by the top of the viewport.
- * Called on mouseEnter for stint cells and player name cells.
+ * Position tooltip at bottom-right of the mouse cursor using fixed positioning.
+ * Called on mouseMove for stint cells and player name cells.
  */
-function adjustTooltipPosition(e: ReactMouseEvent<HTMLDivElement>) {
+function positionTooltipAtCursor(e: ReactMouseEvent<HTMLDivElement>) {
   const tooltip = e.currentTarget.querySelector(
     ".gf-stint-tooltip, .gf-player-tooltip",
   ) as HTMLElement | null;
   if (!tooltip) return;
-  const rect = e.currentTarget.getBoundingClientRect();
-  if (rect.top < 260) {
-    tooltip.style.bottom = "auto";
-    tooltip.style.top = "100%";
-  } else {
-    tooltip.style.bottom = "100%";
-    tooltip.style.top = "auto";
+
+  const offsetX = 12;
+  const offsetY = 16;
+  let left = e.clientX + offsetX;
+  let top = e.clientY + offsetY;
+
+  // Clamp to viewport edges
+  const tw = tooltip.offsetWidth || 240;
+  const th = tooltip.offsetHeight || 150;
+  if (left + tw > window.innerWidth - 4) {
+    left = e.clientX - tw - 4;
   }
+  if (top + th > window.innerHeight - 4) {
+    top = e.clientY - th - 4;
+  }
+
+  tooltip.style.left = `${left}px`;
+  tooltip.style.top = `${top}px`;
 }
 
 /**
@@ -255,6 +271,11 @@ function buildLineupsByMinute(
   return lineups;
 }
 
+interface PinnedStint {
+  playerId: string;
+  stintIndex: number;
+}
+
 interface PlayerRowProps {
   player: GameflowPlayer;
   periods: number[];
@@ -262,9 +283,13 @@ interface PlayerRowProps {
   boxscore?: BoxScoreData;
   selectedMinute: number | null;
   lineups: Map<number, Set<string>>;
+  position?: string;
+  isStarter?: boolean;
+  pinnedStint: PinnedStint | null;
+  onPinStint: (pin: PinnedStint | null) => void;
 }
 
-function PlayerRow({ player, periods, isHome, boxscore, selectedMinute, lineups }: PlayerRowProps) {
+function PlayerRow({ player, periods, isHome, boxscore, selectedMinute, lineups, position, pinnedStint, onPinStint }: PlayerRowProps) {
   const inClass = isHome ? "hometeamIN" : "visitorIN";
   const outClass = isHome ? "hometeamOUT" : "visitorOUT";
   const endClass = isHome ? "hometeamENDSTAT" : "visitorENDSTAT";
@@ -321,7 +346,7 @@ function PlayerRow({ player, periods, isHome, boxscore, selectedMinute, lineups 
       {/* Player name with CSS hover tooltip */}
       <div
         className="gf-name-cell"
-        onMouseEnter={adjustTooltipPosition}
+        onMouseMove={positionTooltipAtCursor}
         style={{
           width: NAME_COL_PX,
           flexShrink: 0,
@@ -337,12 +362,15 @@ function PlayerRow({ player, periods, isHome, boxscore, selectedMinute, lineups 
         }}
       >
         {isHighlighted && <span style={{ marginRight: 2 }}>&#9654;</span>}
+        {position && (
+          <span style={{ color: "#C9A84C", fontSize: 10, marginRight: 3, fontWeight: 600 }}>{position}</span>
+        )}
         {player.name}
         <div className="gf-player-tooltip">
           <strong>{player.name}</strong><br />
           Game Totals<br />
-          Min:{totals.min.toFixed(1)}&nbsp;&nbsp;(+/-):{totals.pm > 0 ? "+" : ""}{totals.pm}<br />
-          Pts:{totals.pts}&nbsp;&nbsp;hv:{totals.hv}
+          Min:{Math.floor(totals.min)}:{String(Math.round((totals.min % 1) * 60)).padStart(2, "0")}&nbsp;&nbsp;Pts:{totals.pts}&nbsp;&nbsp;(+/-):{totals.pm > 0 ? "+" : ""}{totals.pm}<br />
+          Reb:{totals.reb}&nbsp;Ast:{totals.ast}&nbsp;Stl:{totals.stl}&nbsp;Blk:{totals.blk}&nbsp;Tov:{totals.tov}
         </div>
       </div>
 
@@ -370,16 +398,40 @@ function PlayerRow({ player, periods, isHome, boxscore, selectedMinute, lineups 
                 }
                 const currentStintNum = ++stintCounter;
                 const stint = seg.stint!;
+                const globalStintIdx = seg.stintIndex!;
+                const isPinned = pinnedStint?.playerId === player.playerId && pinnedStint?.stintIndex === globalStintIdx;
                 return (
                   <div
                     key={sIdx}
-                    className={`${inClass} gf-stint-cell`}
-                    onMouseEnter={adjustTooltipPosition}
+                    className={`${inClass} gf-stint-cell${isPinned ? " gf-stint-pinned" : ""}`}
+                    onMouseMove={isPinned ? undefined : positionTooltipAtCursor}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (isPinned) {
+                        onPinStint(null);
+                      } else {
+                        // Pin this stint and position tooltip at click location
+                        onPinStint({ playerId: player.playerId, stintIndex: globalStintIdx });
+                        const tooltip = e.currentTarget.querySelector(".gf-stint-tooltip") as HTMLElement | null;
+                        if (tooltip) {
+                          const offsetX = 12;
+                          const offsetY = 16;
+                          let left = e.clientX + offsetX;
+                          let top = e.clientY + offsetY;
+                          const tw = tooltip.offsetWidth || 240;
+                          const th = tooltip.offsetHeight || 150;
+                          if (left + tw > window.innerWidth - 4) left = e.clientX - tw - 4;
+                          if (top + th > window.innerHeight - 4) top = e.clientY - th - 4;
+                          tooltip.style.left = `${left}px`;
+                          tooltip.style.top = `${top}px`;
+                        }
+                      }
+                    }}
                     style={{
                       width: seg.widthPx,
                       height: ROW_HEIGHT,
                       position: "relative",
-                      cursor: "default",
+                      cursor: "pointer",
                       fontSize: 12,
                       fontFamily: "'Roboto Condensed', Arial, Verdana, Helvetica",
                       whiteSpace: "nowrap",
@@ -388,11 +440,19 @@ function PlayerRow({ player, periods, isHome, boxscore, selectedMinute, lineups 
                     {seg.widthPx > 20 && (
                       <span>&nbsp;{stint.stats.pts}&nbsp;&nbsp;{stint.plusMinus > 0 ? "+" : ""}{stint.plusMinus}</span>
                     )}
-                    {/* CSS hover tooltip */}
+                    {/* CSS hover tooltip (becomes interactive when pinned) */}
                     <div className="gf-stint-tooltip">
-                      <strong>{player.name} Stint {currentStintNum}</strong><br />
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <strong>{player.name} Stint {currentStintNum}</strong>
+                        {isPinned && (
+                          <span
+                            style={{ cursor: "pointer", color: "#C4956A", fontSize: 14, lineHeight: 1 }}
+                            onClick={(e) => { e.stopPropagation(); onPinStint(null); }}
+                          >&times;</span>
+                        )}
+                      </div>
                       Period {stint.period}&nbsp;&nbsp;{stint.inTime} &rarr; {stint.outTime}<br />
-                      Min:&nbsp;{stint.minutes.toFixed(1)}&nbsp;&nbsp;(+/-):{stint.plusMinus > 0 ? "+" : ""}{stint.plusMinus}<br />
+                      Min:&nbsp;{Math.floor(stint.minutes)}:{String(Math.round((stint.minutes % 1) * 60)).padStart(2, "0")}&nbsp;&nbsp;(+/-):{stint.plusMinus > 0 ? "+" : ""}{stint.plusMinus}<br />
                       {(stint.stats.fgm > 0 || stint.stats.fga > 0) && <>FG {stint.stats.fgm}-{stint.stats.fga}&nbsp;&nbsp;&nbsp;</>}
                       {(stint.stats.fg3m > 0 || stint.stats.fg3a > 0) && <>3FG {stint.stats.fg3m}-{stint.stats.fg3a}<br /></>}
                       {(stint.stats.ftm > 0 || stint.stats.fta > 0) && <>FT {stint.stats.ftm}-{stint.stats.fta}<br /></>}
@@ -437,19 +497,35 @@ function PlayerRow({ player, periods, isHome, boxscore, selectedMinute, lineups 
       <div style={{ width: SPACER_PX, background: "#2C1810" }} />
 
       {/* End stats */}
-      <div className={endClass} style={{ width: STAT_COL_PX, textAlign: "center", fontSize: 12 }}>
+      <div className={endClass} style={{ width: STAT_COL_PX, textAlign: "center", fontSize: 11 }}>
         {totals.min.toFixed(1)}
       </div>
       <div style={{ width: SPACER_PX, background: "#2C1810" }} />
-      <div className={endClass} style={{ width: STAT_COL_PX, textAlign: "center", fontSize: 12 }}>
+      <div className={endClass} style={{ width: STAT_COL_PX, textAlign: "center", fontSize: 11 }}>
         {totals.pts}
       </div>
       <div style={{ width: SPACER_PX, background: "#2C1810" }} />
-      <div className={endClass} style={{ width: STAT_COL_PX, textAlign: "center", fontSize: 12 }}>
-        {totals.hv}
+      <div className={endClass} style={{ width: STAT_COL_PX, textAlign: "center", fontSize: 11 }}>
+        {totals.reb}
       </div>
       <div style={{ width: SPACER_PX, background: "#2C1810" }} />
-      <div className={endClass} style={{ width: STAT_COL_PX - 1, textAlign: "center", fontSize: 12 }}>
+      <div className={endClass} style={{ width: STAT_COL_PX, textAlign: "center", fontSize: 11 }}>
+        {totals.ast}
+      </div>
+      <div style={{ width: SPACER_PX, background: "#2C1810" }} />
+      <div className={endClass} style={{ width: STAT_COL_PX, textAlign: "center", fontSize: 11 }}>
+        {totals.stl}
+      </div>
+      <div style={{ width: SPACER_PX, background: "#2C1810" }} />
+      <div className={endClass} style={{ width: STAT_COL_PX, textAlign: "center", fontSize: 11 }}>
+        {totals.blk}
+      </div>
+      <div style={{ width: SPACER_PX, background: "#2C1810" }} />
+      <div className={endClass} style={{ width: STAT_COL_PX, textAlign: "center", fontSize: 11 }}>
+        {totals.tov}
+      </div>
+      <div style={{ width: SPACER_PX, background: "#2C1810" }} />
+      <div className={endClass} style={{ width: STAT_COL_PX - 1, textAlign: "center", fontSize: 11 }}>
         {totals.pm > 0 ? "+" : ""}{totals.pm}
       </div>
     </div>
@@ -530,7 +606,7 @@ function MomentumLine({
       const sc = scoreChanges[i];
       const x = (sc.ts / 12) * QUARTER_PX;
       const diff = sc.homeScore - sc.awayScore;
-      const y = (CANVAS_HEIGHT / 2) + (diff * ((CANVAS_HEIGHT / 2) / biggestLead));
+      const y = (CANVAS_HEIGHT / 2) - (diff * ((CANVAS_HEIGHT / 2) / biggestLead));
       ctx.lineTo(x, y);
     }
     ctx.stroke();
@@ -579,7 +655,7 @@ function MomentumLine({
       <div style={{ width: SPACER_PX }} />
       {finalScore && (
         <div style={{
-          width: 4 * STAT_COL_PX + 3 * SPACER_PX,
+          width: NUM_STAT_COLS * STAT_COL_PX + (NUM_STAT_COLS - 1) * SPACER_PX,
           background: "#1a1a2e",
           border: "1px solid #5C3A21",
           borderRadius: 2,
@@ -593,11 +669,28 @@ function MomentumLine({
           boxSizing: "border-box",
           color: "#E8D5B7",
         }}>
-          <div style={{ color: "#FF6B35" }}>&nbsp;{finalScore.awayScore}</div>
-          <div style={{ textAlign: "center", fontSize: 10, color: "#C4956A" }}>
-            Diff: {Math.abs(finalScore.homeScore - finalScore.awayScore)}
-          </div>
           <div style={{ color: "#FF6B35" }}>&nbsp;{finalScore.homeScore}</div>
+          <div style={{ textAlign: "center", fontSize: 10, color: "#C4956A" }}>
+            Avg Lead: {(() => {
+              // Compute time-weighted average lead from score changes
+              // Positive = home team leads, negative = away team leads
+              if (scoreChanges.length < 2) return "0.0";
+              let weightedSum = 0;
+              for (let i = 0; i < scoreChanges.length - 1; i++) {
+                const sc = scoreChanges[i];
+                const next = scoreChanges[i + 1];
+                const duration = next.ts - sc.ts;
+                const lead = sc.homeScore - sc.awayScore;
+                weightedSum += lead * duration;
+              }
+              const totalMinutes = scoreChanges[scoreChanges.length - 1].ts;
+              if (totalMinutes === 0) return "0.0";
+              const avgLead = weightedSum / totalMinutes;
+              const sign = avgLead > 0 ? "+" : avgLead < 0 ? "" : "";
+              return `${sign}${avgLead.toFixed(1)}`;
+            })()}
+          </div>
+          <div style={{ color: "#FF6B35" }}>&nbsp;{finalScore.awayScore}</div>
         </div>
       )}
     </div>
@@ -684,6 +777,27 @@ function MinuteSelector({
  */
 export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
   const [selectedMinute, setSelectedMinute] = useState<number | null>(null);
+  const [pinnedStint, setPinnedStint] = useState<PinnedStint | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Click outside or Escape key clears the pinned stint
+  useEffect(() => {
+    if (!pinnedStint) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setPinnedStint(null);
+      }
+    }
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === "Escape") setPinnedStint(null);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [pinnedStint]);
 
   const maxPeriod = useMemo(
     () => Math.max(4, ...data.players.flatMap((p) => p.stints.map((s) => s.period))),
@@ -700,15 +814,50 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
     [data],
   );
 
-  const sortByMinutes = (players: GameflowPlayer[]) =>
-    [...players].sort(
-      (a, b) =>
-        b.stints.reduce((s, st) => s + st.minutes, 0) -
-        a.stints.reduce((s, st) => s + st.minutes, 0),
-    );
+  /**
+   * Sort players: starters first (ordered G, G, F, F, C), then bench by minutes.
+   * Falls back to boxscore data for position/starter info if gameflow lacks it.
+   */
+  const sortPlayers = useCallback((players: GameflowPlayer[]) => {
+    // Specific positions (from roster) and broad V3 positions
+    const posOrder: Record<string, number> = {
+      PG: 0, SG: 1, G: 1,   // Guards
+      SF: 2, PF: 3, F: 3,   // Forwards
+      C: 4,                   // Center
+      "G-F": 2, "F-G": 2, "F-C": 3, "C-F": 3,  // Combo positions
+    };
 
-  const sortedHome = useMemo(() => sortByMinutes(homePlayers), [homePlayers]);
-  const sortedAway = useMemo(() => sortByMinutes(awayPlayers), [awayPlayers]);
+    // Enrich with boxscore position/starter if gameflow data lacks it
+    const enriched = players.map((p) => {
+      let pos = p.position ?? "";
+      let isStarter = p.starter ?? false;
+      if (!pos && boxscore) {
+        const bsPlayer = boxscore.players.find((bp) => bp.playerId === p.playerId);
+        if (bsPlayer) {
+          pos = bsPlayer.position ?? "";
+          isStarter = bsPlayer.starter ?? false;
+        }
+      }
+      return { player: p, position: pos, starter: isStarter };
+    });
+
+    const starters = enriched
+      .filter((e) => e.starter)
+      .sort((a, b) => (posOrder[a.position] ?? 9) - (posOrder[b.position] ?? 9));
+
+    const bench = enriched
+      .filter((e) => !e.starter)
+      .sort(
+        (a, b) =>
+          b.player.stints.reduce((s, st) => s + st.minutes, 0) -
+          a.player.stints.reduce((s, st) => s + st.minutes, 0),
+      );
+
+    return [...starters, ...bench].map((e) => e.player);
+  }, [boxscore]);
+
+  const sortedHome = useMemo(() => sortPlayers(homePlayers), [homePlayers, sortPlayers]);
+  const sortedAway = useMemo(() => sortPlayers(awayPlayers), [awayPlayers, sortPlayers]);
 
   // Total game minutes for lineup tracking
   const totalGameMinutes = useMemo(() => {
@@ -736,7 +885,7 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
   };
 
   const totalTimelineWidth = periods.length * QUARTER_PX + (periods.length - 1) * SPACER_PX;
-  const totalWidth = NAME_COL_PX + SPACER_PX + totalTimelineWidth + SPACER_PX + 4 * STAT_COL_PX + 3 * SPACER_PX;
+  const totalWidth = NAME_COL_PX + SPACER_PX + totalTimelineWidth + SPACER_PX + NUM_STAT_COLS * STAT_COL_PX + (NUM_STAT_COLS - 1) * SPACER_PX;
 
   const headerStyle: React.CSSProperties = {
     color: "#C9A84C",
@@ -755,16 +904,26 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
     setSelectedMinute(minute);
   }, []);
 
-  // Count highlighted players from lineup maps
-  const highlightedCount = useMemo(() => {
-    if (selectedMinute === null) return null;
-    const homeCount = homeLineups.get(selectedMinute)?.size ?? 0;
-    const awayCount = awayLineups.get(selectedMinute)?.size ?? 0;
-    return { home: homeCount, away: awayCount };
-  }, [selectedMinute, homeLineups, awayLineups]);
+  // Score at selected minute from scoreChanges
+  const minuteScore = useMemo(() => {
+    if (selectedMinute === null || !data.scoreChanges || data.scoreChanges.length < 2) return null;
+    // Find the last score change at or before the end of the selected minute
+    const minuteEnd = selectedMinute + 1; // end of this minute bucket
+    let homeScore = 0, awayScore = 0;
+    for (const sc of data.scoreChanges) {
+      if (sc.ts <= minuteEnd) {
+        homeScore = sc.homeScore;
+        awayScore = sc.awayScore;
+      } else {
+        break;
+      }
+    }
+    return { homeScore, awayScore };
+  }, [selectedMinute, data.scoreChanges]);
 
   return (
     <div
+      ref={containerRef}
       style={{
         minWidth: totalWidth,
         maxWidth: totalWidth,
@@ -781,8 +940,6 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
         <div style={{ ...headerStyle, width: totalTimelineWidth }}>
           {data.awayTeam.name} @ {data.homeTeam.name}
         </div>
-        <div style={{ width: SPACER_PX, background: "#2C1810" }} />
-        <div style={{ ...headerStyle, width: 4 * STAT_COL_PX + 3 * SPACER_PX }}>Totals</div>
       </div>
 
       {/* Quarter headers row */}
@@ -797,14 +954,6 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
             </div>
           </div>
         ))}
-        <div style={{ width: SPACER_PX, background: "#2C1810" }} />
-        <div style={{ ...headerStyle, width: STAT_COL_PX, fontSize: 11 }}>Min</div>
-        <div style={{ width: SPACER_PX, background: "#2C1810" }} />
-        <div style={{ ...headerStyle, width: STAT_COL_PX, fontSize: 11 }}>Pts</div>
-        <div style={{ width: SPACER_PX, background: "#2C1810" }} />
-        <div style={{ ...headerStyle, width: STAT_COL_PX, fontSize: 11 }}>hv</div>
-        <div style={{ width: SPACER_PX, background: "#2C1810" }} />
-        <div style={{ ...headerStyle, width: STAT_COL_PX, fontSize: 11 }}>+/-</div>
       </div>
 
       {/* Momentum line */}
@@ -825,7 +974,7 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
       />
 
       {/* Lineup info when minute selected */}
-      {selectedMinute !== null && highlightedCount && (
+      {selectedMinute !== null && minuteScore && (
         <div
           style={{
             display: "flex",
@@ -840,10 +989,10 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
           }}
         >
           <div style={{ width: NAME_COL_PX }}>
-            Minute {selectedMinute + 1} lineup
+            Minute {selectedMinute + 1}
           </div>
           <div style={{ marginLeft: 8 }}>
-            Home: {highlightedCount.home} &nbsp;|&nbsp; Away: {highlightedCount.away}
+            {data.homeTeam.tricode} {minuteScore.homeScore} &ndash; {minuteScore.awayScore} {data.awayTeam.tricode}
           </div>
           <div
             style={{
@@ -859,58 +1008,106 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
         </div>
       )}
 
-      {/* Home team label */}
-      <div
-        style={{
+      {/* Home team label + stat headers */}
+      <div style={{ display: "flex", height: ROW_HEIGHT, borderTop: "1px solid #5C3A21", borderBottom: "1px solid #5C3A21" }}>
+        <div style={{
           ...headerStyle,
+          width: NAME_COL_PX + SPACER_PX + totalTimelineWidth,
           textAlign: "center",
           background: "linear-gradient(90deg, #2C1810 0%, #3D2415 50%, #2C1810 100%)",
-          borderTop: "1px solid #5C3A21",
-          borderBottom: "1px solid #5C3A21",
-        }}
-      >
-        {data.homeTeam.name}
+        }}>
+          {data.homeTeam.name}
+        </div>
+        <div style={{ width: SPACER_PX, background: "#2C1810" }} />
+        {["Min", "Pts", "Reb", "Ast", "Stl", "Blk", "Tov", "+/-"].map((label, i) => (
+          <div key={label} style={{ display: "flex" }}>
+            {i > 0 && <div style={{ width: SPACER_PX, background: "#2C1810" }} />}
+            <div style={{ ...headerStyle, width: STAT_COL_PX, fontSize: 10 }}>{label}</div>
+          </div>
+        ))}
       </div>
 
       {/* Home players */}
-      {sortedHome.map((player) => (
-        <PlayerRow
-          key={player.playerId}
-          player={player}
-          periods={periods}
-          isHome={true}
-          boxscore={boxscore}
-          selectedMinute={selectedMinute}
-          lineups={homeLineups}
-        />
-      ))}
+      {sortedHome.map((player, idx) => {
+        const bsPlayer = boxscore?.players.find((bp) => bp.playerId === player.playerId);
+        const pos = player.position || bsPlayer?.position || "";
+        const starter = player.starter ?? bsPlayer?.starter ?? false;
+        // Insert bench separator after last starter
+        const prevPlayer = idx > 0 ? sortedHome[idx - 1] : null;
+        const prevStarter = prevPlayer
+          ? (prevPlayer.starter ?? boxscore?.players.find((bp) => bp.playerId === prevPlayer.playerId)?.starter ?? false)
+          : false;
+        const showSep = !starter && prevStarter;
+        return (
+          <div key={player.playerId}>
+            {showSep && (
+              <div style={{ height: 2, background: "linear-gradient(90deg, transparent 0%, #5C3A21 20%, #8B6914 50%, #5C3A21 80%, transparent 100%)" }} />
+            )}
+            <PlayerRow
+              player={player}
+              periods={periods}
+              isHome={true}
+              boxscore={boxscore}
+              selectedMinute={selectedMinute}
+              lineups={homeLineups}
+              position={pos}
+              isStarter={starter}
+              pinnedStint={pinnedStint}
+              onPinStint={setPinnedStint}
+            />
+          </div>
+        );
+      })}
 
-      {/* Away team label */}
-      <div
-        style={{
+      {/* Away team label + stat headers */}
+      <div style={{ display: "flex", height: ROW_HEIGHT, borderTop: "1px solid #5C3A21", borderBottom: "1px solid #5C3A21", marginTop: 2 }}>
+        <div style={{
           ...headerStyle,
+          width: NAME_COL_PX + SPACER_PX + totalTimelineWidth,
           textAlign: "center",
           background: "linear-gradient(90deg, #2C1810 0%, #3D2415 50%, #2C1810 100%)",
-          borderTop: "1px solid #5C3A21",
-          borderBottom: "1px solid #5C3A21",
-          marginTop: 2,
-        }}
-      >
-        {data.awayTeam.name}
+        }}>
+          {data.awayTeam.name}
+        </div>
+        <div style={{ width: SPACER_PX, background: "#2C1810" }} />
+        {["Min", "Pts", "Reb", "Ast", "Stl", "Blk", "Tov", "+/-"].map((label, i) => (
+          <div key={label} style={{ display: "flex" }}>
+            {i > 0 && <div style={{ width: SPACER_PX, background: "#2C1810" }} />}
+            <div style={{ ...headerStyle, width: STAT_COL_PX, fontSize: 10 }}>{label}</div>
+          </div>
+        ))}
       </div>
 
       {/* Away players */}
-      {sortedAway.map((player) => (
-        <PlayerRow
-          key={player.playerId}
-          player={player}
-          periods={periods}
-          isHome={false}
-          boxscore={boxscore}
-          selectedMinute={selectedMinute}
-          lineups={awayLineups}
-        />
-      ))}
+      {sortedAway.map((player, idx) => {
+        const bsPlayer = boxscore?.players.find((bp) => bp.playerId === player.playerId);
+        const pos = player.position || bsPlayer?.position || "";
+        const starter = player.starter ?? bsPlayer?.starter ?? false;
+        const prevPlayer = idx > 0 ? sortedAway[idx - 1] : null;
+        const prevStarter = prevPlayer
+          ? (prevPlayer.starter ?? boxscore?.players.find((bp) => bp.playerId === prevPlayer.playerId)?.starter ?? false)
+          : false;
+        const showSep = !starter && prevStarter;
+        return (
+          <div key={player.playerId}>
+            {showSep && (
+              <div style={{ height: 2, background: "linear-gradient(90deg, transparent 0%, #5C3A21 20%, #8B6914 50%, #5C3A21 80%, transparent 100%)" }} />
+            )}
+            <PlayerRow
+              player={player}
+              periods={periods}
+              isHome={false}
+              boxscore={boxscore}
+              selectedMinute={selectedMinute}
+              lineups={awayLineups}
+              position={pos}
+              isStarter={starter}
+              pinnedStint={pinnedStint}
+              onPinStint={setPinnedStint}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -8,6 +8,7 @@ from typing import Optional
 import pandas as pd
 import requests
 from nba_api.stats.endpoints import BoxScoreTraditionalV3
+from nba_api.stats.endpoints.commonteamroster import CommonTeamRoster
 from nba_api.stats.endpoints.gamerotation import GameRotation
 from nba_api.stats.endpoints.playbyplayv3 import PlayByPlayV3
 from nba_api.stats.endpoints.scoreboardv2 import ScoreboardV2
@@ -69,6 +70,7 @@ def _map_v3_boxscore_player_stats(df: pd.DataFrame) -> pd.DataFrame:
         "teamId": "TEAM_ID",
         "teamName": "TEAM_NAME",
         "gameId": "GAME_ID",
+        "position": "POSITION",
         "minutes": "MIN",
         "fieldGoalsMade": "FGM",
         "fieldGoalsAttempted": "FGA",
@@ -283,4 +285,35 @@ def fetch_game_rotation(game_id: str, delay: float = 1.5) -> Optional[dict]:
                 return None
         except Exception as e:
             _log_error(f"Unexpected error fetching game rotation for {game_id}: {e}")
+            return None
+
+
+def fetch_roster(team_id: str, season: str, delay: float = 1.5) -> Optional[pd.DataFrame]:
+    """
+    Fetch team roster with specific positions (PG, SG, SF, PF, C).
+
+    Args:
+        team_id: NBA team ID string
+        season: Season string in YYYY-YY format (e.g., "2025-26")
+        delay: Delay in seconds before making the API call (default 1.5)
+
+    Returns:
+        DataFrame with PLAYER_ID and POSITION columns, or None on failure
+    """
+    max_retries = 1
+    for attempt in range(max_retries + 1):
+        try:
+            time.sleep(delay)
+            response = CommonTeamRoster(team_id=team_id, season=season)
+            df = response.common_team_roster.get_data_frame()
+            return df
+        except requests.exceptions.RequestException as e:
+            _log_error(f"Error fetching roster for team {team_id}: {e}")
+
+            if attempt < max_retries:
+                time.sleep(5)
+            else:
+                return None
+        except Exception as e:
+            _log_error(f"Unexpected error fetching roster for team {team_id}: {e}")
             return None

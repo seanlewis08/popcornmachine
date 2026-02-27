@@ -97,19 +97,17 @@ body {
    =================================================================== */
 .gf-stint-tooltip {
   display: none;
-  position: absolute;
+  position: fixed;
   width: 240px;
   border: 2px solid var(--hw-gold);
   border-radius: 6px;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   color: var(--hw-white);
   padding: 6px 8px;
-  z-index: 100;
-  left: 0;
-  bottom: 100%;
+  z-index: 1000;
   font-size: 12px;
   font-family: 'Roboto Condensed', Arial, Verdana, Helvetica;
-  pointer-events: auto;
+  pointer-events: none;
   box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 /* On hover, raise z-index of cell so tooltip escapes any parent clipping */
@@ -123,13 +121,32 @@ body {
 .gf-stint-cell:hover .gf-stint-tooltip {
   display: block;
 }
+/* Pinned stint: tooltip stays visible and becomes interactive */
+.gf-stint-pinned {
+  z-index: 60 !important;
+  overflow: visible !important;
+}
+.gf-stint-pinned .gf-stint-tooltip {
+  display: block !important;
+  pointer-events: auto !important;
+  border-color: #FF6B35;
+}
+/* Highlight the pinned stint cell itself */
+.gf-stint-pinned::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid #FF6B35;
+  border-radius: 2px;
+  pointer-events: none;
+}
 
 /* ===================================================================
    PLAYER NAME TOOLTIP (hidden by default, shown on hover)
    =================================================================== */
 .gf-player-tooltip {
   display: none;
-  position: absolute;
+  position: fixed;
   width: 180px;
   min-height: 60px;
   border: 2px solid var(--hw-gold);
@@ -137,18 +154,13 @@ body {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   color: var(--hw-white);
   padding: 6px 8px;
-  z-index: 100;
-  left: 0;
-  bottom: 100%;
+  z-index: 1000;
   font-size: 12px;
   font-family: 'Roboto Condensed', Arial, Verdana, Helvetica;
-  pointer-events: auto;
+  pointer-events: none;
   box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 .gf-name-cell:hover .gf-player-tooltip {
-  display: block;
-}
-.gf-player-tooltip:hover {
   display: block;
 }
 
