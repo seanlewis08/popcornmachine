@@ -1,0 +1,39 @@
+{
+  "gameId": "0022500001",
+  "homeTeam": { "tricode": "DET", "name": "Detroit Pistons" },
+  "awayTeam": { "tricode": "BOS", "name": "Boston Celtics" },
+  "players": [
+    {
+      "playerId": "1234",
+      "name": "C Cunningham",
+      "team": "DET",
+      "stints": [
+        {
+          "period": 1, "inTime": "12:00", "outTime": "1:54",
+          "minutes": 10.1, "plusMinus": -4,
+          "stats": { "fgm": 0, "fga": 4, "fg3m": 0, "fg3a": 1, "ftm": 3, "fta": 4, "pts": 3, "ast": 3, "reb": 1, "stl": 0, "blk": 0, "tov": 0, "pf": 1 },
+          "events": [
+            { "clock": "10:30", "type": "miss2", "description": "Missed 2PT" },
+            { "clock": "08:15", "type": "fta", "description": "Free Throw Made" }
+          ]
+        }
+      ]
+    },
+    {
+      "playerId": "5678",
+      "name": "J Holiday",
+      "team": "BOS",
+      "stints": [
+        {
+          "period": 1, "inTime": "12:00", "outTime": "2:30",
+          "minutes": 9.5, "plusMinus": 2,
+          "stats": { "fgm": 1, "fga": 3, "fg3m": 1, "fg3a": 2, "ftm": 2, "fta": 2, "pts": 5, "ast": 2, "reb": 0, "stl": 1, "blk": 0, "tov": 0, "pf": 0 },
+          "events": [
+            { "clock": "11:45", "type": "3pt", "description": "3PT Made" },
+            { "clock": "09:20", "type": "ast", "description": "Assist" }
+          ]
+        }
+      ]
+    }
+  ]
+}
