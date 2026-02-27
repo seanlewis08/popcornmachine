@@ -146,4 +146,76 @@ describe("StintBar", () => {
     const bar = container.querySelector("[data-testid='stint-bar']");
     expect(bar).toBeInTheDocument();
   });
+
+  it("calls onStintClick when Enter key is pressed on focused stint bar", async () => {
+    const onStintClick = vi.fn();
+    const user = userEvent.setup();
+
+    const { container } = render(
+      <StintBar
+        stint={mockStint}
+        team="DET"
+        x={100}
+        width={150}
+        homeTeamTricode="DET"
+        onStintClick={onStintClick}
+      />
+    );
+
+    const bar = container.querySelector("[data-testid='stint-bar']") as HTMLElement;
+    expect(bar).toBeInTheDocument();
+
+    // Focus the stint bar
+    bar.focus();
+    expect(bar).toHaveFocus();
+
+    // Press Enter
+    await user.keyboard("{Enter}");
+
+    expect(onStintClick).toHaveBeenCalledWith(mockStint);
+  });
+
+  it("calls onStintClick when Space key is pressed on focused stint bar", async () => {
+    const onStintClick = vi.fn();
+    const user = userEvent.setup();
+
+    const { container } = render(
+      <StintBar
+        stint={mockStint}
+        team="DET"
+        x={100}
+        width={150}
+        homeTeamTricode="DET"
+        onStintClick={onStintClick}
+      />
+    );
+
+    const bar = container.querySelector("[data-testid='stint-bar']") as HTMLElement;
+    expect(bar).toBeInTheDocument();
+
+    // Focus the stint bar
+    bar.focus();
+    expect(bar).toHaveFocus();
+
+    // Press Space
+    await user.keyboard(" ");
+
+    expect(onStintClick).toHaveBeenCalledWith(mockStint);
+  });
+
+  it("is keyboard focusable with tabIndex 0", () => {
+    const { container } = render(
+      <StintBar
+        stint={mockStint}
+        team="DET"
+        x={100}
+        width={150}
+        homeTeamTricode="DET"
+        onStintClick={vi.fn()}
+      />
+    );
+
+    const bar = container.querySelector("[data-testid='stint-bar']");
+    expect(bar).toHaveAttribute("tabIndex", "0");
+  });
 });

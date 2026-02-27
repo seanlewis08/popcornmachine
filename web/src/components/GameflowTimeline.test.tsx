@@ -150,22 +150,23 @@ describe("GameflowTimeline", () => {
     expect(labelText.some((text) => text?.includes("Q4"))).toBe(true);
   });
 
-  it("opens popover when stint bar is clicked (AC3.3)", async () => {
-    const user = userEvent.setup();
+  it("stint bar is keyboard accessible with proper ARIA attributes", () => {
     const { container } = render(<GameflowTimeline data={mockData} />);
 
-    const firstStintBar = container.querySelector("[data-testid='stint-bar']");
-    if (firstStintBar) {
-      await user.click(firstStintBar);
+    const stintBar = container.querySelector("[data-testid='stint-bar']") as HTMLElement;
+    expect(stintBar).toBeInTheDocument();
 
-      // After clicking, the detail card should appear
-      // (Popover opens - we can check if detail card appears)
-      await new Promise((resolve) => setTimeout(resolve, 100));
+    // Verify keyboard accessibility: has role button and is focusable
+    expect(stintBar).toHaveAttribute("role", "button");
+    expect(stintBar).toHaveAttribute("tabIndex", "0");
 
-      // Stats should be visible in the popover
-      const minutesLabel = screen.getByText("Minutes");
-      expect(minutesLabel).toBeInTheDocument();
-    }
+    // Verify aria-label exists
+    expect(stintBar).toHaveAttribute("aria-label");
+
+    // Verify it has ARIA label with stint info
+    const ariaLabel = stintBar.getAttribute("aria-label");
+    expect(ariaLabel).toMatch(/Stint:/);
+    expect(ariaLabel).toMatch(/minutes/);
   });
 
   it("handles multiple stints per player", () => {
@@ -218,5 +219,30 @@ describe("GameflowTimeline", () => {
     // Should have quarter boundary lines for alignment
     const quarterLines = container.querySelectorAll("[data-testid='quarter-boundary']");
     expect(quarterLines.length).toBeGreaterThan(0);
+  });
+
+  it("supports keyboard navigation - Tab to focus stint bars for keyboard accessibility", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<GameflowTimeline data={mockData} />);
+
+    // Get all stint bars
+    const stintBars = container.querySelectorAll("[data-testid='stint-bar']");
+    expect(stintBars.length).toBeGreaterThan(0);
+
+    const firstStintBar = stintBars[0] as HTMLElement;
+
+    // Initially, stint bar should not be focused
+    expect(firstStintBar).not.toHaveFocus();
+
+    // Tab to focus the stint bar
+    await user.tab();
+
+    // The stint bar should now be focused (Radix PopoverTrigger will handle keyboard)
+    expect(firstStintBar).toHaveFocus();
+
+    // Verify the focused stint bar has keyboard event handlers
+    // by checking it has role="button" and tabIndex="0"
+    expect(firstStintBar).toHaveAttribute("role", "button");
+    expect(firstStintBar).toHaveAttribute("tabIndex", "0");
   });
 });

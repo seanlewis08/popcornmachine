@@ -120,18 +120,13 @@ export function GameflowTimeline({ data }: GameflowTimelineProps) {
                   return (
                     <Popover key={idx}>
                       <PopoverTrigger asChild>
-                        <div>
-                          <StintBar
-                            stint={stint}
-                            team={player.team}
-                            x={pixelRange.x}
-                            width={Math.max(pixelRange.width, 2)}
-                            homeTeamTricode={data.homeTeam.tricode}
-                            onStintClick={() => {
-                              // Stint clicked - popover opens automatically via Radix
-                            }}
-                          />
-                        </div>
+                        <StintBar
+                          stint={stint}
+                          team={player.team}
+                          x={pixelRange.x}
+                          width={Math.max(pixelRange.width, 2)}
+                          homeTeamTricode={data.homeTeam.tricode}
+                        />
                       </PopoverTrigger>
                       <PopoverContent side="top" align="center" className="w-auto p-0">
                         <StintDetailCard stint={stint} />
@@ -184,18 +179,13 @@ export function GameflowTimeline({ data }: GameflowTimelineProps) {
                   return (
                     <Popover key={idx}>
                       <PopoverTrigger asChild>
-                        <div>
-                          <StintBar
-                            stint={stint}
-                            team={player.team}
-                            x={pixelRange.x}
-                            width={Math.max(pixelRange.width, 2)}
-                            homeTeamTricode={data.homeTeam.tricode}
-                            onStintClick={() => {
-                              // Stint clicked - popover opens automatically via Radix
-                            }}
-                          />
-                        </div>
+                        <StintBar
+                          stint={stint}
+                          team={player.team}
+                          x={pixelRange.x}
+                          width={Math.max(pixelRange.width, 2)}
+                          homeTeamTricode={data.homeTeam.tricode}
+                        />
                       </PopoverTrigger>
                       <PopoverContent side="top" align="center" className="w-auto p-0">
                         <StintDetailCard stint={stint} />
