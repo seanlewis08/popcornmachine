@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import type { GameflowData, GameflowStint } from "../types/api";
+import type { GameflowData } from "../types/api";
 import { StintBar } from "./StintBar";
 import { StintDetailCard } from "./StintDetailCard";
 import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover";
@@ -18,7 +18,6 @@ interface GameflowTimelineProps {
 export function GameflowTimeline({ data }: GameflowTimelineProps) {
   const timelineRef = useRef<HTMLDivElement>(null);
   const [timelineWidth, setTimelineWidth] = useState(800);
-  const [selectedStint, setSelectedStint] = useState<GameflowStint | null>(null);
 
   // Calculate total game seconds
   const maxPeriod = Math.max(...data.players.flatMap((p) => p.stints.map((s) => s.period)));
@@ -128,7 +127,9 @@ export function GameflowTimeline({ data }: GameflowTimelineProps) {
                             x={pixelRange.x}
                             width={Math.max(pixelRange.width, 2)}
                             homeTeamTricode={data.homeTeam.tricode}
-                            onStintClick={() => setSelectedStint(stint)}
+                            onStintClick={() => {
+                              // Stint clicked - popover opens automatically via Radix
+                            }}
                           />
                         </div>
                       </PopoverTrigger>
@@ -190,7 +191,9 @@ export function GameflowTimeline({ data }: GameflowTimelineProps) {
                             x={pixelRange.x}
                             width={Math.max(pixelRange.width, 2)}
                             homeTeamTricode={data.homeTeam.tricode}
-                            onStintClick={() => setSelectedStint(stint)}
+                            onStintClick={() => {
+                              // Stint clicked - popover opens automatically via Radix
+                            }}
                           />
                         </div>
                       </PopoverTrigger>
