@@ -2,9 +2,12 @@
 
 import json
 import os
+import shutil
+import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+
+from pipeline.write import _write_json_atomic
 
 
 def cleanup_old_data(data_dir: str = "data", reference_date: str | None = None) -> list[str]:
@@ -61,8 +64,6 @@ def cleanup_old_data(data_dir: str = "data", reference_date: str | None = None) 
 
                             if game_month != current_month and game_month < current_month:
                                 # Delete game directory
-                                import shutil
-
                                 if os.path.exists(game_dir):
                                     shutil.rmtree(game_dir)
                                     deleted_paths.append(str(game_dir))
@@ -82,15 +83,14 @@ def cleanup_old_data(data_dir: str = "data", reference_date: str | None = None) 
             filtered_dates = [
                 d
                 for d in dates
-                if d.get("date", "")[:7] == current_month or d.get("date", "") >= current_month
+                if d.get("date", "") >= current_month
             ]
 
             # Write updated index
             index_data["dates"] = filtered_dates
-            with open(index_path, "w") as f:
-                json.dump(index_data, f, indent=2, sort_keys=True)
-        except (json.JSONDecodeError, IOError):
-            # Skip if index is invalid
-            pass
+            _write_json_atomic(index_path, index_data)
+        except (json.JSONDecodeError, IOError) as e:
+            timestamp = datetime.now().isoformat()
+            print(f"[{timestamp}] Warning: Could not update index.json during cleanup: {e}", file=sys.stderr, flush=True)
 
     return deleted_paths
