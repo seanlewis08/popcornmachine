@@ -5,7 +5,7 @@ import { PlayerStatsTable } from "@/components/PlayerStatsTable";
 
 export default function BoxScorePage() {
   const { gameId } = useParams<{ gameId: string }>();
-  const url = gameId ? `/data/games/${gameId}/boxscore.json` : null;
+  const url = gameId ? `data/games/${gameId}/boxscore.json` : null;
   const { data, loading, error } = useJsonData<BoxScoreData>(url);
 
   if (loading) {

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 export default function HomePage() {
   const { data: indexData, loading: indexLoading, error: indexError } =
-    useJsonData<IndexData>("/data/index.json");
+    useJsonData<IndexData>("data/index.json");
 
   const [games, setGames] = useState<ScoreEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +28,7 @@ export default function HomePage() {
         for (const dateEntry of indexData.dates) {
           try {
             const response = await fetch(
-              `/data/scores/${dateEntry.date}.json`
+              `data/scores/${dateEntry.date}.json`
             );
             if (response.ok) {
               const scoreData = await response.json();
