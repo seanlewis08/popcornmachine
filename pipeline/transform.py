@@ -399,8 +399,17 @@ def transform_boxscore(
         players.append(player_dict)
 
     # Build team totals
-    home_team_stats = team_stats[team_stats["TEAM_ABBREVIATION"] == home_line["TEAM_ABBREVIATION"]].iloc[0]
-    away_team_stats = team_stats[team_stats["TEAM_ABBREVIATION"] == away_line["TEAM_ABBREVIATION"]].iloc[0]
+    home_team_match = team_stats[team_stats["TEAM_ABBREVIATION"] == home_line["TEAM_ABBREVIATION"]]
+    away_team_match = team_stats[team_stats["TEAM_ABBREVIATION"] == away_line["TEAM_ABBREVIATION"]]
+
+    if len(home_team_match) == 0 or len(away_team_match) == 0:
+        # Handle case where team stats don't match
+        # Use the first two rows as home and away fallback
+        home_team_stats = team_stats.iloc[0]
+        away_team_stats = team_stats.iloc[1] if len(team_stats) > 1 else team_stats.iloc[0]
+    else:
+        home_team_stats = home_team_match.iloc[0]
+        away_team_stats = away_team_match.iloc[0]
 
     team_totals = {
         "home": {
