@@ -61,6 +61,8 @@ def _rotation_time_to_period_clock(
         Tuple of (period, in_clock_str, out_clock_str)
     """
     ms_per_period = 720000  # 12 minutes in milliseconds
+    in_time_real = int(in_time_real)
+    out_time_real = int(out_time_real)
     period = (in_time_real // ms_per_period) + 1
     period_start_ms = (period - 1) * ms_per_period
 
@@ -74,16 +76,17 @@ def _rotation_time_to_period_clock(
     return int(period), in_clock, out_clock
 
 
-def _seconds_to_clock(seconds: int) -> str:
+def _seconds_to_clock(seconds) -> str:
     """Convert seconds to MM:SS clock format."""
+    seconds = int(seconds)
     minutes = seconds // 60
     secs = seconds % 60
     return f"{minutes}:{secs:02d}"
 
 
-def _compute_stint_minutes(in_time_real: int, out_time_real: int) -> float:
+def _compute_stint_minutes(in_time_real, out_time_real) -> float:
     """Compute stint duration in minutes."""
-    duration_ms = out_time_real - in_time_real
+    duration_ms = int(out_time_real) - int(in_time_real)
     return round(duration_ms / 60000, 1)
 
 
