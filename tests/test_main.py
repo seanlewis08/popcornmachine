@@ -152,3 +152,88 @@ def test_main_creates_proper_directory_structure(
         assert isinstance(index, dict)
         assert "dates" in index
         assert isinstance(index["dates"], list)
+
+
+@patch("pipeline.main.fetch_game_rotation")
+@patch("pipeline.main.fetch_playbyplay")
+@patch("pipeline.main.fetch_boxscore")
+@patch("pipeline.main.fetch_scoreboard")
+def test_main_protects_existing_data_on_failure(
+    mock_fetch_sb, mock_fetch_bs, mock_fetch_pbp, mock_fetch_rot,
+    sample_scoreboard_data, sample_boxscore_data, sample_playbyplay_data,
+    sample_rotation_data
+):
+    """Test that existing data is not modified when API fails."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        # First run: write initial data
+        single_game_scoreboard = {
+            "game_header": sample_scoreboard_data["game_header"].iloc[[0]].reset_index(drop=True),
+            "line_score": sample_scoreboard_data["line_score"].iloc[[0, 1]].reset_index(drop=True),
+        }
+
+        mock_fetch_sb.return_value = single_game_scoreboard
+        mock_fetch_bs.return_value = sample_boxscore_data
+        mock_fetch_pbp.return_value = sample_playbyplay_data
+        mock_fetch_rot.return_value = sample_rotation_data
+
+        main(date="2026-01-19", data_dir=tmpdir)
+
+        # Get hashes of initial files
+        index_path = Path(tmpdir) / "index.json"
+        with open(index_path, "rb") as f:
+            initial_index_hash = __import__("hashlib").md5(f.read()).hexdigest()
+
+        scores_path = Path(tmpdir) / "scores" / "2026-01-19.json"
+        with open(scores_path, "rb") as f:
+            initial_scores_hash = __import__("hashlib").md5(f.read()).hexdigest()
+
+        # Second run: mock all fetches to return None (simulating API failure)
+        mock_fetch_sb.return_value = None
+        mock_fetch_bs.return_value = None
+        mock_fetch_pbp.return_value = None
+        mock_fetch_rot.return_value = None
+
+        main(date="2026-01-19", data_dir=tmpdir)
+
+        # Verify existing files are unchanged
+        with open(index_path, "rb") as f:
+            final_index_hash = __import__("hashlib").md5(f.read()).hexdigest()
+
+        with open(scores_path, "rb") as f:
+            final_scores_hash = __import__("hashlib").md5(f.read()).hexdigest()
+
+        assert initial_index_hash == final_index_hash
+        assert initial_scores_hash == final_scores_hash
+
+
+@patch("pipeline.main.fetch_game_rotation")
+@patch("pipeline.main.fetch_playbyplay")
+@patch("pipeline.main.fetch_boxscore")
+@patch("pipeline.main.fetch_scoreboard")
+def test_main_skips_failed_games_but_continues(
+    mock_fetch_sb, mock_fetch_bs, mock_fetch_pbp, mock_fetch_rot,
+    sample_scoreboard_data, sample_boxscore_data, sample_playbyplay_data,
+    sample_rotation_data
+):
+    """Test that pipeline continues with other games when some fail."""
+    import pandas as pd
+
+    # Create scoreboard with two games
+    mock_fetch_sb.return_value = sample_scoreboard_data
+
+    # Mock so first game fails, second game succeeds
+    mock_fetch_bs.side_effect = [None, sample_boxscore_data]
+    mock_fetch_pbp.return_value = sample_playbyplay_data
+    mock_fetch_rot.return_value = sample_rotation_data
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        main(date="2026-01-19", data_dir=tmpdir)
+
+        # Scores should still be written for the date
+        scores_path = Path(tmpdir) / "scores" / "2026-01-19.json"
+        assert scores_path.exists()
+
+        # Verify scores has data (not corrupted)
+        with open(scores_path) as f:
+            scores = json.load(f)
+        assert len(scores) > 0
