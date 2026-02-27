@@ -1,0 +1,5542 @@
+{
+  "awayTeam": {
+    "name": "Pistons",
+    "tricode": "DET"
+  },
+  "gameId": "0022500796",
+  "homeTeam": {
+    "name": "Knicks",
+    "tricode": "NYK"
+  },
+  "players": [
+    {
+      "name": "Karl-Anthony Towns",
+      "playerId": "1626157",
+      "position": "C-F",
+      "starter": true,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "11:32",
+              "description": "Towns REBOUND (Off:0 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "6:49",
+              "description": "MISS Towns 28' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "6:17",
+              "description": "Towns S.FOUL (P1.T3) (C.Kirkland)",
+              "type": "PF"
+            },
+            {
+              "clock": "11:53",
+              "description": "Brunson 26' 3PT Jump Shot (3 PTS) (Towns 1 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "10:20",
+              "description": "Hart 1' Running Dunk (2 PTS) (Towns 2 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 5.7,
+          "outTime": "6:17",
+          "period": 1,
+          "plusMinus": 1,
+          "stats": {
+            "ast": 2,
+            "blk": 0,
+            "fg3a": 1,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 0,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "9:14",
+              "description": "Towns REBOUND (Off:0 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "8:23",
+              "description": "Towns REBOUND (Off:1 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "8:23",
+              "description": "Towns OFF.Foul (P2) (C.Kirkland)",
+              "type": "PF"
+            },
+            {
+              "clock": "8:23",
+              "description": "Towns Offensive Foul Turnover (P1.T4)",
+              "type": "TO"
+            },
+            {
+              "clock": "7:44",
+              "description": "MISS Towns 4' Driving Hook Shot",
+              "type": "miss2"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 4.8,
+          "outTime": "7:14",
+          "period": 2,
+          "plusMinus": 1,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 1,
+            "pf": 1,
+            "pts": 0,
+            "reb": 2,
+            "stl": 0,
+            "tov": 1
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "4:00",
+              "description": "Towns REBOUND (Off:1 Def:3)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "3:27",
+              "description": "Towns STEAL (1 STL)",
+              "type": "Steal"
+            },
+            {
+              "clock": "2:05",
+              "description": "Towns REBOUND (Off:2 Def:3)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "2:05",
+              "description": "Towns 1' Putback Dunk (2 PTS)",
+              "type": "Make2"
+            }
+          ],
+          "inTime": "4:12",
+          "minutes": 4.2,
+          "outTime": "0:00",
+          "period": 2,
+          "plusMinus": -4,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 2,
+            "pf": 0,
+            "pts": 2,
+            "reb": 2,
+            "stl": 1,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "10:50",
+              "description": "Towns Free Throw 1 of 2 (3 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "10:50",
+              "description": "Towns Free Throw 2 of 2 (4 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "10:18",
+              "description": "Towns 28' 3PT Jump Shot (7 PTS) (Brunson 5 AST)",
+              "type": "Make3"
+            },
+            {
+              "clock": "10:18",
+              "description": "Towns Free Throw 1 of 1 (8 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "10:00",
+              "description": "Towns REBOUND (Off:2 Def:4)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "9:49",
+              "description": "MISS Towns 27' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "9:31",
+              "description": "Towns 2' Running Dunk (10 PTS) (Brunson 6 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "8:54",
+              "description": "Towns REBOUND (Off:3 Def:4)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "8:54",
+              "description": "Towns 1' Putback Layup (12 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "8:02",
+              "description": "MISS Towns 25' 3PT Step Back Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "7:30",
+              "description": "Towns Free Throw 1 of 2 (13 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "7:30",
+              "description": "Towns Free Throw 2 of 2 (14 PTS)",
+              "type": "MakeFT"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 5.8,
+          "outTime": "6:15",
+          "period": 3,
+          "plusMinus": 4,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 3,
+            "fg3m": 1,
+            "fga": 5,
+            "fgm": 3,
+            "fta": 5,
+            "ftm": 5,
+            "oreb": 2,
+            "pf": 0,
+            "pts": 12,
+            "reb": 2,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [],
+          "inTime": "3:16",
+          "minutes": 3.2,
+          "outTime": "0:07",
+          "period": 3,
+          "plusMinus": -3,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "11:04",
+              "description": "Towns REBOUND (Off:3 Def:5)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "10:58",
+              "description": "Towns Lost Ball Turnover (P2.T9)",
+              "type": "TO"
+            },
+            {
+              "clock": "10:39",
+              "description": "Towns 2' Driving Finger Roll Layup (16 PTS) (Alvarado 4 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "9:56",
+              "description": "MISS Towns 2' Driving Layup",
+              "type": "miss2"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 3.6,
+          "outTime": "8:23",
+          "period": 4,
+          "plusMinus": -3,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 1,
+            "pf": 0,
+            "pts": 2,
+            "reb": 1,
+            "stl": 0,
+            "tov": 1
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "2:57",
+              "description": "Towns 4' Driving Layup (18 PTS) (Brunson 8 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "2:57",
+              "description": "Towns Free Throw 1 of 1 (19 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "1:37",
+              "description": "Towns REBOUND (Off:3 Def:6)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "1:12",
+              "description": "Towns REBOUND (Off:4 Def:6)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "1:12",
+              "description": "MISS Towns Tip Layup Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "0:48",
+              "description": "MISS Towns 2' Driving Layup",
+              "type": "miss2"
+            },
+            {
+              "clock": "0:47",
+              "description": "Towns REBOUND (Off:5 Def:6)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "0:47",
+              "description": "Towns 1' Putback Layup (21 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "0:46",
+              "description": "Towns Personal Take Foul (P3.PN) (J.DeRosa)",
+              "type": "PF"
+            },
+            {
+              "clock": "3:32",
+              "description": "Shamet 25' 3PT Pullup Jump Shot (15 PTS) (Towns 3 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "2:08",
+              "description": "Anunoby 25' 3PT Jump Shot (8 PTS) (Towns 4 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "3:43",
+          "minutes": 3.7,
+          "outTime": "0:00",
+          "period": 4,
+          "plusMinus": 4,
+          "stats": {
+            "ast": 2,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 4,
+            "fgm": 2,
+            "fta": 1,
+            "ftm": 1,
+            "oreb": 3,
+            "pf": 1,
+            "pts": 5,
+            "reb": 3,
+            "stl": 0,
+            "tov": 0
+          }
+        }
+      ],
+      "team": "NYK"
+    },
+    {
+      "name": "OG Anunoby",
+      "playerId": "1628384",
+      "position": "F-G",
+      "starter": true,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "11:18",
+              "description": "MISS Anunoby 26' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "9:53",
+              "description": "MISS Anunoby 26' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "7:15",
+              "description": "Anunoby 1' Driving Finger Roll Layup (2 PTS) (Hart 2 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "7:05",
+              "description": "Anunoby BLOCK (1 BLK)",
+              "type": "Block"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 5.7,
+          "outTime": "6:17",
+          "period": 1,
+          "plusMinus": 1,
+          "stats": {
+            "ast": 0,
+            "blk": 1,
+            "fg3a": 2,
+            "fg3m": 0,
+            "fga": 3,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 2,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "0:30",
+              "description": "Anunoby BLOCK (2 BLK)",
+              "type": "Block"
+            },
+            {
+              "clock": "0:00",
+              "description": "MISS Anunoby 3PT Jump Shot",
+              "type": "miss3"
+            }
+          ],
+          "inTime": "3:31",
+          "minutes": 3.5,
+          "outTime": "0:00",
+          "period": 1,
+          "plusMinus": 2,
+          "stats": {
+            "ast": 0,
+            "blk": 1,
+            "fg3a": 1,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "10:07",
+              "description": "Anunoby BLOCK (3 BLK)",
+              "type": "Block"
+            },
+            {
+              "clock": "10:03",
+              "description": "Anunoby 1' Running Layup (4 PTS) (Alvarado 1 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "9:07",
+              "description": "MISS Anunoby 1' Driving Dunk",
+              "type": "miss2"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 2.9,
+          "outTime": "9:07",
+          "period": 2,
+          "plusMinus": 0,
+          "stats": {
+            "ast": 0,
+            "blk": 1,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 2,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "3:13",
+              "description": "MISS Anunoby Free Throw 1 of 2",
+              "type": "missFT"
+            },
+            {
+              "clock": "3:13",
+              "description": "Anunoby Free Throw 2 of 2 (5 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "1:53",
+              "description": "Anunoby S.FOUL (P1.PN) (J.DeRosa)",
+              "type": "PF"
+            }
+          ],
+          "inTime": "4:12",
+          "minutes": 4.2,
+          "outTime": "0:00",
+          "period": 2,
+          "plusMinus": -4,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 2,
+            "ftm": 1,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 1,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "11:49",
+              "description": "Anunoby BLOCK (4 BLK)",
+              "type": "Block"
+            },
+            {
+              "clock": "9:20",
+              "description": "Anunoby P.FOUL (P2.T1) (C.Kirkland)",
+              "type": "PF"
+            },
+            {
+              "clock": "8:56",
+              "description": "MISS Anunoby 4' Driving Layup",
+              "type": "miss2"
+            },
+            {
+              "clock": "8:38",
+              "description": "MISS Anunoby Running Alley Oop Layup Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "7:47",
+              "description": "MISS Anunoby 25' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "6:38",
+              "description": "Anunoby P.FOUL (P3.T2) (T.Ricks)",
+              "type": "PF"
+            },
+            {
+              "clock": "6:22",
+              "description": "MISS Anunoby 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "4:10",
+              "description": "MISS Anunoby 25' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "3:16",
+              "description": "Anunoby P.FOUL (P4.T4) (J.DeRosa)",
+              "type": "PF"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 8.7,
+          "outTime": "3:16",
+          "period": 3,
+          "plusMinus": 4,
+          "stats": {
+            "ast": 0,
+            "blk": 1,
+            "fg3a": 3,
+            "fg3m": 0,
+            "fga": 5,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 3,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "2:08",
+              "description": "Anunoby 25' 3PT Jump Shot (8 PTS) (Towns 4 AST)",
+              "type": "Make3"
+            },
+            {
+              "clock": "0:38",
+              "description": "MISS Anunoby 3PT Jump Shot",
+              "type": "miss3"
+            }
+          ],
+          "inTime": "6:32",
+          "minutes": 6.5,
+          "outTime": "0:00",
+          "period": 4,
+          "plusMinus": 1,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 2,
+            "fg3m": 1,
+            "fga": 2,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 3,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        }
+      ],
+      "team": "NYK"
+    },
+    {
+      "name": "Josh Hart",
+      "playerId": "1628404",
+      "position": "G",
+      "starter": true,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "11:01",
+              "description": "Hart REBOUND (Off:0 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "10:33",
+              "description": "MISS Hart 2' Driving Layup",
+              "type": "miss2"
+            },
+            {
+              "clock": "10:20",
+              "description": "Hart 1' Running Dunk (2 PTS) (Towns 2 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "8:54",
+              "description": "Hart REBOUND (Off:0 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "7:03",
+              "description": "Hart REBOUND (Off:0 Def:3)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "5:53",
+              "description": "Hart REBOUND (Off:0 Def:4)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "5:48",
+              "description": "Hart 1' Running Layup (4 PTS) (Shamet 1 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "5:32",
+              "description": "Hart S.FOUL (P1.T4) (J.DeRosa)",
+              "type": "PF"
+            },
+            {
+              "clock": "7:42",
+              "description": "Bridges Layup (4 PTS) (Hart 1 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "7:15",
+              "description": "Anunoby 1' Driving Finger Roll Layup (2 PTS) (Hart 2 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "4:26",
+              "description": "Brunson 6' Driving Floating Jump Shot (7 PTS) (Hart 3 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 8.5,
+          "outTime": "3:31",
+          "period": 1,
+          "plusMinus": -3,
+          "stats": {
+            "ast": 3,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 3,
+            "fgm": 2,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 4,
+            "reb": 4,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "5:31",
+              "description": "MISS Hart 1' Driving Layup",
+              "type": "miss2"
+            },
+            {
+              "clock": "2:37",
+              "description": "Hart 10' Pullup Jump Shot (6 PTS) (Brunson 3 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "0:52",
+              "description": "Hart Bad Pass Turnover (P1.T6)",
+              "type": "TO"
+            }
+          ],
+          "inTime": "7:14",
+          "minutes": 7.2,
+          "outTime": "0:00",
+          "period": 2,
+          "plusMinus": -7,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 2,
+            "reb": 0,
+            "stl": 0,
+            "tov": 1
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "11:23",
+              "description": "Hart 8' Driving Floating Jump Shot (8 PTS) (Brunson 4 AST)",
+              "type": "Make2"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 5.8,
+          "outTime": "6:15",
+          "period": 3,
+          "plusMinus": 4,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 2,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [],
+          "inTime": "0:07",
+          "minutes": 0.1,
+          "outTime": "0:00",
+          "period": 3,
+          "plusMinus": 2,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "9:09",
+              "description": "Hart 1' Driving Layup (10 PTS) (Alvarado 5 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "8:34",
+              "description": "MISS Hart 23' Pullup Jump Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "6:32",
+              "description": "MISS Hart Free Throw 1 of 2",
+              "type": "missFT"
+            },
+            {
+              "clock": "6:32",
+              "description": "Hart Free Throw 2 of 2 (11 PTS)",
+              "type": "MakeFT"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 6.2,
+          "outTime": "5:46",
+          "period": 4,
+          "plusMinus": -2,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 1,
+            "fta": 2,
+            "ftm": 1,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 3,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        }
+      ],
+      "team": "NYK"
+    },
+    {
+      "name": "Mikal Bridges",
+      "playerId": "1628969",
+      "position": "G-F",
+      "starter": true,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "9:03",
+              "description": "Bridges L.B.FOUL (P1.T1) (C.Kirkland)",
+              "type": "PF"
+            },
+            {
+              "clock": "8:46",
+              "description": "Bridges 21' Jump Shot (2 PTS) (Brunson 1 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "7:42",
+              "description": "Bridges Layup (4 PTS) (Hart 1 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "7:33",
+              "description": "Bridges S.FOUL (P2.T2) (J.DeRosa)",
+              "type": "PF"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 4.5,
+          "outTime": "7:33",
+          "period": 1,
+          "plusMinus": 3,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 2,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 2,
+            "pts": 4,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "10:22",
+              "description": "MISS Bridges 25' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "8:26",
+              "description": "MISS Bridges 4' Running Jump Shot",
+              "type": "miss2"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 5.4,
+          "outTime": "6:34",
+          "period": 2,
+          "plusMinus": -1,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 1,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "3:40",
+              "description": "Bridges 13' Turnaround Fadeaway (6 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "1:28",
+              "description": "Bridges REBOUND (Off:0 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "0:01",
+              "description": "MISS Bridges 26' 3PT Jump Shot",
+              "type": "miss3"
+            }
+          ],
+          "inTime": "4:12",
+          "minutes": 4.2,
+          "outTime": "0:00",
+          "period": 2,
+          "plusMinus": -4,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 1,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 2,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "9:10",
+              "description": "Bridges REBOUND (Off:0 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "8:42",
+              "description": "Bridges STEAL (1 STL)",
+              "type": "Steal"
+            },
+            {
+              "clock": "7:10",
+              "description": "Bridges REBOUND (Off:0 Def:3)",
+              "type": "OffReb"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 5.8,
+          "outTime": "6:15",
+          "period": 3,
+          "plusMinus": 4,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 2,
+            "stl": 1,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "1:07",
+              "description": "Bridges 13' Fadeaway Jumper (8 PTS) (Alvarado 3 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "0:31",
+              "description": "MISS Bridges 4' Turnaround Hook Shot",
+              "type": "miss2"
+            }
+          ],
+          "inTime": "3:16",
+          "minutes": 3.2,
+          "outTime": "0:07",
+          "period": 3,
+          "plusMinus": -3,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 2,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "11:43",
+              "description": "Bridges Bad Pass Turnover (P1.T8)",
+              "type": "TO"
+            },
+            {
+              "clock": "11:23",
+              "description": "MISS Bridges 24' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "10:54",
+              "description": "Bridges S.FOUL (P3.T1) (C.Kirkland)",
+              "type": "PF"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 2.5,
+          "outTime": "9:31",
+          "period": 4,
+          "plusMinus": -5,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 1,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 1
+          }
+        }
+      ],
+      "team": "NYK"
+    },
+    {
+      "name": "Jalen Brunson",
+      "playerId": "1628973",
+      "position": "G",
+      "starter": true,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "11:53",
+              "description": "Brunson 26' 3PT Jump Shot (3 PTS) (Towns 1 AST)",
+              "type": "Make3"
+            },
+            {
+              "clock": "10:58",
+              "description": "Brunson Traveling Turnover (P1.T1)",
+              "type": "TO"
+            },
+            {
+              "clock": "10:41",
+              "description": "Brunson REBOUND (Off:0 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "10:23",
+              "description": "Brunson REBOUND (Off:0 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "9:28",
+              "description": "Brunson REBOUND (Off:0 Def:3)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "9:14",
+              "description": "Brunson Free Throw 1 of 2 (4 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "9:14",
+              "description": "Brunson Free Throw 2 of 2 (5 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "6:25",
+              "description": "MISS Brunson 25' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "6:03",
+              "description": "MISS Brunson 5' Driving Floating Jump Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "5:13",
+              "description": "MISS Brunson 26' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "4:41",
+              "description": "Brunson S.FOUL (P1.PN) (C.Kirkland)",
+              "type": "PF"
+            },
+            {
+              "clock": "4:26",
+              "description": "Brunson 6' Driving Floating Jump Shot (7 PTS) (Hart 3 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "3:09",
+              "description": "Brunson REBOUND (Off:0 Def:4)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "2:48",
+              "description": "Brunson Bad Pass Turnover (P2.T2)",
+              "type": "TO"
+            },
+            {
+              "clock": "2:42",
+              "description": "Brunson STEAL (1 STL)",
+              "type": "Steal"
+            },
+            {
+              "clock": "1:59",
+              "description": "MISS Brunson 8' Driving Floating Jump Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "1:33",
+              "description": "Brunson 11' Turnaround Fadeaway (9 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "8:46",
+              "description": "Bridges 21' Jump Shot (2 PTS) (Brunson 1 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 11.6,
+          "outTime": "0:27",
+          "period": 1,
+          "plusMinus": -2,
+          "stats": {
+            "ast": 1,
+            "blk": 0,
+            "fg3a": 3,
+            "fg3m": 1,
+            "fga": 7,
+            "fgm": 3,
+            "fta": 2,
+            "ftm": 2,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 9,
+            "reb": 4,
+            "stl": 1,
+            "tov": 2
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "5:38",
+              "description": "Brunson 13' Pullup Jump Shot (11 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "5:15",
+              "description": "MISS Brunson 7' Driving Floating Jump Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "4:12",
+              "description": "Brunson P.FOUL (P2.T4) (C.Kirkland)",
+              "type": "PF"
+            },
+            {
+              "clock": "2:07",
+              "description": "MISS Brunson 9' Driving Floating Jump Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "1:36",
+              "description": "Brunson Bad Pass Turnover (P3.T5)",
+              "type": "TO"
+            },
+            {
+              "clock": "1:19",
+              "description": "Brunson Free Throw 1 of 2 (12 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "1:19",
+              "description": "Brunson Free Throw 2 of 2 (13 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "0:31",
+              "description": "MISS Brunson 25' 3PT Pullup Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "6:10",
+              "description": "Robinson 2' Cutting Layup Shot (7 PTS) (Brunson 2 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "2:37",
+              "description": "Hart 10' Pullup Jump Shot (6 PTS) (Brunson 3 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "6:34",
+          "minutes": 6.6,
+          "outTime": "0:00",
+          "period": 2,
+          "plusMinus": -7,
+          "stats": {
+            "ast": 2,
+            "blk": 0,
+            "fg3a": 1,
+            "fg3m": 0,
+            "fga": 4,
+            "fgm": 1,
+            "fta": 2,
+            "ftm": 2,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 4,
+            "reb": 0,
+            "stl": 0,
+            "tov": 1
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "9:37",
+              "description": "Brunson REBOUND (Off:0 Def:5)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "6:55",
+              "description": "Brunson 21' Step Back Jump Shot (15 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "6:34",
+              "description": "Brunson S.FOUL (P3.T3) (J.DeRosa)",
+              "type": "PF"
+            },
+            {
+              "clock": "5:54",
+              "description": "Brunson 26' 3PT Pullup Jump Shot (18 PTS)",
+              "type": "Make3"
+            },
+            {
+              "clock": "4:50",
+              "description": "Brunson 10' Turnaround Fadeaway (20 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "4:17",
+              "description": "Brunson Bad Pass Turnover (P4.T7)",
+              "type": "TO"
+            },
+            {
+              "clock": "3:38",
+              "description": "Brunson 12' Step Back Jump Shot (22 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "0:39",
+              "description": "Brunson REBOUND (Off:0 Def:6)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "0:06",
+              "description": "Brunson Free Throw 1 of 2 (23 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "0:06",
+              "description": "Brunson Free Throw 2 of 2 (24 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "11:23",
+              "description": "Hart 8' Driving Floating Jump Shot (8 PTS) (Brunson 4 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "10:18",
+              "description": "Towns 28' 3PT Jump Shot (7 PTS) (Brunson 5 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "9:31",
+              "description": "Towns 2' Running Dunk (10 PTS) (Brunson 6 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 12.0,
+          "outTime": "0:00",
+          "period": 3,
+          "plusMinus": -1,
+          "stats": {
+            "ast": 3,
+            "blk": 0,
+            "fg3a": 1,
+            "fg3m": 1,
+            "fga": 4,
+            "fgm": 4,
+            "fta": 2,
+            "ftm": 2,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 11,
+            "reb": 2,
+            "stl": 0,
+            "tov": 1
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "7:57",
+              "description": "Brunson Lost Ball Turnover (P5.T10)",
+              "type": "TO"
+            },
+            {
+              "clock": "6:52",
+              "description": "Brunson 5' Driving Floating Bank Jump Shot (26 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "6:03",
+              "description": "Brunson 3' Driving Floating Bank Jump Shot (28 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "5:33",
+              "description": "Brunson 15' Step Back Jump Shot (30 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "4:14",
+              "description": "Brunson Lost Ball Turnover (P6.T11)",
+              "type": "TO"
+            },
+            {
+              "clock": "3:43",
+              "description": "Brunson S.FOUL (P4.PN) (J.DeRosa)",
+              "type": "PF"
+            },
+            {
+              "clock": "1:33",
+              "description": "Brunson 26' 3PT Running Pull-Up Jump Shot (33 PTS)",
+              "type": "Make3"
+            },
+            {
+              "clock": "1:18",
+              "description": "Brunson STEAL (2 STL)",
+              "type": "Steal"
+            },
+            {
+              "clock": "1:14",
+              "description": "MISS Brunson 24' 3PT Running Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "7:42",
+              "description": "Shamet 26' 3PT Pullup Jump Shot (10 PTS) (Brunson 7 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "2:57",
+              "description": "Towns 4' Driving Layup (18 PTS) (Brunson 8 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "8:23",
+          "minutes": 7.6,
+          "outTime": "0:47",
+          "period": 4,
+          "plusMinus": 1,
+          "stats": {
+            "ast": 2,
+            "blk": 0,
+            "fg3a": 2,
+            "fg3m": 1,
+            "fga": 5,
+            "fgm": 4,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 9,
+            "reb": 0,
+            "stl": 1,
+            "tov": 2
+          }
+        }
+      ],
+      "team": "NYK"
+    },
+    {
+      "name": "Mitchell Robinson",
+      "playerId": "1629011",
+      "position": "C-F",
+      "starter": false,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "3:50",
+              "description": "Robinson 1' Cutting Dunk Shot (2 PTS) (Diawara 1 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "1:58",
+              "description": "Robinson REBOUND (Off:1 Def:0)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "1:58",
+              "description": "MISS Robinson Free Throw 1 of 2",
+              "type": "missFT"
+            },
+            {
+              "clock": "1:58",
+              "description": "MISS Robinson Free Throw 2 of 2",
+              "type": "missFT"
+            },
+            {
+              "clock": "0:47",
+              "description": "Robinson Free Throw 1 of 2 (3 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "0:47",
+              "description": "Robinson Free Throw 2 of 2 (4 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "0:05",
+              "description": "Robinson STEAL (1 STL)",
+              "type": "Steal"
+            }
+          ],
+          "inTime": "6:17",
+          "minutes": 6.3,
+          "outTime": "0:00",
+          "period": 1,
+          "plusMinus": -3,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 1,
+            "fta": 4,
+            "ftm": 2,
+            "oreb": 1,
+            "pf": 0,
+            "pts": 4,
+            "reb": 1,
+            "stl": 1,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "8:33",
+              "description": "Robinson BLOCK (1 BLK)",
+              "type": "Block"
+            },
+            {
+              "clock": "8:31",
+              "description": "Robinson REBOUND (Off:1 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "7:43",
+              "description": "Robinson REBOUND (Off:2 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "7:43",
+              "description": "MISS Robinson Tip Layup Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "7:43",
+              "description": "Robinson REBOUND (Off:3 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "7:43",
+              "description": "MISS Robinson Free Throw 1 of 2",
+              "type": "missFT"
+            },
+            {
+              "clock": "7:43",
+              "description": "Robinson Free Throw 2 of 2 (5 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "6:28",
+              "description": "Robinson S.FOUL (P1.T3) (T.Ricks)",
+              "type": "PF"
+            },
+            {
+              "clock": "6:10",
+              "description": "Robinson 2' Cutting Layup Shot (7 PTS) (Brunson 2 AST)",
+              "type": "Make2"
+            }
+          ],
+          "inTime": "9:07",
+          "minutes": 4.9,
+          "outTime": "4:12",
+          "period": 2,
+          "plusMinus": -4,
+          "stats": {
+            "ast": 0,
+            "blk": 1,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 1,
+            "fta": 2,
+            "ftm": 1,
+            "oreb": 3,
+            "pf": 1,
+            "pts": 3,
+            "reb": 3,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [],
+          "inTime": "6:15",
+          "minutes": 3.3,
+          "outTime": "2:57",
+          "period": 3,
+          "plusMinus": -3,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "6:37",
+              "description": "Robinson REBOUND (Off:3 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "5:10",
+              "description": "Robinson STEAL (2 STL)",
+              "type": "Steal"
+            },
+            {
+              "clock": "3:54",
+              "description": "Robinson REBOUND (Off:4 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "3:52",
+              "description": "MISS Robinson Putback Layup",
+              "type": "miss2"
+            }
+          ],
+          "inTime": "8:23",
+          "minutes": 4.7,
+          "outTime": "3:43",
+          "period": 4,
+          "plusMinus": -5,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 2,
+            "pf": 0,
+            "pts": 0,
+            "reb": 2,
+            "stl": 1,
+            "tov": 0
+          }
+        }
+      ],
+      "team": "NYK"
+    },
+    {
+      "name": "Landry Shamet",
+      "playerId": "1629013",
+      "position": "G",
+      "starter": false,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "4:50",
+              "description": "MISS Shamet 26' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "3:31",
+              "description": "Shamet Free Throw 1 of 2 (1 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "3:31",
+              "description": "MISS Shamet Free Throw 2 of 2",
+              "type": "missFT"
+            },
+            {
+              "clock": "0:27",
+              "description": "Shamet REBOUND (Off:0 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "5:48",
+              "description": "Hart 1' Running Layup (4 PTS) (Shamet 1 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "2:37",
+              "description": "Alvarado 2' Running Finger Roll Layup (2 PTS) (Shamet 2 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "7:33",
+          "minutes": 7.5,
+          "outTime": "0:00",
+          "period": 1,
+          "plusMinus": -5,
+          "stats": {
+            "ast": 2,
+            "blk": 0,
+            "fg3a": 1,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 0,
+            "fta": 2,
+            "ftm": 1,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 1,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "7:29",
+              "description": "Shamet REBOUND (Off:0 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "7:14",
+              "description": "Shamet Free Throw 1 of 2 (2 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "7:14",
+              "description": "Shamet Free Throw 2 of 2 (3 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "4:28",
+              "description": "MISS Shamet 3PT Jump Shot",
+              "type": "miss3"
+            }
+          ],
+          "inTime": "9:07",
+          "minutes": 4.9,
+          "outTime": "4:12",
+          "period": 2,
+          "plusMinus": -4,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 1,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 0,
+            "fta": 2,
+            "ftm": 2,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 2,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "5:19",
+              "description": "MISS Shamet 9' Pullup Jump Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "2:57",
+              "description": "MISS Shamet Free Throw 1 of 2",
+              "type": "missFT"
+            },
+            {
+              "clock": "2:57",
+              "description": "Shamet Free Throw 2 of 2 (4 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "2:11",
+              "description": "Shamet 3PT Step Back Jump Shot (7 PTS) (Alvarado 2 AST)",
+              "type": "Make3"
+            },
+            {
+              "clock": "1:41",
+              "description": "MISS Shamet 25' 3PT Jump Shot",
+              "type": "miss3"
+            }
+          ],
+          "inTime": "6:15",
+          "minutes": 6.2,
+          "outTime": "0:00",
+          "period": 3,
+          "plusMinus": -5,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 2,
+            "fg3m": 1,
+            "fga": 3,
+            "fgm": 1,
+            "fta": 2,
+            "ftm": 1,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 4,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "7:42",
+              "description": "Shamet 26' 3PT Pullup Jump Shot (10 PTS) (Brunson 7 AST)",
+              "type": "Make3"
+            },
+            {
+              "clock": "7:21",
+              "description": "Shamet BLOCK (1 BLK)",
+              "type": "Block"
+            },
+            {
+              "clock": "7:06",
+              "description": "MISS Shamet 25' 3PT Step Back Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "7:00",
+              "description": "Shamet S.FOUL (P1.T4) (C.Kirkland)",
+              "type": "PF"
+            },
+            {
+              "clock": "5:07",
+              "description": "Shamet 1' Running Layup (12 PTS) (Sochan 1 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "3:56",
+              "description": "MISS Shamet 25' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "3:32",
+              "description": "Shamet 25' 3PT Pullup Jump Shot (15 PTS) (Towns 3 AST)",
+              "type": "Make3"
+            }
+          ],
+          "inTime": "9:31",
+          "minutes": 9.5,
+          "outTime": "0:00",
+          "period": 4,
+          "plusMinus": 1,
+          "stats": {
+            "ast": 0,
+            "blk": 1,
+            "fg3a": 4,
+            "fg3m": 2,
+            "fga": 5,
+            "fgm": 3,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 8,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        }
+      ],
+      "team": "NYK"
+    },
+    {
+      "name": "Jose Alvarado",
+      "playerId": "1630631",
+      "position": "G",
+      "starter": false,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "2:37",
+              "description": "Alvarado 2' Running Finger Roll Layup (2 PTS) (Shamet 2 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "0:26",
+              "description": "Alvarado Offensive Charge Foul (P1) (C.Kirkland)",
+              "type": "PF"
+            },
+            {
+              "clock": "0:26",
+              "description": "Alvarado Offensive Foul Turnover (P1.T3)",
+              "type": "TO"
+            }
+          ],
+          "inTime": "3:31",
+          "minutes": 3.5,
+          "outTime": "0:00",
+          "period": 1,
+          "plusMinus": 2,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 2,
+            "reb": 0,
+            "stl": 0,
+            "tov": 1
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "11:22",
+              "description": "Alvarado 2' Driving Floating Jump Shot (4 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "10:58",
+              "description": "Alvarado 3' Driving Layup (6 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "10:04",
+              "description": "Alvarado REBOUND (Off:0 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "9:24",
+              "description": "MISS Alvarado 26' 3PT Pullup Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "8:41",
+              "description": "MISS Alvarado 25' 3PT Step Back Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "6:40",
+              "description": "MISS Alvarado 26' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "6:34",
+              "description": "Alvarado P.FOUL (P2.T2) (J.DeRosa)",
+              "type": "PF"
+            },
+            {
+              "clock": "5:35",
+              "description": "Alvarado STEAL (1 STL)",
+              "type": "Steal"
+            },
+            {
+              "clock": "5:26",
+              "description": "Alvarado REBOUND (Off:0 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "4:24",
+              "description": "Alvarado REBOUND (Off:1 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "4:22",
+              "description": "MISS Alvarado 26' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "10:03",
+              "description": "Anunoby 1' Running Layup (4 PTS) (Alvarado 1 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 7.8,
+          "outTime": "4:12",
+          "period": 2,
+          "plusMinus": 0,
+          "stats": {
+            "ast": 1,
+            "blk": 0,
+            "fg3a": 4,
+            "fg3m": 0,
+            "fga": 6,
+            "fgm": 2,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 1,
+            "pf": 1,
+            "pts": 4,
+            "reb": 3,
+            "stl": 1,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "2:11",
+              "description": "Shamet 3PT Step Back Jump Shot (7 PTS) (Alvarado 2 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "1:07",
+              "description": "Bridges 13' Fadeaway Jumper (8 PTS) (Alvarado 3 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "2:57",
+          "minutes": 3.0,
+          "outTime": "0:00",
+          "period": 3,
+          "plusMinus": -1,
+          "stats": {
+            "ast": 2,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "10:13",
+              "description": "Alvarado S.FOUL (P3.T2) (J.DeRosa)",
+              "type": "PF"
+            },
+            {
+              "clock": "9:15",
+              "description": "MISS Alvarado 26' 3PT Pullup Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "9:11",
+              "description": "Alvarado REBOUND (Off:2 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "10:39",
+              "description": "Towns 2' Driving Finger Roll Layup (16 PTS) (Alvarado 4 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "9:09",
+              "description": "Hart 1' Driving Layup (10 PTS) (Alvarado 5 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 5.5,
+          "outTime": "6:32",
+          "period": 4,
+          "plusMinus": -2,
+          "stats": {
+            "ast": 2,
+            "blk": 0,
+            "fg3a": 1,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 1,
+            "pf": 1,
+            "pts": 0,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "0:17",
+              "description": "Alvarado Bad Pass Turnover (P2.T12)",
+              "type": "TO"
+            }
+          ],
+          "inTime": "0:47",
+          "minutes": 0.8,
+          "outTime": "0:00",
+          "period": 4,
+          "plusMinus": -2,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 1
+          }
+        }
+      ],
+      "team": "NYK"
+    },
+    {
+      "name": "Jeremy Sochan",
+      "playerId": "1631110",
+      "position": "F",
+      "starter": false,
+      "stints": [
+        {
+          "events": [],
+          "inTime": "0:27",
+          "minutes": 0.4,
+          "outTime": "0:00",
+          "period": 1,
+          "plusMinus": 0,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "0:01",
+              "description": "Sochan BLOCK (1 BLK)",
+              "type": "Block"
+            }
+          ],
+          "inTime": "0:07",
+          "minutes": 0.1,
+          "outTime": "0:00",
+          "period": 3,
+          "plusMinus": 2,
+          "stats": {
+            "ast": 0,
+            "blk": 1,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "8:30",
+              "description": "Sochan STEAL (1 STL)",
+              "type": "Steal"
+            },
+            {
+              "clock": "8:24",
+              "description": "Sochan 1' Dunk (2 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "8:23",
+              "description": "Sochan P.FOUL (P1.T3) (T.Ricks)",
+              "type": "PF"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 3.6,
+          "outTime": "8:23",
+          "period": 4,
+          "plusMinus": -2,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 2,
+            "reb": 0,
+            "stl": 1,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "5:07",
+              "description": "Shamet 1' Running Layup (12 PTS) (Sochan 1 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "5:46",
+          "minutes": 5.8,
+          "outTime": "0:00",
+          "period": 4,
+          "plusMinus": 1,
+          "stats": {
+            "ast": 1,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        }
+      ],
+      "team": "NYK"
+    },
+    {
+      "name": "Mohamed Diawara",
+      "playerId": "1642885",
+      "position": "F",
+      "starter": false,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "5:30",
+              "description": "Diawara REBOUND (Off:0 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "3:50",
+              "description": "Robinson 1' Cutting Dunk Shot (2 PTS) (Diawara 1 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "6:17",
+          "minutes": 2.8,
+          "outTime": "3:31",
+          "period": 1,
+          "plusMinus": -4,
+          "stats": {
+            "ast": 1,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "11:09",
+              "description": "Diawara S.FOUL (P1.T1) (T.Ricks)",
+              "type": "PF"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 2.9,
+          "outTime": "9:07",
+          "period": 2,
+          "plusMinus": 0,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "5:12",
+              "description": "Diawara REBOUND (Off:0 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "4:15",
+              "description": "Diawara STEAL (1 STL)",
+              "type": "Steal"
+            }
+          ],
+          "inTime": "6:15",
+          "minutes": 3.0,
+          "outTime": "3:16",
+          "period": 3,
+          "plusMinus": -2,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 1,
+            "stl": 1,
+            "tov": 0
+          }
+        }
+      ],
+      "team": "NYK"
+    },
+    {
+      "name": "Tobias Harris",
+      "playerId": "202699",
+      "position": "F",
+      "starter": true,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "10:45",
+              "description": "MISS Harris 25' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "10:33",
+              "description": "Harris BLOCK (1 BLK)",
+              "type": "Block"
+            },
+            {
+              "clock": "8:29",
+              "description": "MISS Harris 9' Fadeaway Jumper",
+              "type": "miss2"
+            },
+            {
+              "clock": "8:25",
+              "description": "MISS Harris 3' Cutting Layup Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "6:47",
+              "description": "Harris REBOUND (Off:0 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "6:24",
+              "description": "Harris REBOUND (Off:0 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "6:17",
+              "description": "Harris Free Throw 1 of 2 (1 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "6:17",
+              "description": "Harris Free Throw 2 of 2 (2 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "5:32",
+              "description": "Harris 11' Driving Floating Jump Shot (4 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "5:32",
+              "description": "MISS Harris Free Throw 1 of 1",
+              "type": "missFT"
+            },
+            {
+              "clock": "5:11",
+              "description": "Harris REBOUND (Off:0 Def:3)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "5:05",
+              "description": "Cunningham 3PT Running Jump Shot (11 PTS) (Harris 1 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 7.3,
+          "outTime": "4:41",
+          "period": 1,
+          "plusMinus": 5,
+          "stats": {
+            "ast": 1,
+            "blk": 1,
+            "fg3a": 1,
+            "fg3m": 0,
+            "fga": 4,
+            "fgm": 1,
+            "fta": 3,
+            "ftm": 2,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 4,
+            "reb": 3,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "7:43",
+              "description": "Harris S.FOUL (P1.T1) (T.Ricks)",
+              "type": "PF"
+            },
+            {
+              "clock": "6:37",
+              "description": "Harris REBOUND (Off:0 Def:4)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "6:28",
+              "description": "Harris 1' Dunk (6 PTS) (LeVert 2 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "6:28",
+              "description": "MISS Harris Free Throw 1 of 1",
+              "type": "missFT"
+            },
+            {
+              "clock": "5:54",
+              "description": "MISS Harris 11' Pullup Jump Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "5:30",
+              "description": "Harris REBOUND (Off:0 Def:5)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "4:49",
+              "description": "Harris 24' 3PT Jump Shot (9 PTS) (Thompson 3 AST)",
+              "type": "Make3"
+            },
+            {
+              "clock": "4:03",
+              "description": "MISS Harris 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "1:30",
+              "description": "MISS Harris 1' Running Alley Oop Layup Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "8:03",
+              "description": "Cunningham 17' Jump Shot (16 PTS) (Harris 2 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "6:50",
+              "description": "Thompson 1' Dunk (2 PTS) (Harris 3 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "0:24",
+              "description": "Thompson 1' Running Layup (4 PTS) (Harris 4 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "8:48",
+          "minutes": 8.8,
+          "outTime": "0:00",
+          "period": 2,
+          "plusMinus": 8,
+          "stats": {
+            "ast": 3,
+            "blk": 0,
+            "fg3a": 2,
+            "fg3m": 1,
+            "fga": 5,
+            "fgm": 2,
+            "fta": 1,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 5,
+            "reb": 2,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "11:08",
+              "description": "MISS Harris 25' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "9:46",
+              "description": "Harris REBOUND (Off:0 Def:6)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "9:39",
+              "description": "MISS Harris 6' Pullup Jump Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "8:42",
+              "description": "Harris Bad Pass Turnover (P1.T8)",
+              "type": "TO"
+            },
+            {
+              "clock": "7:58",
+              "description": "Harris REBOUND (Off:0 Def:7)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "7:43",
+              "description": "Harris REBOUND (Off:0 Def:8)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "6:04",
+              "description": "Harris 12' Turnaround Fadeaway (11 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "5:38",
+              "description": "Cunningham 27' 3PT Jump Shot (27 PTS) (Harris 5 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 6.4,
+          "outTime": "5:38",
+          "period": 3,
+          "plusMinus": -4,
+          "stats": {
+            "ast": 1,
+            "blk": 0,
+            "fg3a": 1,
+            "fg3m": 0,
+            "fga": 3,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 2,
+            "reb": 3,
+            "stl": 0,
+            "tov": 1
+          }
+        },
+        {
+          "events": [],
+          "inTime": "0:07",
+          "minutes": 0.1,
+          "outTime": "0:00",
+          "period": 3,
+          "plusMinus": -2,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "11:43",
+              "description": "Harris STEAL (1 STL)",
+              "type": "Steal"
+            },
+            {
+              "clock": "11:41",
+              "description": "Harris Out of Bounds - Bad Pass Turnover Turnover (P2.T11)",
+              "type": "TO"
+            },
+            {
+              "clock": "11:19",
+              "description": "Harris REBOUND (Off:0 Def:9)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "9:36",
+              "description": "MISS Harris 4' Driving Layup",
+              "type": "miss2"
+            },
+            {
+              "clock": "7:21",
+              "description": "MISS Harris 4' Driving Layup",
+              "type": "miss2"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 4.7,
+          "outTime": "7:21",
+          "period": 4,
+          "plusMinus": 2,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 1,
+            "stl": 1,
+            "tov": 1
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "4:54",
+              "description": "MISS Harris 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "2:57",
+              "description": "Harris S.FOUL (P2.T2) (T.Ricks)",
+              "type": "PF"
+            },
+            {
+              "clock": "1:03",
+              "description": "Harris REBOUND (Off:1 Def:9)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "1:03",
+              "description": "MISS Harris Tip Dunk Shot",
+              "type": "miss2"
+            }
+          ],
+          "inTime": "5:07",
+          "minutes": 4.3,
+          "outTime": "0:47",
+          "period": 4,
+          "plusMinus": 1,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 1,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 1,
+            "pf": 1,
+            "pts": 0,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        }
+      ],
+      "team": "DET"
+    },
+    {
+      "name": "Caris LeVert",
+      "playerId": "1627747",
+      "position": "G",
+      "starter": false,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "1:13",
+              "description": "Smith 1' Dunk (2 PTS) (LeVert 1 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "1:58",
+          "minutes": 2.0,
+          "outTime": "0:00",
+          "period": 1,
+          "plusMinus": -2,
+          "stats": {
+            "ast": 1,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "9:24",
+              "description": "LeVert BLOCK (1 BLK)",
+              "type": "Block"
+            },
+            {
+              "clock": "9:17",
+              "description": "MISS LeVert 3PT Running Pull-Up Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "7:31",
+              "description": "MISS LeVert 12' Pullup Jump Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "5:35",
+              "description": "LeVert Bad Pass Turnover (P1.T6)",
+              "type": "TO"
+            },
+            {
+              "clock": "6:28",
+              "description": "Harris 1' Dunk (6 PTS) (LeVert 2 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 7.8,
+          "outTime": "4:12",
+          "period": 2,
+          "plusMinus": 0,
+          "stats": {
+            "ast": 1,
+            "blk": 1,
+            "fg3a": 1,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 1
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "4:06",
+              "description": "LeVert REBOUND (Off:0 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "0:14",
+              "description": "LeVert 2' Driving Reverse Layup (2 PTS) (Holland II 1 AST)",
+              "type": "Make2"
+            }
+          ],
+          "inTime": "5:38",
+          "minutes": 5.6,
+          "outTime": "0:00",
+          "period": 3,
+          "plusMinus": 6,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 2,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "9:54",
+              "description": "LeVert REBOUND (Off:0 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "9:33",
+              "description": "LeVert 27' 3PT Jump Shot (5 PTS) (Reed 2 AST)",
+              "type": "Make3"
+            },
+            {
+              "clock": "9:15",
+              "description": "LeVert BLOCK (2 BLK)",
+              "type": "Block"
+            },
+            {
+              "clock": "8:12",
+              "description": "LeVert 3PT Step Back Jump Shot (8 PTS)",
+              "type": "Make3"
+            },
+            {
+              "clock": "7:57",
+              "description": "LeVert STEAL (1 STL)",
+              "type": "Steal"
+            },
+            {
+              "clock": "7:54",
+              "description": "MISS LeVert 1' Running Layup",
+              "type": "miss2"
+            },
+            {
+              "clock": "8:47",
+              "description": "Reed 1' Reverse Layup (14 PTS) (LeVert 3 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 4.7,
+          "outTime": "7:21",
+          "period": 4,
+          "plusMinus": 2,
+          "stats": {
+            "ast": 1,
+            "blk": 1,
+            "fg3a": 2,
+            "fg3m": 2,
+            "fga": 3,
+            "fgm": 2,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 6,
+            "reb": 1,
+            "stl": 1,
+            "tov": 0
+          }
+        }
+      ],
+      "team": "DET"
+    },
+    {
+      "name": "Duncan Robinson",
+      "playerId": "1629130",
+      "position": "F",
+      "starter": true,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "11:04",
+              "description": "MISS Robinson 25' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "10:26",
+              "description": "MISS Robinson 24' 3PT Running Pull-Up Jump Shot",
+              "type": "miss3"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 7.3,
+          "outTime": "4:41",
+          "period": 1,
+          "plusMinus": 5,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 2,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [],
+          "inTime": "0:27",
+          "minutes": 0.4,
+          "outTime": "0:00",
+          "period": 1,
+          "plusMinus": 0,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "0:45",
+              "description": "Robinson 24' 3PT Jump Shot (3 PTS) (Cunningham 4 AST)",
+              "type": "Make3"
+            },
+            {
+              "clock": "0:00",
+              "description": "Robinson REBOUND (Off:0 Def:1)",
+              "type": "OffReb"
+            }
+          ],
+          "inTime": "4:12",
+          "minutes": 4.2,
+          "outTime": "0:00",
+          "period": 2,
+          "plusMinus": 4,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 1,
+            "fg3m": 1,
+            "fga": 1,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 3,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "8:32",
+              "description": "Robinson 25' 3PT Running Jump Shot (6 PTS) (Cunningham 6 AST)",
+              "type": "Make3"
+            },
+            {
+              "clock": "7:36",
+              "description": "Robinson 24' 3PT Jump Shot (9 PTS) (Cunningham 7 AST)",
+              "type": "Make3"
+            },
+            {
+              "clock": "7:14",
+              "description": "MISS Robinson 3PT Jump Shot",
+              "type": "miss3"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 6.4,
+          "outTime": "5:38",
+          "period": 3,
+          "plusMinus": -4,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 3,
+            "fg3m": 2,
+            "fga": 3,
+            "fgm": 2,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 6,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [],
+          "inTime": "0:07",
+          "minutes": 0.1,
+          "outTime": "0:00",
+          "period": 3,
+          "plusMinus": 0,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [],
+          "inTime": "7:21",
+          "minutes": 2.2,
+          "outTime": "5:07",
+          "period": 4,
+          "plusMinus": -4,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        }
+      ],
+      "team": "DET"
+    },
+    {
+      "name": "Javonte Green",
+      "playerId": "1629750",
+      "position": "G",
+      "starter": false,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "2:21",
+              "description": "Green 24' 3PT Jump Shot (3 PTS) (Cunningham 2 AST)",
+              "type": "Make3"
+            },
+            {
+              "clock": "1:55",
+              "description": "Green REBOUND (Off:0 Def:1)",
+              "type": "OffReb"
+            }
+          ],
+          "inTime": "3:40",
+          "minutes": 3.7,
+          "outTime": "0:00",
+          "period": 1,
+          "plusMinus": -2,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 1,
+            "fg3m": 1,
+            "fga": 1,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 3,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "11:09",
+              "description": "Green Free Throw 1 of 2 (4 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "11:09",
+              "description": "Green Free Throw 2 of 2 (5 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "10:18",
+              "description": "Green REBOUND (Off:0 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "9:38",
+              "description": "Green REBOUND (Off:1 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "9:36",
+              "description": "MISS Green 26' 3PT Jump Shot",
+              "type": "miss3"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 3.2,
+          "outTime": "8:48",
+          "period": 2,
+          "plusMinus": 0,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 1,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 0,
+            "fta": 2,
+            "ftm": 2,
+            "oreb": 1,
+            "pf": 0,
+            "pts": 2,
+            "reb": 2,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "4:17",
+              "description": "Green STEAL (1 STL)",
+              "type": "Steal"
+            }
+          ],
+          "inTime": "5:38",
+          "minutes": 5.6,
+          "outTime": "0:00",
+          "period": 3,
+          "plusMinus": 6,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 1,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "11:07",
+              "description": "MISS Green 26' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "10:58",
+              "description": "Green STEAL (2 STL)",
+              "type": "Steal"
+            },
+            {
+              "clock": "10:54",
+              "description": "MISS Green Free Throw 1 of 2",
+              "type": "missFT"
+            },
+            {
+              "clock": "10:54",
+              "description": "Green Free Throw 2 of 2 (6 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "8:30",
+              "description": "Green Bad Pass Turnover (P1.T12)",
+              "type": "TO"
+            },
+            {
+              "clock": "7:02",
+              "description": "Green REBOUND (Off:1 Def:3)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "7:00",
+              "description": "Green 1' Running Dunk (8 PTS) (Cunningham 10 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "7:00",
+              "description": "Green Free Throw 1 of 1 (9 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "6:32",
+              "description": "Green S.FOUL (P1.T1) (C.Kirkland)",
+              "type": "PF"
+            },
+            {
+              "clock": "5:46",
+              "description": "Green Out of Bounds - Bad Pass Turnover Turnover (P2.T13)",
+              "type": "TO"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 6.9,
+          "outTime": "5:07",
+          "period": 4,
+          "plusMinus": 2,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 1,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 1,
+            "fta": 3,
+            "ftm": 2,
+            "oreb": 1,
+            "pf": 1,
+            "pts": 4,
+            "reb": 1,
+            "stl": 1,
+            "tov": 2
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "0:12",
+              "description": "Green REBOUND (Off:2 Def:3)",
+              "type": "OffReb"
+            }
+          ],
+          "inTime": "0:47",
+          "minutes": 0.8,
+          "outTime": "0:00",
+          "period": 4,
+          "plusMinus": 2,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 1,
+            "pf": 0,
+            "pts": 0,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        }
+      ],
+      "team": "DET"
+    },
+    {
+      "name": "Paul Reed",
+      "playerId": "1630194",
+      "position": "F",
+      "starter": true,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "10:10",
+              "description": "Reed 1' Layup (2 PTS) (Thompson 1 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "9:50",
+              "description": "Reed REBOUND (Off:0 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "9:30",
+              "description": "MISS Reed 26' 3PT Step Back Bank Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "8:26",
+              "description": "Reed REBOUND (Off:1 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "6:01",
+              "description": "Reed REBOUND (Off:1 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "4:47",
+              "description": "Reed REBOUND (Off:1 Def:3)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "4:41",
+              "description": "Reed 2' Layup (4 PTS) (Cunningham 1 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "4:41",
+              "description": "Reed Free Throw 1 of 1 (5 PTS)",
+              "type": "MakeFT"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 8.3,
+          "outTime": "3:40",
+          "period": 1,
+          "plusMinus": 4,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 1,
+            "fg3m": 0,
+            "fga": 3,
+            "fgm": 2,
+            "fta": 1,
+            "ftm": 1,
+            "oreb": 3,
+            "pf": 0,
+            "pts": 5,
+            "reb": 4,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "10:41",
+              "description": "Reed 1' Cutting Dunk Shot (7 PTS) (Cunningham 3 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "11:49",
+              "description": "Holland II 2' Cutting Layup Shot (2 PTS) (Reed 1 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 3.2,
+          "outTime": "8:48",
+          "period": 2,
+          "plusMinus": 0,
+          "stats": {
+            "ast": 1,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 2,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "1:36",
+              "description": "Reed STEAL (1 STL)",
+              "type": "Steal"
+            },
+            {
+              "clock": "1:19",
+              "description": "Reed S.FOUL (P1.PN) (J.DeRosa)",
+              "type": "PF"
+            }
+          ],
+          "inTime": "3:54",
+          "minutes": 3.9,
+          "outTime": "0:00",
+          "period": 2,
+          "plusMinus": 4,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 0,
+            "reb": 0,
+            "stl": 1,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "10:50",
+              "description": "Reed S.FOUL (P2.T2) (C.Kirkland)",
+              "type": "PF"
+            },
+            {
+              "clock": "10:29",
+              "description": "Reed 8' Jump Shot (9 PTS) (Thompson 4 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "10:18",
+              "description": "Reed S.FOUL (P3.T3) (J.DeRosa)",
+              "type": "PF"
+            },
+            {
+              "clock": "8:56",
+              "description": "Reed BLOCK (1 BLK)",
+              "type": "Block"
+            },
+            {
+              "clock": "8:09",
+              "description": "Reed P.FOUL (P4.T4) (C.Kirkland)",
+              "type": "PF"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 3.9,
+          "outTime": "8:09",
+          "period": 3,
+          "plusMinus": -4,
+          "stats": {
+            "ast": 0,
+            "blk": 1,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 3,
+            "pts": 2,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "10:13",
+              "description": "Reed 3' Layup (11 PTS) (Jenkins 2 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "10:13",
+              "description": "Reed Free Throw 1 of 1 (12 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "9:56",
+              "description": "Reed BLOCK (2 BLK)",
+              "type": "Block"
+            },
+            {
+              "clock": "9:34",
+              "description": "Reed REBOUND (Off:2 Def:3)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "8:47",
+              "description": "Reed 1' Reverse Layup (14 PTS) (LeVert 3 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "9:33",
+              "description": "LeVert 27' 3PT Jump Shot (5 PTS) (Reed 2 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 5.0,
+          "outTime": "7:00",
+          "period": 4,
+          "plusMinus": 8,
+          "stats": {
+            "ast": 1,
+            "blk": 1,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 2,
+            "fta": 1,
+            "ftm": 1,
+            "oreb": 1,
+            "pf": 0,
+            "pts": 5,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "4:47",
+              "description": "Reed REBOUND (Off:3 Def:3)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "3:52",
+              "description": "Reed BLOCK (3 BLK)",
+              "type": "Block"
+            },
+            {
+              "clock": "1:39",
+              "description": "MISS Reed 13' Jump Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "1:12",
+              "description": "Reed REBOUND (Off:3 Def:4)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "0:54",
+              "description": "Reed 1' Cutting Layup Shot (16 PTS) (Cunningham 12 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "0:46",
+              "description": "Reed Free Throw 1 of 2 (17 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "0:46",
+              "description": "Reed Free Throw 2 of 2 (18 PTS)",
+              "type": "MakeFT"
+            }
+          ],
+          "inTime": "5:07",
+          "minutes": 5.1,
+          "outTime": "0:00",
+          "period": 4,
+          "plusMinus": 3,
+          "stats": {
+            "ast": 0,
+            "blk": 1,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 1,
+            "fta": 2,
+            "ftm": 2,
+            "oreb": 2,
+            "pf": 0,
+            "pts": 4,
+            "reb": 2,
+            "stl": 0,
+            "tov": 0
+          }
+        }
+      ],
+      "team": "DET"
+    },
+    {
+      "name": "Cade Cunningham",
+      "playerId": "1630595",
+      "position": "G",
+      "starter": true,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "11:34",
+              "description": "MISS Cunningham 16' Step Back Jump Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "9:04",
+              "description": "MISS Cunningham 16' Pullup Jump Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "8:55",
+              "description": "MISS Cunningham 25' 3PT Pullup Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "8:11",
+              "description": "Cunningham 25' 3PT Step Back Jump Shot (3 PTS)",
+              "type": "Make3"
+            },
+            {
+              "clock": "7:33",
+              "description": "Cunningham 2' Driving Layup (5 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "7:33",
+              "description": "Cunningham Free Throw 1 of 1 (6 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "7:05",
+              "description": "MISS Cunningham 26' 3PT Pullup Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "6:35",
+              "description": "Cunningham 2' Layup (8 PTS) (Thompson 2 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "5:55",
+              "description": "MISS Cunningham 1' Driving Layup",
+              "type": "miss2"
+            },
+            {
+              "clock": "5:05",
+              "description": "Cunningham 3PT Running Jump Shot (11 PTS) (Harris 1 AST)",
+              "type": "Make3"
+            },
+            {
+              "clock": "4:05",
+              "description": "Cunningham 26' 3PT Jump Shot (14 PTS) (Jenkins 1 AST)",
+              "type": "Make3"
+            },
+            {
+              "clock": "3:12",
+              "description": "MISS Cunningham 15' Step Back Jump Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "2:48",
+              "description": "Cunningham STEAL (1 STL)",
+              "type": "Steal"
+            },
+            {
+              "clock": "2:42",
+              "description": "Cunningham Bad Pass Turnover (P1.T2)",
+              "type": "TO"
+            },
+            {
+              "clock": "4:41",
+              "description": "Reed 2' Layup (4 PTS) (Cunningham 1 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "2:21",
+              "description": "Green 24' 3PT Jump Shot (3 PTS) (Cunningham 2 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 10.0,
+          "outTime": "1:58",
+          "period": 1,
+          "plusMinus": 4,
+          "stats": {
+            "ast": 2,
+            "blk": 0,
+            "fg3a": 5,
+            "fg3m": 3,
+            "fga": 11,
+            "fgm": 5,
+            "fta": 1,
+            "ftm": 1,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 14,
+            "reb": 0,
+            "stl": 1,
+            "tov": 1
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "0:05",
+              "description": "Cunningham Bad Pass Turnover (P2.T4)",
+              "type": "TO"
+            }
+          ],
+          "inTime": "0:27",
+          "minutes": 0.4,
+          "outTime": "0:00",
+          "period": 1,
+          "plusMinus": 0,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 1
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "10:07",
+              "description": "MISS Cunningham 9' Fadeaway Jumper",
+              "type": "miss2"
+            },
+            {
+              "clock": "9:41",
+              "description": "MISS Cunningham 4' Driving Layup",
+              "type": "miss2"
+            },
+            {
+              "clock": "9:38",
+              "description": "Cunningham REBOUND (Off:1 Def:0)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "9:38",
+              "description": "MISS Cunningham Tip Layup Shot",
+              "type": "miss2"
+            },
+            {
+              "clock": "9:07",
+              "description": "Cunningham BLOCK (1 BLK)",
+              "type": "Block"
+            },
+            {
+              "clock": "8:37",
+              "description": "Cunningham REBOUND (Off:1 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "8:33",
+              "description": "MISS Cunningham 1' Running Layup",
+              "type": "miss2"
+            },
+            {
+              "clock": "8:03",
+              "description": "Cunningham 17' Jump Shot (16 PTS) (Harris 2 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "10:41",
+              "description": "Reed 1' Cutting Dunk Shot (7 PTS) (Cunningham 3 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 5.4,
+          "outTime": "6:34",
+          "period": 2,
+          "plusMinus": 0,
+          "stats": {
+            "ast": 1,
+            "blk": 1,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 5,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 2,
+            "pf": 0,
+            "pts": 2,
+            "reb": 2,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "3:01",
+              "description": "Cunningham 3' Driving Layup (18 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "2:19",
+              "description": "Cunningham 14' Fadeaway Jumper (20 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "1:53",
+              "description": "Cunningham Free Throw 1 of 2 (21 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "1:53",
+              "description": "Cunningham Free Throw 2 of 2 (22 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "1:02",
+              "description": "Cunningham 15' Pullup Jump Shot (24 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "0:30",
+              "description": "Cunningham REBOUND (Off:1 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "0:45",
+              "description": "Robinson 24' 3PT Jump Shot (3 PTS) (Cunningham 4 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "3:13",
+          "minutes": 3.2,
+          "outTime": "0:00",
+          "period": 2,
+          "plusMinus": 6,
+          "stats": {
+            "ast": 1,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 3,
+            "fgm": 3,
+            "fta": 2,
+            "ftm": 2,
+            "oreb": 1,
+            "pf": 0,
+            "pts": 8,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "11:49",
+              "description": "MISS Cunningham 2' Driving Layup",
+              "type": "miss2"
+            },
+            {
+              "clock": "9:15",
+              "description": "MISS Cunningham 26' 3PT Pullup Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "8:36",
+              "description": "Cunningham REBOUND (Off:1 Def:3)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "7:54",
+              "description": "Cunningham Out of Bounds Lost Ball Turnover (P3.T9)",
+              "type": "TO"
+            },
+            {
+              "clock": "5:38",
+              "description": "Cunningham 27' 3PT Jump Shot (27 PTS) (Harris 5 AST)",
+              "type": "Make3"
+            },
+            {
+              "clock": "5:13",
+              "description": "MISS Cunningham 26' 3PT Running Pull-Up Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "4:28",
+              "description": "Cunningham 1' Driving Layup (29 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "3:57",
+              "description": "Cunningham 20' Pullup Jump Shot (31 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "3:08",
+              "description": "Cunningham 1' Driving Dunk (33 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "2:37",
+              "description": "Cunningham 21' Step Back Jump Shot (35 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "1:38",
+              "description": "Cunningham REBOUND (Off:1 Def:4)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "0:41",
+              "description": "MISS Cunningham 27' 3PT Step Back Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "0:29",
+              "description": "Cunningham REBOUND (Off:1 Def:5)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "0:01",
+              "description": "MISS Cunningham 3' Driving Layup",
+              "type": "miss2"
+            },
+            {
+              "clock": "11:46",
+              "description": "Thompson 1' Layup (6 PTS) (Cunningham 5 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "8:32",
+              "description": "Robinson 25' 3PT Running Jump Shot (6 PTS) (Cunningham 6 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "7:36",
+              "description": "Robinson 24' 3PT Jump Shot (9 PTS) (Cunningham 7 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "1:57",
+              "description": "Holland II 26' 3PT Jump Shot (5 PTS) (Cunningham 8 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "1:30",
+              "description": "Holland II 2' Driving Reverse Layup (7 PTS) (Cunningham 9 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 12.0,
+          "outTime": "0:00",
+          "period": 3,
+          "plusMinus": 1,
+          "stats": {
+            "ast": 5,
+            "blk": 0,
+            "fg3a": 4,
+            "fg3m": 1,
+            "fga": 10,
+            "fgm": 5,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 3,
+            "pf": 0,
+            "pts": 11,
+            "reb": 3,
+            "stl": 0,
+            "tov": 1
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "6:14",
+              "description": "Cunningham 3' Driving Floating Jump Shot (37 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "5:10",
+              "description": "Cunningham Lost Ball Turnover (P4.T14)",
+              "type": "TO"
+            },
+            {
+              "clock": "4:50",
+              "description": "MISS Cunningham 27' 3PT Jump Shot",
+              "type": "miss3"
+            },
+            {
+              "clock": "4:37",
+              "description": "Cunningham 25' 3PT Step Back Jump Shot (40 PTS)",
+              "type": "Make3"
+            },
+            {
+              "clock": "3:09",
+              "description": "Cunningham 1' Driving Finger Roll Layup (42 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "1:18",
+              "description": "Cunningham Lost Ball Turnover (P5.T15)",
+              "type": "TO"
+            },
+            {
+              "clock": "1:07",
+              "description": "MISS Cunningham 3' Running Layup",
+              "type": "miss2"
+            },
+            {
+              "clock": "1:03",
+              "description": "Cunningham REBOUND (Off:2 Def:5)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "0:48",
+              "description": "Cunningham BLOCK (2 BLK)",
+              "type": "Block"
+            },
+            {
+              "clock": "0:36",
+              "description": "Cunningham REBOUND (Off:2 Def:6)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "7:00",
+              "description": "Green 1' Running Dunk (8 PTS) (Cunningham 10 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "4:10",
+              "description": "Jenkins 1' Running Alley Oop Dunk Shot (4 PTS) (Cunningham 11 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "0:54",
+              "description": "Reed 1' Cutting Layup Shot (16 PTS) (Cunningham 12 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "0:32",
+              "description": "Thompson 2' Running Layup (10 PTS) (Cunningham 13 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "7:21",
+          "minutes": 7.3,
+          "outTime": "0:00",
+          "period": 4,
+          "plusMinus": -1,
+          "stats": {
+            "ast": 4,
+            "blk": 1,
+            "fg3a": 2,
+            "fg3m": 1,
+            "fga": 5,
+            "fgm": 3,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 2,
+            "pf": 0,
+            "pts": 7,
+            "reb": 2,
+            "stl": 0,
+            "tov": 2
+          }
+        }
+      ],
+      "team": "DET"
+    },
+    {
+      "name": "Ausar Thompson",
+      "playerId": "1641709",
+      "position": "G-F",
+      "starter": true,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "10:31",
+              "description": "Thompson REBOUND (Off:0 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "9:14",
+              "description": "Thompson S.FOUL (P1.T1) (C.Kirkland)",
+              "type": "PF"
+            },
+            {
+              "clock": "10:10",
+              "description": "Reed 1' Layup (2 PTS) (Thompson 1 AST)",
+              "type": "Assist"
+            },
+            {
+              "clock": "6:35",
+              "description": "Cunningham 2' Layup (8 PTS) (Thompson 2 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 8.3,
+          "outTime": "3:40",
+          "period": 1,
+          "plusMinus": 4,
+          "stats": {
+            "ast": 2,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 0,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "6:50",
+              "description": "Thompson 1' Dunk (2 PTS) (Harris 3 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "5:26",
+              "description": "MISS Thompson 3' Running Layup",
+              "type": "miss2"
+            },
+            {
+              "clock": "4:22",
+              "description": "Thompson REBOUND (Off:0 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "3:13",
+              "description": "Thompson S.FOUL (P2.T4) (J.DeRosa)",
+              "type": "PF"
+            },
+            {
+              "clock": "0:52",
+              "description": "Thompson STEAL (1 STL)",
+              "type": "Steal"
+            },
+            {
+              "clock": "0:24",
+              "description": "Thompson 1' Running Layup (4 PTS) (Harris 4 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "4:49",
+              "description": "Harris 24' 3PT Jump Shot (9 PTS) (Thompson 3 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "7:14",
+          "minutes": 7.2,
+          "outTime": "0:00",
+          "period": 2,
+          "plusMinus": 7,
+          "stats": {
+            "ast": 1,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 3,
+            "fgm": 2,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 4,
+            "reb": 1,
+            "stl": 1,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "11:46",
+              "description": "Thompson 1' Layup (6 PTS) (Cunningham 5 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "11:07",
+              "description": "Thompson L.B.FOUL (P3.T1) (J.DeRosa)",
+              "type": "PF"
+            },
+            {
+              "clock": "10:02",
+              "description": "MISS Thompson 1' Driving Layup",
+              "type": "miss2"
+            },
+            {
+              "clock": "6:34",
+              "description": "Thompson Free Throw 1 of 2 (7 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "6:34",
+              "description": "Thompson Free Throw 2 of 2 (8 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "6:20",
+              "description": "Thompson REBOUND (Off:0 Def:3)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "6:15",
+              "description": "MISS Thompson 2' Running Layup",
+              "type": "miss2"
+            },
+            {
+              "clock": "5:17",
+              "description": "Thompson REBOUND (Off:0 Def:4)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "4:15",
+              "description": "Thompson Lost Ball Turnover (P1.T10)",
+              "type": "TO"
+            },
+            {
+              "clock": "10:29",
+              "description": "Reed 8' Jump Shot (9 PTS) (Thompson 4 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 8.7,
+          "outTime": "3:16",
+          "period": 3,
+          "plusMinus": -4,
+          "stats": {
+            "ast": 1,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 3,
+            "fgm": 1,
+            "fta": 2,
+            "ftm": 2,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 4,
+            "reb": 2,
+            "stl": 0,
+            "tov": 1
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "4:52",
+              "description": "Thompson REBOUND (Off:1 Def:4)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "4:14",
+              "description": "Thompson STEAL (2 STL)",
+              "type": "Steal"
+            },
+            {
+              "clock": "0:32",
+              "description": "Thompson 2' Running Layup (10 PTS) (Cunningham 13 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "0:17",
+              "description": "Thompson STEAL (3 STL)",
+              "type": "Steal"
+            },
+            {
+              "clock": "0:13",
+              "description": "MISS Thompson 1' Running Layup",
+              "type": "miss2"
+            }
+          ],
+          "inTime": "6:32",
+          "minutes": 6.5,
+          "outTime": "0:00",
+          "period": 4,
+          "plusMinus": -1,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 1,
+            "pf": 0,
+            "pts": 2,
+            "reb": 1,
+            "stl": 2,
+            "tov": 0
+          }
+        }
+      ],
+      "team": "DET"
+    },
+    {
+      "name": "Ronald Holland II",
+      "playerId": "1641842",
+      "position": "F",
+      "starter": false,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "3:28",
+              "description": "Holland II REBOUND (Off:0 Def:1)",
+              "type": "OffReb"
+            }
+          ],
+          "inTime": "4:41",
+          "minutes": 4.2,
+          "outTime": "0:27",
+          "period": 1,
+          "plusMinus": -3,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "11:49",
+              "description": "Holland II 2' Cutting Layup Shot (2 PTS) (Reed 1 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "9:21",
+              "description": "Holland II REBOUND (Off:0 Def:2)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "7:14",
+              "description": "Holland II S.FOUL (P1.T2) (C.Kirkland)",
+              "type": "PF"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 4.8,
+          "outTime": "7:14",
+          "period": 2,
+          "plusMinus": -1,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 2,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "2:57",
+              "description": "Holland II P.FOUL (P2.PN) (C.Kirkland)",
+              "type": "PF"
+            },
+            {
+              "clock": "1:57",
+              "description": "Holland II 26' 3PT Jump Shot (5 PTS) (Cunningham 8 AST)",
+              "type": "Make3"
+            },
+            {
+              "clock": "1:30",
+              "description": "Holland II 2' Driving Reverse Layup (7 PTS) (Cunningham 9 AST)",
+              "type": "Make2"
+            }
+          ],
+          "inTime": "3:16",
+          "minutes": 3.2,
+          "outTime": "0:07",
+          "period": 3,
+          "plusMinus": 3,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 1,
+            "fg3m": 1,
+            "fga": 2,
+            "fgm": 2,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 5,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        }
+      ],
+      "team": "DET"
+    },
+    {
+      "name": "Tolu Smith",
+      "playerId": "1642449",
+      "position": "F",
+      "starter": false,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "1:58",
+              "description": "Smith S.FOUL (P1.T3) (T.Ricks)",
+              "type": "PF"
+            },
+            {
+              "clock": "1:13",
+              "description": "Smith 1' Dunk (2 PTS) (LeVert 1 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "0:47",
+              "description": "Smith S.FOUL (P2.PN) (T.Ricks)",
+              "type": "PF"
+            }
+          ],
+          "inTime": "3:40",
+          "minutes": 3.7,
+          "outTime": "0:00",
+          "period": 1,
+          "plusMinus": -2,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 2,
+            "pts": 2,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "5:52",
+              "description": "Smith REBOUND (Off:1 Def:0)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "5:51",
+              "description": "Smith 2' Putback Layup (4 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "5:12",
+              "description": "Smith REBOUND (Off:1 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "3:54",
+              "description": "Smith P.FOUL (P3.T3) (C.Kirkland)",
+              "type": "PF"
+            }
+          ],
+          "inTime": "8:48",
+          "minutes": 4.9,
+          "outTime": "3:54",
+          "period": 2,
+          "plusMinus": 4,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 2,
+            "pf": 1,
+            "pts": 2,
+            "reb": 2,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "7:30",
+              "description": "Smith S.FOUL (P4.PN) (T.Ricks)",
+              "type": "PF"
+            }
+          ],
+          "inTime": "8:09",
+          "minutes": 8.0,
+          "outTime": "0:07",
+          "period": 3,
+          "plusMinus": 6,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 1,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "6:37",
+              "description": "MISS Smith 1' Driving Layup",
+              "type": "miss2"
+            }
+          ],
+          "inTime": "7:00",
+          "minutes": 1.9,
+          "outTime": "5:07",
+          "period": 4,
+          "plusMinus": -7,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 0
+          }
+        }
+      ],
+      "team": "DET"
+    },
+    {
+      "name": "Daniss Jenkins",
+      "playerId": "1642450",
+      "position": "G",
+      "starter": false,
+      "stints": [
+        {
+          "events": [
+            {
+              "clock": "3:40",
+              "description": "Jenkins OFF.Foul (P1) (T.Ricks)",
+              "type": "PF"
+            },
+            {
+              "clock": "3:40",
+              "description": "Jenkins Offensive Foul Turnover (P1.T1)",
+              "type": "TO"
+            },
+            {
+              "clock": "3:31",
+              "description": "Jenkins S.FOUL (P2.T2) (C.Kirkland)",
+              "type": "PF"
+            },
+            {
+              "clock": "1:48",
+              "description": "Jenkins Offensive Charge Foul (P3) (J.DeRosa)",
+              "type": "PF"
+            },
+            {
+              "clock": "1:48",
+              "description": "Jenkins Offensive Foul Turnover (P2.T3)",
+              "type": "TO"
+            },
+            {
+              "clock": "0:30",
+              "description": "MISS Jenkins 3' Driving Layup",
+              "type": "miss2"
+            },
+            {
+              "clock": "4:05",
+              "description": "Cunningham 26' 3PT Jump Shot (14 PTS) (Jenkins 1 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "4:41",
+          "minutes": 4.2,
+          "outTime": "0:27",
+          "period": 1,
+          "plusMinus": -3,
+          "stats": {
+            "ast": 1,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 3,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 2
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "3:27",
+              "description": "Jenkins Bad Pass Turnover (P3.T7)",
+              "type": "TO"
+            }
+          ],
+          "inTime": "6:34",
+          "minutes": 3.4,
+          "outTime": "3:13",
+          "period": 2,
+          "plusMinus": 0,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 0,
+            "fgm": 0,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 0,
+            "pf": 0,
+            "pts": 0,
+            "reb": 0,
+            "stl": 0,
+            "tov": 1
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "7:50",
+              "description": "Jenkins REBOUND (Off:1 Def:0)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "7:50",
+              "description": "Jenkins Tip Layup Shot (2 PTS)",
+              "type": "Make2"
+            },
+            {
+              "clock": "10:13",
+              "description": "Reed 3' Layup (11 PTS) (Jenkins 2 AST)",
+              "type": "Assist"
+            }
+          ],
+          "inTime": "12:00",
+          "minutes": 5.5,
+          "outTime": "6:32",
+          "period": 4,
+          "plusMinus": 5,
+          "stats": {
+            "ast": 1,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 1,
+            "fgm": 1,
+            "fta": 0,
+            "ftm": 0,
+            "oreb": 1,
+            "pf": 0,
+            "pts": 2,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        },
+        {
+          "events": [
+            {
+              "clock": "4:10",
+              "description": "Jenkins 1' Running Alley Oop Dunk Shot (4 PTS) (Cunningham 11 AST)",
+              "type": "Make2"
+            },
+            {
+              "clock": "3:50",
+              "description": "Jenkins REBOUND (Off:1 Def:1)",
+              "type": "OffReb"
+            },
+            {
+              "clock": "3:43",
+              "description": "Jenkins Free Throw 1 of 2 (5 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "3:43",
+              "description": "Jenkins Free Throw 2 of 2 (6 PTS)",
+              "type": "MakeFT"
+            },
+            {
+              "clock": "2:32",
+              "description": "Jenkins 1' Driving Layup (8 PTS)",
+              "type": "Make2"
+            }
+          ],
+          "inTime": "5:07",
+          "minutes": 5.1,
+          "outTime": "0:00",
+          "period": 4,
+          "plusMinus": 3,
+          "stats": {
+            "ast": 0,
+            "blk": 0,
+            "fg3a": 0,
+            "fg3m": 0,
+            "fga": 2,
+            "fgm": 2,
+            "fta": 2,
+            "ftm": 2,
+            "oreb": 1,
+            "pf": 0,
+            "pts": 6,
+            "reb": 1,
+            "stl": 0,
+            "tov": 0
+          }
+        }
+      ],
+      "team": "DET"
+    }
+  ],
+  "scoreChanges": [
+    {
+      "awayScore": 0,
+      "homeScore": 0,
+      "ts": 0.0
+    },
+    {
+      "awayScore": 0,
+      "homeScore": 3,
+      "ts": 0.12
+    },
+    {
+      "awayScore": 0,
+      "homeScore": 5,
+      "ts": 1.67
+    },
+    {
+      "awayScore": 2,
+      "homeScore": 5,
+      "ts": 1.83
+    },
+    {
+      "awayScore": 2,
+      "homeScore": 6,
+      "ts": 2.77
+    },
+    {
+      "awayScore": 2,
+      "homeScore": 7,
+      "ts": 2.77
+    },
+    {
+      "awayScore": 2,
+      "homeScore": 9,
+      "ts": 3.23
+    },
+    {
+      "awayScore": 5,
+      "homeScore": 9,
+      "ts": 3.82
+    },
+    {
+      "awayScore": 5,
+      "homeScore": 11,
+      "ts": 4.3
+    },
+    {
+      "awayScore": 7,
+      "homeScore": 11,
+      "ts": 4.45
+    },
+    {
+      "awayScore": 8,
+      "homeScore": 11,
+      "ts": 4.45
+    },
+    {
+      "awayScore": 8,
+      "homeScore": 13,
+      "ts": 4.75
+    },
+    {
+      "awayScore": 10,
+      "homeScore": 13,
+      "ts": 5.42
+    },
+    {
+      "awayScore": 11,
+      "homeScore": 13,
+      "ts": 5.72
+    },
+    {
+      "awayScore": 12,
+      "homeScore": 13,
+      "ts": 5.72
+    },
+    {
+      "awayScore": 12,
+      "homeScore": 15,
+      "ts": 6.2
+    },
+    {
+      "awayScore": 14,
+      "homeScore": 15,
+      "ts": 6.47
+    },
+    {
+      "awayScore": 17,
+      "homeScore": 15,
+      "ts": 6.92
+    },
+    {
+      "awayScore": 19,
+      "homeScore": 15,
+      "ts": 7.32
+    },
+    {
+      "awayScore": 20,
+      "homeScore": 15,
+      "ts": 7.32
+    },
+    {
+      "awayScore": 20,
+      "homeScore": 17,
+      "ts": 7.57
+    },
+    {
+      "awayScore": 23,
+      "homeScore": 17,
+      "ts": 7.92
+    },
+    {
+      "awayScore": 23,
+      "homeScore": 19,
+      "ts": 8.17
+    },
+    {
+      "awayScore": 23,
+      "homeScore": 20,
+      "ts": 8.48
+    },
+    {
+      "awayScore": 23,
+      "homeScore": 22,
+      "ts": 9.38
+    },
+    {
+      "awayScore": 26,
+      "homeScore": 22,
+      "ts": 9.65
+    },
+    {
+      "awayScore": 26,
+      "homeScore": 24,
+      "ts": 10.45
+    },
+    {
+      "awayScore": 28,
+      "homeScore": 24,
+      "ts": 10.78
+    },
+    {
+      "awayScore": 28,
+      "homeScore": 25,
+      "ts": 11.22
+    },
+    {
+      "awayScore": 28,
+      "homeScore": 26,
+      "ts": 11.22
+    },
+    {
+      "awayScore": 30,
+      "homeScore": 26,
+      "ts": 12.18
+    },
+    {
+      "awayScore": 30,
+      "homeScore": 28,
+      "ts": 12.63
+    },
+    {
+      "awayScore": 31,
+      "homeScore": 28,
+      "ts": 12.85
+    },
+    {
+      "awayScore": 32,
+      "homeScore": 28,
+      "ts": 12.85
+    },
+    {
+      "awayScore": 32,
+      "homeScore": 30,
+      "ts": 13.03
+    },
+    {
+      "awayScore": 34,
+      "homeScore": 30,
+      "ts": 13.32
+    },
+    {
+      "awayScore": 34,
+      "homeScore": 32,
+      "ts": 13.95
+    },
+    {
+      "awayScore": 36,
+      "homeScore": 32,
+      "ts": 15.95
+    },
+    {
+      "awayScore": 36,
+      "homeScore": 33,
+      "ts": 16.28
+    },
+    {
+      "awayScore": 36,
+      "homeScore": 34,
+      "ts": 16.77
+    },
+    {
+      "awayScore": 36,
+      "homeScore": 35,
+      "ts": 16.77
+    },
+    {
+      "awayScore": 38,
+      "homeScore": 35,
+      "ts": 17.17
+    },
+    {
+      "awayScore": 40,
+      "homeScore": 35,
+      "ts": 17.53
+    },
+    {
+      "awayScore": 40,
+      "homeScore": 37,
+      "ts": 17.83
+    },
+    {
+      "awayScore": 42,
+      "homeScore": 37,
+      "ts": 18.15
+    },
+    {
+      "awayScore": 42,
+      "homeScore": 39,
+      "ts": 18.37
+    },
+    {
+      "awayScore": 45,
+      "homeScore": 39,
+      "ts": 19.18
+    },
+    {
+      "awayScore": 45,
+      "homeScore": 41,
+      "ts": 20.33
+    },
+    {
+      "awayScore": 45,
+      "homeScore": 42,
+      "ts": 20.78
+    },
+    {
+      "awayScore": 47,
+      "homeScore": 42,
+      "ts": 20.98
+    },
+    {
+      "awayScore": 47,
+      "homeScore": 44,
+      "ts": 21.38
+    },
+    {
+      "awayScore": 49,
+      "homeScore": 44,
+      "ts": 21.68
+    },
+    {
+      "awayScore": 49,
+      "homeScore": 46,
+      "ts": 21.92
+    },
+    {
+      "awayScore": 50,
+      "homeScore": 46,
+      "ts": 22.12
+    },
+    {
+      "awayScore": 51,
+      "homeScore": 46,
+      "ts": 22.12
+    },
+    {
+      "awayScore": 51,
+      "homeScore": 47,
+      "ts": 22.68
+    },
+    {
+      "awayScore": 51,
+      "homeScore": 48,
+      "ts": 22.68
+    },
+    {
+      "awayScore": 53,
+      "homeScore": 48,
+      "ts": 22.97
+    },
+    {
+      "awayScore": 56,
+      "homeScore": 48,
+      "ts": 23.25
+    },
+    {
+      "awayScore": 58,
+      "homeScore": 48,
+      "ts": 23.6
+    },
+    {
+      "awayScore": 60,
+      "homeScore": 48,
+      "ts": 24.23
+    },
+    {
+      "awayScore": 60,
+      "homeScore": 50,
+      "ts": 24.62
+    },
+    {
+      "awayScore": 60,
+      "homeScore": 51,
+      "ts": 25.17
+    },
+    {
+      "awayScore": 60,
+      "homeScore": 52,
+      "ts": 25.17
+    },
+    {
+      "awayScore": 62,
+      "homeScore": 52,
+      "ts": 25.52
+    },
+    {
+      "awayScore": 62,
+      "homeScore": 55,
+      "ts": 25.7
+    },
+    {
+      "awayScore": 62,
+      "homeScore": 56,
+      "ts": 25.7
+    },
+    {
+      "awayScore": 62,
+      "homeScore": 58,
+      "ts": 26.48
+    },
+    {
+      "awayScore": 62,
+      "homeScore": 60,
+      "ts": 27.1
+    },
+    {
+      "awayScore": 65,
+      "homeScore": 60,
+      "ts": 27.47
+    },
+    {
+      "awayScore": 68,
+      "homeScore": 60,
+      "ts": 28.4
+    },
+    {
+      "awayScore": 68,
+      "homeScore": 61,
+      "ts": 28.5
+    },
+    {
+      "awayScore": 68,
+      "homeScore": 62,
+      "ts": 28.5
+    },
+    {
+      "awayScore": 68,
+      "homeScore": 64,
+      "ts": 29.08
+    },
+    {
+      "awayScore": 69,
+      "homeScore": 64,
+      "ts": 29.43
+    },
+    {
+      "awayScore": 70,
+      "homeScore": 64,
+      "ts": 29.43
+    },
+    {
+      "awayScore": 72,
+      "homeScore": 64,
+      "ts": 29.93
+    },
+    {
+      "awayScore": 72,
+      "homeScore": 67,
+      "ts": 30.1
+    },
+    {
+      "awayScore": 75,
+      "homeScore": 67,
+      "ts": 30.37
+    },
+    {
+      "awayScore": 75,
+      "homeScore": 69,
+      "ts": 31.17
+    },
+    {
+      "awayScore": 77,
+      "homeScore": 69,
+      "ts": 31.53
+    },
+    {
+      "awayScore": 79,
+      "homeScore": 69,
+      "ts": 32.05
+    },
+    {
+      "awayScore": 79,
+      "homeScore": 71,
+      "ts": 32.37
+    },
+    {
+      "awayScore": 81,
+      "homeScore": 71,
+      "ts": 32.87
+    },
+    {
+      "awayScore": 81,
+      "homeScore": 72,
+      "ts": 33.05
+    },
+    {
+      "awayScore": 83,
+      "homeScore": 72,
+      "ts": 33.38
+    },
+    {
+      "awayScore": 83,
+      "homeScore": 75,
+      "ts": 33.82
+    },
+    {
+      "awayScore": 86,
+      "homeScore": 75,
+      "ts": 34.05
+    },
+    {
+      "awayScore": 88,
+      "homeScore": 75,
+      "ts": 34.5
+    },
+    {
+      "awayScore": 88,
+      "homeScore": 77,
+      "ts": 34.88
+    },
+    {
+      "awayScore": 90,
+      "homeScore": 77,
+      "ts": 35.77
+    },
+    {
+      "awayScore": 90,
+      "homeScore": 78,
+      "ts": 35.9
+    },
+    {
+      "awayScore": 90,
+      "homeScore": 79,
+      "ts": 35.9
+    },
+    {
+      "awayScore": 91,
+      "homeScore": 79,
+      "ts": 37.1
+    },
+    {
+      "awayScore": 91,
+      "homeScore": 81,
+      "ts": 37.35
+    },
+    {
+      "awayScore": 93,
+      "homeScore": 81,
+      "ts": 37.78
+    },
+    {
+      "awayScore": 94,
+      "homeScore": 81,
+      "ts": 37.78
+    },
+    {
+      "awayScore": 97,
+      "homeScore": 81,
+      "ts": 38.45
+    },
+    {
+      "awayScore": 97,
+      "homeScore": 83,
+      "ts": 38.85
+    },
+    {
+      "awayScore": 99,
+      "homeScore": 83,
+      "ts": 39.22
+    },
+    {
+      "awayScore": 99,
+      "homeScore": 85,
+      "ts": 39.6
+    },
+    {
+      "awayScore": 102,
+      "homeScore": 85,
+      "ts": 39.8
+    },
+    {
+      "awayScore": 104,
+      "homeScore": 85,
+      "ts": 40.17
+    },
+    {
+      "awayScore": 104,
+      "homeScore": 88,
+      "ts": 40.3
+    },
+    {
+      "awayScore": 106,
+      "homeScore": 88,
+      "ts": 41.0
+    },
+    {
+      "awayScore": 107,
+      "homeScore": 88,
+      "ts": 41.0
+    },
+    {
+      "awayScore": 107,
+      "homeScore": 90,
+      "ts": 41.13
+    },
+    {
+      "awayScore": 107,
+      "homeScore": 91,
+      "ts": 41.47
+    },
+    {
+      "awayScore": 109,
+      "homeScore": 91,
+      "ts": 41.77
+    },
+    {
+      "awayScore": 109,
+      "homeScore": 93,
+      "ts": 41.95
+    },
+    {
+      "awayScore": 109,
+      "homeScore": 95,
+      "ts": 42.45
+    },
+    {
+      "awayScore": 109,
+      "homeScore": 97,
+      "ts": 42.88
+    },
+    {
+      "awayScore": 112,
+      "homeScore": 97,
+      "ts": 43.38
+    },
+    {
+      "awayScore": 114,
+      "homeScore": 97,
+      "ts": 43.83
+    },
+    {
+      "awayScore": 115,
+      "homeScore": 97,
+      "ts": 44.28
+    },
+    {
+      "awayScore": 116,
+      "homeScore": 97,
+      "ts": 44.28
+    },
+    {
+      "awayScore": 116,
+      "homeScore": 100,
+      "ts": 44.47
+    },
+    {
+      "awayScore": 118,
+      "homeScore": 100,
+      "ts": 44.85
+    },
+    {
+      "awayScore": 118,
+      "homeScore": 102,
+      "ts": 45.05
+    },
+    {
+      "awayScore": 118,
+      "homeScore": 103,
+      "ts": 45.05
+    },
+    {
+      "awayScore": 120,
+      "homeScore": 103,
+      "ts": 45.47
+    },
+    {
+      "awayScore": 120,
+      "homeScore": 106,
+      "ts": 45.87
+    },
+    {
+      "awayScore": 120,
+      "homeScore": 109,
+      "ts": 46.45
+    },
+    {
+      "awayScore": 122,
+      "homeScore": 109,
+      "ts": 47.1
+    },
+    {
+      "awayScore": 122,
+      "homeScore": 111,
+      "ts": 47.22
+    },
+    {
+      "awayScore": 123,
+      "homeScore": 111,
+      "ts": 47.23
+    },
+    {
+      "awayScore": 124,
+      "homeScore": 111,
+      "ts": 47.23
+    },
+    {
+      "awayScore": 126,
+      "homeScore": 111,
+      "ts": 47.47
+    }
+  ]
+}

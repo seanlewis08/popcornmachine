@@ -1,0 +1,457 @@
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="Description" content="GameFlows or graphical boxscores of NBA games">
+    <meta name="KeyWords" content="PopcornMachine, Popcorn Machine, Popcorn, GameFlows, game flows, Los Angeles Lakers, Lakers, NBA, National Basketball Associaton, pro basketball, stats, basketball, boxscore, +/-, plus/minus, graphical boxscore">
+    <title>PopcornMachine's BoxScores</title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/GameFlowsC3.css" />
+    <link rel="alternate" type="application/rss+xml" title="PopcornMachine.net RSS Feed" href="http://popcornmachine.net/rss.xml" />
+
+    <script language="JavaScript" type="text/javascript">
+        <!--
+
+        function closeSub()
+        {
+            var x = document.getElementsByTagName('table');
+            for (var i=0;i<x.length;i++)
+            {
+                if (x[i].className == 'subtable')
+                    x[i].style.display = 'none';
+            }
+        }
+
+        function openSub()
+        {
+            var x = document.getElementsByTagName('table');
+            for (var i=0;i<x.length;i++)
+            {
+                if (x[i].className == 'subtable')
+                    x[i].style.display = 'block';
+            }
+        }
+
+        function toggleSub(elemid)
+        {
+            if (elemid) {
+                var x = document.getElementById(elemid);
+                if (x.style.display == 'block')
+                    x.style.display = 'none';
+                else if (x.style.display == 'none')
+                    x.style.display = 'block';
+                else x.style.display = 'block';
+            }
+        }
+
+        //-->
+    </script>
+</head>
+
+<body>
+<div class=headerBox style="width:980" ID="box">
+    <div class=headertext>&nbsp;&nbsp;PopcornMachine.Net </div>
+    <div class=headermsg>"He put him in the popcorn machine...<br>
+        he's got salt and butter all over him"<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-Chick Hearn<br></div>
+
+    <script language="JavaScript1.2">
+
+        var no = 15;
+        var pHeightAdj = -0.0235;
+
+        var xp, yp;    // coordinate and position variables
+        var i, doc_width = 1000, doc_height = 600;
+
+        var ns4up = (document.layers) ? 1 : 0;  // browser sniffer
+        var ie4up = (document.all) ? 1 : 0;
+        var ns6up = (document.getElementById&&!document.all) ? 1 : 0;
+        var browser=navigator.appName;
+        if (browser=="Microsoft Internet Explorer") {ie4up = 1}
+
+        doc_width = document.getElementsByTagName("div")["box"].offsetWidth;
+      //  doc_height = document.getElementsByTagName("div")["box"].offsetHeight;
+        doc_height = 405;
+
+        xp = new Array();
+        xVal = new Array();
+        xDirection = new Array();
+        yStart = new Array();
+        yp = new Array();
+
+        for (i = 0; i < no; ++ i) {
+          xp[i] = Math.random()*(0.9*doc_width);  // set position variables
+          xVal[i] = Math.round(pHeightAdj * doc_height);
+          if (Math.random() < 0.5) {
+            xDirection[i] = -1;
+          }
+          else {
+            xDirection[i] = 1;
+          }
+          yStart[i] = (0.5*doc_height) + Math.round(Math.random()*(doc_height/4));
+          yp[i] = yStart[i] + (xVal[i]*xVal[i]);
+          if (ns4up) {		      // set layers
+            if (i == 0) {
+          document.write("<layer name=\"dot"+ i +"\" left=\"15\" top=\"15\" visibility=\"show\"><a href=\"http://PopcornMachine.net/\"><img src=\"/images/pop40.gif\" border=\"0\"></a></layer>");
+            } else {
+          document.write("<layer name=\"dot"+ i +"\" left=\"15\" top=\"15\" visibility=\"show\"><img src=\"/images/pop40.gif\" border=\"0\"></layer>");
+            }
+          } else if (ie4up||ns6up) {
+            if (i == 0) {
+          document.write("<div id=\"dot"+ i +"\" style=\"POSITION: absolute; Z-INDEX: "+ i +"; VISIBILITY: visible; TOP: 15px; LEFT: 15px;\"><a href=\"http://PopcornMachine.net/\"><img src=\"/images/pop40.gif\" border=\"0\"></a></div>");
+            } else {
+          document.write("<div id=\"dot"+ i +"\" style=\"POSITION: absolute; Z-INDEX: "+ i +"; VISIBILITY: visible; TOP: 15px; LEFT: 15px;\"><img src=\"/images/pop40.gif\" border=\"0\"></div>");
+            }
+          }
+        }
+
+        function makePopcorn() {  // IE main animation function
+          for (i = 0; i < no; ++ i) {  // iterate for every dot
+            xp[i] += xDirection[i]*10;
+            xVal[i] += 1;
+            yp[i] = yStart[i] + (xVal[i]*xVal[i]);
+            if (yp[i] > (1.1*doc_height)) {
+          xp[i] = Math.random()*(0.9*doc_width);  // set position variables
+          xVal[i] = Math.round(pHeightAdj * doc_height);
+          if (Math.random() < 0.5) {
+            xDirection[i] = -1;
+          }
+          else {
+            xDirection[i] = 1;
+          }
+          yStart[i] = (0.5*doc_height) + Math.round(Math.random()*(doc_height/4));
+          yp[i] = yStart[i] + (xVal[i]*xVal[i]);
+            }
+
+            if (ns6up) {
+          document.getElementById("dot"+i).style.top=yp[i]-175;
+          document.getElementById("dot"+i).style.left=xp[i];
+            }
+            else if (ns4up) {
+          document.layers["dot"+i].top = yp[i]-175;
+          document.layers["dot"+i].left = xp[i];
+            }
+            else if (ie4up) {
+          document.all["dot"+i].style.pixelTop = yp[i]-175;
+          document.all["dot"+i].style.pixelLeft = xp[i];
+            }
+          }
+          setTimeout("makePopcorn()", 125);
+        }
+
+        makePopcorn();
+    </script>
+</div>
+
+<div class=hbar1 style="width:980"></div>
+<div class=buttonLine style="width:980">
+    <div class=pbutton><a href="/">HOME</a></div>
+    <div class=pbutton><a href="/help.html">HELP</a></div>
+    <div class=pbutton><a href="mailto:me@PopcornMachine.net">CONTACT</a></div>
+    <div class=pbutton><a href="/rss.xml"><image width=20 height=20 src="/images/Feed-icon.png" alt="Subscribe To PopcornMachine RSS Feed"></a></div>
+    <div class=pbutton><a target="_blank" href="http://www.twitter.com/pmgameflows"><img width=20 height=20 src="/images/Twitter.png" alt="Follow pmgameflows On Twitter"/></a></div>
+    <div class=pbutton><a href="/gf?date=20260119&game=BOSDET">GameFlow</a></div>
+    <div class=pbutton><a onclick='openSub();'>Show All Stints</a></div>
+    <div class=pbutton><a onclick='closeSub();'>Close All Stints</a></div>
+    <div class=pbutton><a onclick="window.close()" href="">Close Window</a></div>
+</div>
+<div class=hbar2 style="width:980"></div>
+<div class=StatDiv>
+    <TABLE class='boxscore'>
+        <tr><td class=blank></td><td colspan=16 class='headerline'>PopcornMachine's BoxScores - Boston Celtics @ Detroit Pistons - Jan 19, 2026</td></tr>
+        <tr align=right>
+            <td class=blank></td>
+            <td class='header' onmouseover="this.T_WIDTH=125;return escape('Minutes Played');">Min</td>
+            <td class='header' onmouseover="this.T_WIDTH=125;return escape('Shots Made<br>Shots Attempted');">FG</td>
+            <td class='header' onmouseover="this.T_WIDTH=125;return escape('3-Point<br>Shots Made<br>Shots Attempted');">FG3</td>
+            <td class='header' onmouseover="this.T_WIDTH=125;return escape('Free Throws Made<br>Free Throws Attempted');">FT</td>
+            <td class='header' onmouseover="this.T_WIDTH=125;return escape('Offensive Rebounds<br>Total Rebounds');">Reb</td>
+            <td class='header' onmouseover="this.T_WIDTH=125;return escape('Assists');">Ast</td>
+            <td class='header' onmouseover="this.T_WIDTH=125;return escape('Blocks');">Blk</td>
+            <td class='header' onmouseover="this.T_WIDTH=125;return escape('Steals');">Stl</td>
+            <td class='header' onmouseover="this.T_WIDTH=125;return escape('Turnovers');">TO</td>
+            <td class='header' onmouseover="this.T_WIDTH=125;return escape('Personal Fouls');">PF</td>
+            <td class='header' onmouseover="this.T_WIDTH=125;return escape('Total Points');">Pts</td>
+            <td class=blank></td>
+            <td class='header' onmouseover="this.T_WIDTH=125;return escape('HelpValue or hv is Reb+Ast+Blk+Stl-TO');">hv</td>
+            <td class='header' onmouseover="this.T_WIDTH=125;return escape('Productivity or prod is (points + hv) / Min');">prod</td>
+            <td class='header' onmouseover="this.T_WIDTH=125;return escape('Efficiency or MVP rating or eff is (points + assists + rebounds + steals + blocks + field_goals + free_throws) - (turnovers + attempted_fieldgoals + attempted_freethrows)');">eff</td>
+            <td class='header' onmouseover="this.T_WIDTH=125;return escape('Team point differential while player was in the game');">+/-</td>
+        </tr>
+        <tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('BScheierman&nbsp;');">B Scheierman&nbsp;</a></td><td>14.7</td><td>1-3</td><td>1-3</td><td>0-0</td><td>0-1</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>3</td><td class=blank></td><td>3</td><td>&nbsp;.41</td><td>4</td><td>-3</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='BScheierman&nbsp;'>
+            <tr><td class=firstcolumn>2&nbsp;&nbsp;3:19</td><td>2.7</td><td>1-2</td><td>1-2</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>3</td><td class=blank><td>0</td><td>1.10</td><td>2</td><td>-6</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;&nbsp;0:16</td><td>0.3</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>0</td><td>2</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;&nbsp;8:55</td><td>8.9</td><td>0-1</td><td>0-1</td><td>0-0</td><td>0-0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>1</td><td>&nbsp;.11</td><td>0</td><td>0</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;12:00</td><td>2.7</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td class=blank><td>2</td><td>&nbsp;.73</td><td>2</td><td>1</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('XTillman&nbsp;');">X Tillman&nbsp;</a></td><td>1.6</td><td>0-1</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank></td><td>0</td><td>&nbsp;.00</td><td>-1</td><td>-2</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='XTillman&nbsp;'>
+            <tr><td class=firstcolumn>2&nbsp;&nbsp;9:01</td><td>1.6</td><td>0-1</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>-1</td><td>-2</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('JWalsh&nbsp;');">J Walsh&nbsp;</a></td><td>16.1</td><td>1-2</td><td>0-0</td><td>0-0</td><td>2-3</td><td>0</td><td>0</td><td>0</td><td>0</td><td>3</td><td>2</td><td class=blank></td><td>3</td><td>&nbsp;.31</td><td>4</td><td>-7</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='JWalsh&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;&nbsp;3:03</td><td>3.1</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>0</td><td>1</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;12:00</td><td>6.1</td><td>0-1</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>-1</td><td>-6</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;&nbsp;0:04</td><td>0.1</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>0</td><td>0</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;&nbsp;2:01</td><td>2.0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>1-2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>2</td><td>&nbsp;.99</td><td>2</td><td>-2</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;12:00</td><td>4.8</td><td>1-1</td><td>0-0</td><td>0-0</td><td>1-1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2</td><td>2</td><td class=blank><td>1</td><td>&nbsp;.63</td><td>3</td><td>0</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('HGonzalez&nbsp;');">H Gonzalez&nbsp;</a></td><td>1.8</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td class=blank></td><td>0</td><td>&nbsp;.00</td><td>0</td><td>-2</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='HGonzalez&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;&nbsp;4:49</td><td>1.8</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>0</td><td>-2</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('ASimons&nbsp;');">A Simons&nbsp;</a></td><td>24.7</td><td>4-11</td><td>1-6</td><td>0-0</td><td>1-3</td><td>0</td><td>0</td><td>1</td><td>2</td><td>0</td><td>9</td><td class=blank></td><td>2</td><td>&nbsp;.45</td><td>4</td><td>-13</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='ASimons&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;&nbsp;6:52</td><td>6.9</td><td>0-2</td><td>0-2</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>-2</td><td>-5</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;12:00</td><td>4.3</td><td>2-2</td><td>0-0</td><td>0-0</td><td>1-1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>4</td><td class=blank><td>0</td><td>&nbsp;.92</td><td>4</td><td>-2</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;&nbsp;6:56</td><td>6.9</td><td>2-3</td><td>1-2</td><td>0-0</td><td>0-1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>5</td><td class=blank><td>0</td><td>&nbsp;.72</td><td>4</td><td>-3</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;12:00</td><td>6.5</td><td>0-4</td><td>0-2</td><td>0-0</td><td>0-1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td class=blank><td>2</td><td>&nbsp;.31</td><td>-2</td><td>-3</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;&nbsp;0:04</td><td>0.1</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>0</td><td>0</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('LGarza&nbsp;');">L Garza&nbsp;</a></td><td>15.2</td><td>3-8</td><td>2-5</td><td>2-2</td><td>2-5</td><td>0</td><td>0</td><td>0</td><td>1</td><td>5</td><td>10</td><td class=blank></td><td>4</td><td>&nbsp;.92</td><td>9</td><td>-8</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='LGarza&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;&nbsp;7:54</td><td>3.1</td><td>0-2</td><td>0-1</td><td>2-2</td><td>1-3</td><td>0</td><td>0</td><td>0</td><td>1</td><td>3</td><td>2</td><td class=blank><td>2</td><td>1.30</td><td>2</td><td>-3</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;&nbsp;9:13</td><td>0.2</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>0</td><td>0</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;&nbsp;5:30</td><td>5.5</td><td>1-2</td><td>1-2</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>3</td><td class=blank><td>0</td><td>&nbsp;.55</td><td>2</td><td>-2</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;12:00</td><td>6.5</td><td>2-4</td><td>1-2</td><td>0-0</td><td>1-2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>5</td><td class=blank><td>2</td><td>1.09</td><td>5</td><td>-3</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('DWhite&nbsp;');">D White&nbsp;</a></td><td>37.7</td><td>1-11</td><td>0-6</td><td>2-3</td><td>5-9</td><td>5</td><td>2</td><td>0</td><td>1</td><td>1</td><td>4</td><td class=blank></td><td>15</td><td>&nbsp;.50</td><td>8</td><td>9</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='DWhite&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;12:00</td><td>5.1</td><td>0-1</td><td>0-1</td><td>0-0</td><td>1-1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>3</td><td>&nbsp;.59</td><td>2</td><td>8</td></tr>
+            <tr><td class=firstcolumn>1&nbsp;&nbsp;3:34</td><td>3.6</td><td>0-3</td><td>0-1</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>-3</td><td>2</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;12:00</td><td>12.0</td><td>0-3</td><td>0-1</td><td>2-2</td><td>3-4</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td><td>2</td><td class=blank><td>5</td><td>&nbsp;.58</td><td>4</td><td>-11</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;12:00</td><td>5.1</td><td>1-1</td><td>0-0</td><td>0-0</td><td>0-2</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2</td><td class=blank><td>3</td><td>&nbsp;.99</td><td>5</td><td>9</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;12:00</td><td>12.0</td><td>0-3</td><td>0-3</td><td>0-1</td><td>1-2</td><td>2</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td class=blank><td>4</td><td>&nbsp;.33</td><td>0</td><td>1</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('PPritchard&nbsp;');">P Pritchard&nbsp;</a></td><td>33.6</td><td>5-8</td><td>3-6</td><td>4-5</td><td>1-3</td><td>3</td><td>0</td><td>0</td><td>2</td><td>3</td><td>17</td><td class=blank></td><td>4</td><td>&nbsp;.62</td><td>17</td><td>2</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='PPritchard&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;12:00</td><td>8.4</td><td>2-3</td><td>2-3</td><td>0-0</td><td>1-1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>2</td><td>6</td><td class=blank><td>1</td><td>&nbsp;.83</td><td>6</td><td>1</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;&nbsp;7:40</td><td>7.7</td><td>0-1</td><td>0-1</td><td>0-0</td><td>0-2</td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>4</td><td>&nbsp;.52</td><td>3</td><td>-9</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;12:00</td><td>12.0</td><td>3-4</td><td>1-2</td><td>3-4</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>10</td><td class=blank><td>-1</td><td>&nbsp;.75</td><td>7</td><td>6</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;&nbsp;5:32</td><td>5.5</td><td>0-0</td><td>0-0</td><td>1-1</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td><td class=blank><td>0</td><td>&nbsp;.18</td><td>1</td><td>4</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('SHauser&nbsp;');">S Hauser&nbsp;</a></td><td>27.4</td><td>6-9</td><td>4-7</td><td>0-0</td><td>0-4</td><td>1</td><td>0</td><td>0</td><td>0</td><td>4</td><td>16</td><td class=blank></td><td>5</td><td>&nbsp;.77</td><td>18</td><td>2</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='SHauser&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;12:00</td><td>7.2</td><td>1-2</td><td>1-2</td><td>0-0</td><td>0-3</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>3</td><td class=blank><td>4</td><td>&nbsp;.98</td><td>6</td><td>4</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;12:00</td><td>4.3</td><td>0-2</td><td>0-2</td><td>0-0</td><td>0-1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td class=blank><td>1</td><td>&nbsp;.23</td><td>-1</td><td>-2</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;&nbsp;5:51</td><td>5.6</td><td>2-2</td><td>1-1</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2</td><td>5</td><td class=blank><td>0</td><td>&nbsp;.90</td><td>5</td><td>-7</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;12:00</td><td>3.1</td><td>3-3</td><td>2-2</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>8</td><td class=blank><td>0</td><td>2.61</td><td>8</td><td>6</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;&nbsp;7:12</td><td>7.2</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>0</td><td>1</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('NQueta&nbsp;');">N Queta&nbsp;</a></td><td>28.3</td><td>1-2</td><td>0-0</td><td>8-10</td><td>1-8</td><td>1</td><td>1</td><td>3</td><td>2</td><td>4</td><td>10</td><td class=blank></td><td>11</td><td>&nbsp;.74</td><td>18</td><td>15</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='NQueta&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;12:00</td><td>4.1</td><td>1-1</td><td>0-0</td><td>0-0</td><td>0-2</td><td>0</td><td>0</td><td>1</td><td>2</td><td>1</td><td>2</td><td class=blank><td>1</td><td>&nbsp;.73</td><td>3</td><td>7</td></tr>
+            <tr><td class=firstcolumn>1&nbsp;&nbsp;4:49</td><td>4.8</td><td>0-0</td><td>0-0</td><td>3-4</td><td>0-2</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>3</td><td class=blank><td>3</td><td>1.24</td><td>5</td><td>-1</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;12:00</td><td>2.8</td><td>0-1</td><td>0-0</td><td>0-0</td><td>0-1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>1</td><td>&nbsp;.36</td><td>0</td><td>0</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;&nbsp;7:25</td><td>4.1</td><td>0-0</td><td>0-0</td><td>2-2</td><td>1-1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>2</td><td class=blank><td>1</td><td>&nbsp;.73</td><td>3</td><td>-4</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;&nbsp;0:35</td><td>0.5</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>0</td><td>1</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;12:00</td><td>6.5</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-1</td><td>1</td><td>0</td><td>1</td><td>0</td><td>2</td><td>0</td><td class=blank><td>3</td><td>&nbsp;.46</td><td>3</td><td>8</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;&nbsp;5:32</td><td>5.5</td><td>0-0</td><td>0-0</td><td>3-4</td><td>0-1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>3</td><td class=blank><td>2</td><td>&nbsp;.91</td><td>4</td><td>4</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('JBrown&nbsp;');">J Brown&nbsp;</a></td><td>38.9</td><td>11-28</td><td>2-8</td><td>8-10</td><td>4-11</td><td>2</td><td>1</td><td>0</td><td>3</td><td>4</td><td>32</td><td class=blank></td><td>11</td><td>1.10</td><td>24</td><td>2</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='JBrown&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;12:00</td><td>12.0</td><td>5-11</td><td>1-2</td><td>2-2</td><td>2-5</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>13</td><td class=blank><td>5</td><td>1.50</td><td>12</td><td>3</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;&nbsp;7:40</td><td>7.7</td><td>1-5</td><td>0-3</td><td>4-4</td><td>0-1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>6</td><td class=blank><td>0</td><td>&nbsp;.78</td><td>2</td><td>-9</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;12:00</td><td>10.0</td><td>1-4</td><td>1-2</td><td>0-0</td><td>1-3</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td><td>3</td><td class=blank><td>4</td><td>&nbsp;.70</td><td>4</td><td>8</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;&nbsp;9:16</td><td>9.3</td><td>4-8</td><td>0-1</td><td>2-4</td><td>1-2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>3</td><td>10</td><td class=blank><td>2</td><td>1.29</td><td>6</td><td>0</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td class=statictext>BOS</td><td class=blank></td><td>33-83</td><td>13-41</td><td>24-30</td><td>16-47</td><td>13</td><td>4</td><td>5</td><td>11</td><td>26</td><td>103</td></tr>
+<tr><td class=blank></td><td class=blank></td><td>.398</td><td>.317</td><td>.800</td></tr>
+<tr><td class ='statictext'>Period 1</td><td class=blank></td><td>9-25</td><td>4-12</td><td>7-8</td><td>5-17</td><td>4</td><td>1</td><td>2</td><td>5</td><td>8</td><td>29</td></tr>
+<tr><td class ='statictext'>Period 2</td><td class=blank></td><td>6-20</td><td>2-10</td><td>8-8</td><td>5-11</td><td>3</td><td>1</td><td>0</td><td>3</td><td>7</td><td>22</td></tr>
+<tr><td class ='statictext'>Period 3</td><td class=blank></td><td>11-18</td><td>6-11</td><td>3-4</td><td>2-9</td><td>4</td><td>1</td><td>1</td><td>3</td><td>3</td><td>31</td></tr>
+<tr><td class ='statictext'>Period 4</td><td class=blank></td><td>7-20</td><td>1-8</td><td>6-10</td><td>4-10</td><td>2</td><td>1</td><td>2</td><td>0</td><td>8</td><td>21</td></tr>
+<tr><td class=blank>&nbsp;</td></tr>
+<tr><td class ='statictext'>Period 1</td><td class=blank></td><td>8-24</td><td>1-7</td><td>9-12</td><td>3-13</td><td>6</td><td>1</td><td>4</td><td>2</td><td>6</td><td>26</td></tr>
+<tr><td class ='statictext'>Period 2</td><td class=blank></td><td>13-24</td><td>3-10</td><td>4-5</td><td>3-10</td><td>7</td><td>5</td><td>2</td><td>0</td><td>7</td><td>33</td></tr>
+<tr><td class ='statictext'>Period 3</td><td class=blank></td><td>10-22</td><td>2-6</td><td>3-4</td><td>2-8</td><td>6</td><td>0</td><td>3</td><td>1</td><td>4</td><td>25</td></tr>
+<tr><td class ='statictext'>Period 4</td><td class=blank></td><td>7-18</td><td>5-10</td><td>1-2</td><td>1-9</td><td>5</td><td>3</td><td>0</td><td>2</td><td>9</td><td>20</td></tr>
+<tr><td class=blank></td><td class=blank></td><td>.432</td><td>.333</td><td>.739</td></tr>
+<tr><td class=statictext>DET</td><td class=blank></td><td>38-88</td><td>11-33</td><td>17-23</td><td>9-40</td><td>24</td><td>9</td><td>9</td><td>5</td><td>26</td><td>104</td></tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('AThompson&nbsp;');">A Thompson&nbsp;</a></td><td>27.6</td><td>3-6</td><td>0-0</td><td>1-1</td><td>2-7</td><td>2</td><td>1</td><td>4</td><td>1</td><td>2</td><td>7</td><td class=blank></td><td>13</td><td>&nbsp;.73</td><td>17</td><td>-6</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='AThompson&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;12:00</td><td>7.2</td><td>0-1</td><td>0-0</td><td>0-0</td><td>0-3</td><td>1</td><td>0</td><td>3</td><td>1</td><td>0</td><td>0</td><td class=blank><td>6</td><td>&nbsp;.84</td><td>5</td><td>-4</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;&nbsp;7:40</td><td>7.6</td><td>2-3</td><td>0-0</td><td>1-1</td><td>1-2</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>5</td><td class=blank><td>4</td><td>1.18</td><td>8</td><td>9</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;12:00</td><td>7.2</td><td>1-1</td><td>0-0</td><td>0-0</td><td>1-2</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>2</td><td class=blank><td>3</td><td>&nbsp;.69</td><td>5</td><td>-7</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;&nbsp;5:32</td><td>5.5</td><td>0-1</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>-1</td><td>-4</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('DRobinson&nbsp;');">D Robinson&nbsp;</a></td><td>31.5</td><td>5-13</td><td>5-9</td><td>0-0</td><td>1-4</td><td>2</td><td>1</td><td>1</td><td>0</td><td>2</td><td>15</td><td class=blank></td><td>8</td><td>&nbsp;.73</td><td>15</td><td>-4</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='DRobinson&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;12:00</td><td>7.7</td><td>0-3</td><td>0-1</td><td>0-0</td><td>0-0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td class=blank><td>2</td><td>&nbsp;.26</td><td>-1</td><td>-4</td></tr>
+            <tr><td class=firstcolumn>1&nbsp;&nbsp;0:28</td><td>0.5</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>0</td><td>0</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;&nbsp;6:56</td><td>6.7</td><td>2-3</td><td>2-3</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>6</td><td class=blank><td>0</td><td>&nbsp;.90</td><td>5</td><td>8</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;&nbsp;0:04</td><td>0.1</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>0</td><td>0</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;12:00</td><td>9.5</td><td>2-4</td><td>2-3</td><td>0-0</td><td>0-1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>6</td><td class=blank><td>2</td><td>&nbsp;.84</td><td>6</td><td>-7</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;&nbsp;7:12</td><td>7.1</td><td>1-3</td><td>1-2</td><td>0-0</td><td>1-3</td><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>3</td><td class=blank><td>4</td><td>&nbsp;.98</td><td>5</td><td>-1</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('THarris&nbsp;');">T Harris&nbsp;</a></td><td>34.9</td><td>11-20</td><td>3-8</td><td>0-0</td><td>0-3</td><td>1</td><td>1</td><td>0</td><td>1</td><td>4</td><td>25</td><td class=blank></td><td>4</td><td>&nbsp;.83</td><td>20</td><td>0</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='THarris&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;12:00</td><td>7.2</td><td>2-2</td><td>1-1</td><td>0-0</td><td>0-1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>5</td><td class=blank><td>1</td><td>&nbsp;.84</td><td>6</td><td>-4</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;12:00</td><td>12.0</td><td>4-8</td><td>0-2</td><td>0-0</td><td>0-1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>2</td><td>8</td><td class=blank><td>2</td><td>&nbsp;.83</td><td>6</td><td>11</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;12:00</td><td>6.5</td><td>1-3</td><td>0-1</td><td>0-0</td><td>0-0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>2</td><td class=blank><td>0</td><td>&nbsp;.31</td><td>0</td><td>-8</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;&nbsp;2:01</td><td>2.0</td><td>2-2</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td class=blank><td>0</td><td>1.98</td><td>4</td><td>2</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;&nbsp;7:12</td><td>7.2</td><td>2-5</td><td>2-4</td><td>0-0</td><td>0-1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>6</td><td class=blank><td>1</td><td>&nbsp;.97</td><td>4</td><td>-1</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('CCunningham&nbsp;');">C Cunningham&nbsp;</a></td><td>40.3</td><td>4-17</td><td>0-4</td><td>8-10</td><td>1-3</td><td>14</td><td>2</td><td>1</td><td>0</td><td>3</td><td>16</td><td class=blank></td><td>20</td><td>&nbsp;.89</td><td>21</td><td>2</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='CCunningham&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;12:00</td><td>10.1</td><td>0-4</td><td>0-1</td><td>3-4</td><td>1-1</td><td>3</td><td>0</td><td>0</td><td>0</td><td>1</td><td>3</td><td class=blank><td>4</td><td>&nbsp;.69</td><td>2</td><td>-4</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;&nbsp;9:13</td><td>9.2</td><td>1-3</td><td>0-1</td><td>3-4</td><td>0-0</td><td>4</td><td>1</td><td>1</td><td>0</td><td>1</td><td>5</td><td class=blank><td>6</td><td>1.19</td><td>8</td><td>11</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;12:00</td><td>10.0</td><td>1-4</td><td>0-1</td><td>2-2</td><td>0-0</td><td>3</td><td>0</td><td>0</td><td>0</td><td>1</td><td>4</td><td class=blank><td>3</td><td>&nbsp;.70</td><td>4</td><td>-8</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;12:00</td><td>6.5</td><td>1-3</td><td>0-0</td><td>0-0</td><td>0-2</td><td>2</td><td>1</td><td>0</td><td>0</td><td>0</td><td>2</td><td class=blank><td>5</td><td>1.09</td><td>5</td><td>3</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;&nbsp;4:30</td><td>4.5</td><td>1-3</td><td>0-1</td><td>0-0</td><td>0-0</td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2</td><td class=blank><td>2</td><td>&nbsp;.89</td><td>2</td><td>0</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('JDuren&nbsp;');">J Duren&nbsp;</a></td><td>30.8</td><td>8-12</td><td>0-0</td><td>2-5</td><td>3-9</td><td>1</td><td>0</td><td>1</td><td>0</td><td>6</td><td>18</td><td class=blank></td><td>11</td><td>&nbsp;.94</td><td>22</td><td>-4</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='JDuren&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;12:00</td><td>8.1</td><td>4-6</td><td>0-0</td><td>1-3</td><td>1-3</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>9</td><td class=blank><td>3</td><td>1.48</td><td>8</td><td>-2</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;&nbsp;9:13</td><td>5.9</td><td>1-1</td><td>0-0</td><td>0-0</td><td>1-4</td><td>1</td><td>0</td><td>0</td><td>0</td><td>2</td><td>2</td><td class=blank><td>5</td><td>1.19</td><td>7</td><td>6</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;12:00</td><td>9.5</td><td>3-5</td><td>0-0</td><td>1-2</td><td>1-1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>7</td><td class=blank><td>2</td><td>&nbsp;.94</td><td>6</td><td>-7</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;&nbsp;7:12</td><td>7.2</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>3</td><td>0</td><td class=blank><td>1</td><td>&nbsp;.14</td><td>1</td><td>-1</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('JIvey&nbsp;');">J Ivey&nbsp;</a></td><td>17.2</td><td>2-3</td><td>2-3</td><td>1-2</td><td>1-2</td><td>2</td><td>2</td><td>0</td><td>2</td><td>0</td><td>7</td><td class=blank></td><td>4</td><td>&nbsp;.64</td><td>9</td><td>2</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='JIvey&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;&nbsp;4:49</td><td>4.8</td><td>0-0</td><td>0-0</td><td>0-0</td><td>1-1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td><td class=blank><td>1</td><td>&nbsp;.21</td><td>1</td><td>1</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;12:00</td><td>2.8</td><td>0-1</td><td>0-1</td><td>0-0</td><td>0-0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>1</td><td>&nbsp;.36</td><td>0</td><td>0</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;&nbsp;4:45</td><td>4.8</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>2</td><td>&nbsp;.42</td><td>2</td><td>1</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;12:00</td><td>4.8</td><td>2-2</td><td>2-2</td><td>1-2</td><td>0-0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>7</td><td class=blank><td>0</td><td>1.46</td><td>6</td><td>0</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('IStewart&nbsp;');">I Stewart&nbsp;</a></td><td>21.2</td><td>2-5</td><td>0-2</td><td>4-4</td><td>1-4</td><td>0</td><td>1</td><td>0</td><td>0</td><td>2</td><td>8</td><td class=blank></td><td>5</td><td>&nbsp;.61</td><td>10</td><td>8</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='IStewart&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;&nbsp;4:49</td><td>4.8</td><td>1-2</td><td>0-1</td><td>4-4</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>6</td><td class=blank><td>0</td><td>1.24</td><td>5</td><td>1</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;12:00</td><td>2.8</td><td>1-1</td><td>0-0</td><td>0-0</td><td>0-1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>2</td><td class=blank><td>2</td><td>1.44</td><td>4</td><td>0</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;&nbsp;3:19</td><td>3.3</td><td>0-0</td><td>0-0</td><td>0-0</td><td>1-1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>1</td><td>&nbsp;.30</td><td>1</td><td>5</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;&nbsp;5:30</td><td>5.5</td><td>0-2</td><td>0-1</td><td>0-0</td><td>0-2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>2</td><td>&nbsp;.36</td><td>0</td><td>2</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;12:00</td><td>4.8</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>0</td><td>0</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('CLeVert&nbsp;');">C LeVert&nbsp;</a></td><td>17.0</td><td>1-6</td><td>0-4</td><td>0-0</td><td>0-3</td><td>1</td><td>0</td><td>1</td><td>1</td><td>4</td><td>2</td><td class=blank></td><td>4</td><td>&nbsp;.35</td><td>1</td><td>0</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='CLeVert&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;&nbsp;4:20</td><td>4.3</td><td>0-4</td><td>0-3</td><td>0-0</td><td>0-1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>2</td><td>&nbsp;.46</td><td>-2</td><td>1</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;12:00</td><td>4.3</td><td>1-2</td><td>0-1</td><td>0-0</td><td>0-1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>2</td><td class=blank><td>2</td><td>&nbsp;.92</td><td>3</td><td>2</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;&nbsp;2:28</td><td>2.5</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td class=blank><td>1</td><td>&nbsp;.40</td><td>1</td><td>1</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;12:00</td><td>4.8</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>2</td><td>0</td><td class=blank><td>-1</td><td>&nbsp;-.21</td><td>-1</td><td>0</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;&nbsp;5:32</td><td>1.0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>0</td><td>-4</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('RHollandII&nbsp;');">R Holland II&nbsp;</a></td><td>12.3</td><td>1-4</td><td>0-1</td><td>1-1</td><td>0-4</td><td>1</td><td>0</td><td>1</td><td>0</td><td>3</td><td>3</td><td class=blank></td><td>6</td><td>&nbsp;.73</td><td>6</td><td>3</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='RHollandII&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;&nbsp;3:52</td><td>3.4</td><td>1-2</td><td>0-0</td><td>1-1</td><td>0-2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>3</td><td>3</td><td class=blank><td>2</td><td>1.47</td><td>4</td><td>-1</td></tr>
+            <tr><td class=firstcolumn>3&nbsp;&nbsp;2:28</td><td>2.5</td><td>0-1</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td class=blank><td>1</td><td>&nbsp;.40</td><td>0</td><td>1</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;12:00</td><td>6.5</td><td>0-1</td><td>0-1</td><td>0-0</td><td>0-2</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>3</td><td>&nbsp;.47</td><td>2</td><td>3</td></tr>
+        </table>
+    </td>
+</tr>
+<tr><td><div class='playername'><a href="JavaScript://" onclick="toggleSub('JGreen&nbsp;');">J Green&nbsp;</a></td><td>7.3</td><td>1-2</td><td>1-2</td><td>0-0</td><td>0-1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>3</td><td class=blank></td><td>2</td><td>&nbsp;.69</td><td>4</td><td>4</div></td></tr>
+<tr>
+    <td colspan=17 style='{background-color:white}'>
+        <table class='subtable' id='JGreen&nbsp;'>
+            <tr><td class=firstcolumn>1&nbsp;&nbsp;1:52</td><td>1.9</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>1</td><td>&nbsp;.53</td><td>1</td><td>1</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;12:00</td><td>5.1</td><td>1-2</td><td>1-2</td><td>0-0</td><td>0-0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>3</td><td class=blank><td>1</td><td>&nbsp;.79</td><td>3</td><td>5</td></tr>
+            <tr><td class=firstcolumn>2&nbsp;&nbsp;0:16</td><td>0.3</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>0</td><td>-2</td></tr>
+            <tr><td class=firstcolumn>4&nbsp;&nbsp;0:04</td><td>0.1</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class=blank><td>0</td><td>&nbsp;.00</td><td>0</td><td>0</td></tr>
+        </table>
+    </td>
+</tr>
+<tr align=right>
+    <td class=blank></td>
+    <td class='header' onmouseover="this.T_WIDTH=125;return escape('Minutes Played');">Min</td>
+    <td class='header' onmouseover="this.T_WIDTH=125;return escape('Shots Made<br>Shots Attempted');">FG</td>
+    <td class='header' onmouseover="this.T_WIDTH=125;return escape('3-Point<br>Shots Made<br>Shots Attempted');">FG3</td>
+    <td class='header' onmouseover="this.T_WIDTH=125;return escape('Free Throws Made<br>Free Throws Attempted');">FT</td>
+    <td class='header' onmouseover="this.T_WIDTH=125;return escape('Offensive Rebounds<br>Total Rebounds');">Reb</td>
+    <td class='header' onmouseover="this.T_WIDTH=125;return escape('Assists');">Ast</td>
+    <td class='header' onmouseover="this.T_WIDTH=125;return escape('Blocks');">Blk</td>
+    <td class='header' onmouseover="this.T_WIDTH=125;return escape('Steals');">Stl</td>
+    <td class='header' onmouseover="this.T_WIDTH=125;return escape('Turnovers');">TO</td>
+    <td class='header' onmouseover="this.T_WIDTH=125;return escape('Personal Fouls');">PF</td>
+    <td class='header' onmouseover="this.T_WIDTH=125;return escape('Total Points');">Pts</td>
+    <td class=blank></td>
+    <td class='header' onmouseover="this.T_WIDTH=125;return escape('HelpValue or hv is Reb+Ast+Blk+Stl-TO');">hv</td>
+    <td class='header' onmouseover="this.T_WIDTH=125;return escape('Productivity or prod is (points + hv) / Min');">prod</td>
+    <td class='header' onmouseover="this.T_WIDTH=125;return escape('Efficiency or MVP rating or eff is (points + assists + rebounds + steals + blocks + field_goals + free_throws) - (turnovers + attempted_fieldgoals + attempted_freethrows)');">eff</td>
+    <td class='header' onmouseover="this.T_WIDTH=125;return escape('Team point differential while player was in the game');">+/-</td>
+</tr><tr></tr>
+<tr><td class=blank></td><td colspan=11 class='header'>&copy; 2003-2026 <a target=_top href="http://PopcornMachine.net">PopcornMachine.net</a>.  All Rights Reserved.</td></tr>
+</table>
+</div>
+</body>
+</html>
+<script language="JavaScript" type="text/javascript" src="/wz_tooltip.js"></script>
+</body>
+</html>

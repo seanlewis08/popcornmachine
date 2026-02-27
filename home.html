@@ -1,0 +1,350 @@
+
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="Description" content="GameFlows or graphical boxscores of NBA games">
+    <meta name="KeyWords" content="PopcornMachine, Popcorn Machine, Popcorn, GameFlows, game flows, Los Angeles Lakers, Lakers, NBA, National Basketball Associaton, pro basketball, stats, basketball, boxscore, +/-, plus/minus, graphical boxscore">
+    <title>PopcornMachine's GameFlows</title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="PMH-O7.css" />
+    <link rel="alternate" type="application/rss+xml" title="PopcornMachine.net RSS Feed" href="http://popcornmachine.net/rss.xml" />
+</head>
+
+<body>
+<div class="pageWrapper">
+    <div class="headerWrapper">
+        <div class=headerBox ID="box">
+            <div class=headertext>&nbsp;&nbsp;PopcornMachine.Net </div>
+            <div class=headermsg>"He put him in the popcorn machine...<br>
+                he's got salt and butter all over him"<br>
+                -Chick Hearn<br></div>
+
+            <script language="JavaScript1.2">
+
+                var no = 15;
+                var pHeightAdj = -0.0235;
+
+                var xp, yp;    // coordinate and position variables
+                var i, doc_width = 1000, doc_height = 600;
+
+                var ns4up = (document.layers) ? 1 : 0;  // browser sniffer
+                var ie4up = (document.all) ? 1 : 0;
+                var ns6up = (document.getElementById&&!document.all) ? 1 : 0;
+                var browser=navigator.appName;
+                if (browser=="Microsoft Internet Explorer") {ie4up = 1}
+
+                doc_width = document.getElementsByTagName("div")["box"].offsetWidth;
+              //  doc_height = document.getElementsByTagName("div")["box"].offsetHeight;
+              //  doc_height = 390;
+                doc_height = 360;
+
+                xp = new Array();
+                xVal = new Array();
+                xDirection = new Array();
+                yStart = new Array();
+                yp = new Array();
+
+                for (i = 0; i < no; ++ i) {
+                  xp[i] = Math.random()*(0.9*doc_width);  // set position variables
+                  xVal[i] = Math.round(pHeightAdj * doc_height);
+                  if (Math.random() < 0.5) {
+                    xDirection[i] = -1;
+                  }
+                  else {
+                    xDirection[i] = 1;
+                  }
+                  yStart[i] = (0.5*doc_height) + Math.round(Math.random()*(doc_height/4));
+                  yp[i] = yStart[i] + (xVal[i]*xVal[i]);
+                  if (ns4up) {		      // set layers
+                    if (i == 0) {
+                  document.write("<layer name=\"dot"+ i +"\" left=\"15\" top=\"15\" visibility=\"show\"><a href=\"http://PopcornMachine.net/\"><img src=\"/images/pop40.gif\" border=\"0\"></a></layer>");
+                    } else {
+                  document.write("<layer name=\"dot"+ i +"\" left=\"15\" top=\"15\" visibility=\"show\"><img src=\"/images/pop40.gif\" border=\"0\"></layer>");
+                    }
+                  } else if (ie4up||ns6up) {
+                    if (i == 0) {
+                  document.write("<div id=\"dot"+ i +"\" style=\"POSITION: absolute; Z-INDEX: "+ i +"; VISIBILITY: visible; TOP: 15px; LEFT: 15px;\"><a href=\"http://PopcornMachine.net/\"><img src=\"/images/pop40.gif\" border=\"0\"></a></div>");
+                    } else {
+                  document.write("<div id=\"dot"+ i +"\" style=\"POSITION: absolute; Z-INDEX: "+ i +"; VISIBILITY: visible; TOP: 15px; LEFT: 15px;\"><img src=\"/images/pop40.gif\" border=\"0\"></div>");
+                    }
+                  }
+                }
+
+                function makePopcorn() {  // IE main animation function
+                  for (i = 0; i < no; ++ i) {  // iterate for every dot
+                    xp[i] += xDirection[i]*10;
+                    xVal[i] += 1;
+                    yp[i] = yStart[i] + (xVal[i]*xVal[i]);
+                    if (yp[i] > (1.1*doc_height)) {
+                  xp[i] = Math.random()*(0.9*doc_width);  // set position variables
+                  xVal[i] = Math.round(pHeightAdj * doc_height);
+                  if (Math.random() < 0.5) {
+                    xDirection[i] = -1;
+                  }
+                  else {
+                    xDirection[i] = 1;
+                  }
+                  yStart[i] = (0.5*doc_height) + Math.round(Math.random()*(doc_height/4));
+                  yp[i] = yStart[i] + (xVal[i]*xVal[i]);
+                    }
+
+                    if (ns6up) {
+                  document.getElementById("dot"+i).style.top=yp[i]-175;
+                  document.getElementById("dot"+i).style.left=xp[i];
+                    }
+                    else if (ns4up) {
+                  document.layers["dot"+i].top = yp[i]-175;
+                  document.layers["dot"+i].left = xp[i];
+                    }
+                    else if (ie4up) {
+                  document.all["dot"+i].style.pixelTop = yp[i]-175;
+                  document.all["dot"+i].style.pixelLeft = xp[i];
+                    }
+                  }
+                  setTimeout("makePopcorn()", 125);
+                }
+
+                makePopcorn();
+            </script>
+        </div>
+
+        <div class=hbar1></div>
+        <div class=buttonLine>
+            <div class=pbutton><a href="/">HOME</a></div>
+            <div class=pbutton><a href="/help.html">HELP</a></div>
+            <div class=pbutton><a target="_blank" href="https://bsky.app/profile/pmgameflows.bsky.social"><svg fill="none" viewBox="0 0 64 57" width="28" style="width: 28px; height: 24.9375px;"><path fill="#0085ff" d="M13.873 3.805C21.21 9.332 29.103 20.537 32 26.55v15.882c0-.338-.13.044-.41.867-1.512 4.456-7.418 21.847-20.923 7.944-7.111-7.32-3.819-14.64 9.125-16.85-7.405 1.264-15.73-.825-18.014-9.015C1.12 23.022 0 8.51 0 6.55 0-3.268 8.579-.182 13.873 3.805ZM50.127 3.805C42.79 9.332 34.897 20.537 32 26.55v15.882c0-.338.13.044.41.867 1.512 4.456 7.418 21.847 20.923 7.944 7.111-7.32 3.819-14.64-9.125-16.85 7.405 1.264 15.73-.825 18.014-9.015C62.88 23.022 64 8.51 64 6.55c0-9.818-8.578-6.732-13.873-2.745Z"></path></svg></a></div>
+            <div class=pdropdown>
+                <form>
+                    <select onchange="location = this.options[this.selectedIndex].value;">
+                        <option value="">ARCHIVE</option>
+                        <option value="/?dr=20250506">May-Jun 2025</option>
+                        <option value="/?dr=202504">Apr 2025</option>
+                        <option value="/?dr=202503">Mar 2025</option>
+                        <option value="/?dr=202502">Feb 2025</option>
+                        <option value="/?dr=202501">Jan 2025</option>
+                        <option value="/?dr=202412">Dec 2024</option>
+                        <option value="/?dr=202411">Nov 2024</option>
+                        <option value="/?dr=202410">Oct 2024</option>
+                        <option value="/?dr=20240506">May-Jun 2024</option>
+                        <option value="/?dr=202404">Apr 2024</option>
+                        <option value="/?dr=202403">Mar 2024</option>
+                        <option value="/?dr=202402">Feb 2024</option>
+                        <option value="/?dr=202401">Jan 2024</option>
+                        <option value="/?dr=202312">Dec 2023</option>
+                        <option value="/?dr=202311">Nov 2023</option>
+                        <option value="/?dr=202310">Oct 2023</option>
+                        <option value="/?dr=20230506">May-Jun 2023</option>
+                        <option value="/?dr=202304">Apr 2023</option>
+                        <option value="/?dr=202303">Mar 2023</option>
+                        <option value="/?dr=202302">Feb 2023</option>
+                        <option value="/?dr=202301">Jan 2023</option>
+                        <option value="/?dr=202212">Dec 2022</option>
+                        <option value="/?dr=202211">Nov 2022</option>
+                        <option value="/?dr=202210">Oct 2022</option>
+                        <option value="/?dr=20220506">May-Jun 2022</option>
+                        <option value="/?dr=202204">Apr 2022</option>
+                        <option value="/?dr=202203">Mar 2022</option>
+                        <option value="/?dr=202202">Feb 2022</option>
+                        <option value="/?dr=202201">Jan 2022</option>
+                        <option value="/?dr=202112">Dec 2021</option>
+                        <option value="/?dr=202111">Nov 2021</option>
+                        <option value="/?dr=202110">Oct 2021</option>
+                        <option value="/?dr=20210607">Jun-Jul 2021</option>
+                        <option value="/?dr=202105">May 2021</option>
+                        <option value="/?dr=202104">Apr 2021</option>
+                        <option value="/?dr=202103">Mar 2021</option>
+                        <option value="/?dr=202102">Feb 2021</option>
+                        <option value="/?dr=202101">Jan 2021</option>
+                        <option value="/?dr=202012">Dec 2021</option>
+                        <option value="/?dr=202010">Oct 2021</option>
+                        <option value="/?dr=202009">Sep 2021</option>
+                        <option value="/?dr=202008">Aug 2020</option>
+                        <option value="/?dr=202007">Jul 2020</option>
+                        <option value="/?dr=202004">Apr 2020</option>
+                        <option value="/?dr=202003">Mar 2020</option>
+                        <option value="/?dr=202002">Feb 2020</option>
+                        <option value="/?dr=202001">Jan 2020</option>
+                        <option value="/?dr=201912">Dec 2019</option>
+                        <option value="/?dr=20191011">Oct-Nov 2019</option>
+                        <option value="/?dr=20190605">May-Jun 2019</option>
+                        <option value="/?dr=201904">Apr 2019</option>
+                        <option value="/?dr=201903">Mar 2019</option>
+                        <option value="/?dr=201902">Feb 2019</option>
+                        <option value="/?dr=201901">Jan 2019</option>
+                        <option value="/?dr=201812">Dec 2018</option>
+                        <option value="/?dr=20181011">Oct-Nov 2018</option>
+                        <option value="/?dr=20180605">May-Jun 2018</option>
+                        <option value="/?dr=201804">Apr 2018</option>
+                        <option value="/?dr=201803">Mar 2018</option>
+                        <option value="/?dr=201802">Feb 2018</option>
+                        <option value="/?dr=201801">Jan 2018</option>
+                        <option value="/?dr=201712">Dec 2017</option>
+                        <option value="/?dr=20171011">Oct-Nov 2017</option>
+                        <option value="/?dr=20170605">May-Jun 2017</option>
+                        <option value="/?dr=201704">Apr 2017</option>
+                        <option value="/?dr=201703">Mar 2017</option>
+                        <option value="/?dr=201702">Feb 2017</option>
+                        <option value="/?dr=201701">Jan 2017</option>
+                        <option value="/?dr=201612">Dec 2016</option>
+                        <option value="/?dr=20161011">Oct-Nov 2016</option>
+                        <option value="/?dr=20160605">May-Jun 2016</option>
+                        <option value="/?dr=201604">Apr 2016</option>
+                        <option value="/?dr=201603">Mar 2016</option>
+                        <option value="/?dr=201602">Feb 2016</option>
+                        <option value="/?dr=201601">Jan 2016</option>
+                        <option value="/?dr=201512">Dec 2016</option>
+                        <option value="/?dr=20151011">Oct-Nov 2015</option>
+                        <option value="/?dr=20150605">May-Jun 2015</option>
+                        <option value="/?dr=201504">Apr 2015</option>
+                        <option value="/?dr=201503">Mar 2015</option>
+                        <option value="/?dr=201502">Feb 2015</option>
+                        <option value="/?dr=201501">Jan 2015</option>
+                        <option value="/?dr=201412">Dec 2014</option>
+                        <option value="/?dr=20141011">Oct-Nov 2014</option>
+                        <option value="/?dr=20140605">May-Jun 2014</option>
+                        <option value="/?dr=201404">Apr 2014</option>
+                        <option value="/?dr=201403">Mar 2014</option>
+                        <option value="/?dr=201402">Feb 2014</option>
+                        <option value="/?dr=201401">Jan 2014</option>
+                        <option value="/?dr=201312">Dec 2013</option>
+                        <option value="/?dr=20131011">Oct-Nov 2013</option>
+                        <option value="/?dr=20130605">May-Jun 2013</option>
+                        <option value="/?dr=201304">Apr 2013</option>
+                        <option value="/?dr=201303">Mar 2013</option>
+                        <option value="/?dr=201302">Feb 2013</option>
+                        <option value="/?dr=201301">Jan 2013</option>
+                        <option value="/?dr=201212">Dec 2012</option>
+                        <option value="/?dr=20121011">Oct-Nov 2012</option>
+                        <option value="/?dr=20120605">May-Jun 2012</option>
+                        <option value="/?dr=201204">Apr 2012</option>
+                        <option value="/?dr=201203">Mar 2012</option>
+                        <option value="/?dr=201202">Feb 2012</option>
+                        <option value="/?dr=201201">Jan 2012</option>
+                        <option value="/?dr=201112">Dec 2011</option>
+                        <option value="/?dr=20110605">May-Jun 2011</option>
+                        <option value="/?dr=201104">Apr 2011</option>
+                        <option value="/?dr=201103">Mar 2011</option>
+                        <option value="/?dr=201102">Feb 2011</option>
+                        <option value="/?dr=201101">Jan 2011</option>
+                        <option value="/?dr=201012">Dec 2010</option>
+                        <option value="/?dr=20101011">Oct-Nov 2010</option>
+                        <option value="/?dr=20100605">May-Jun 2009</option>
+                        <option value="/?dr=201004">Apr 2010</option>
+                        <option value="/?dr=201003">Mar 2010</option>
+                        <option value="/?dr=201002">Feb 2010</option>
+                        <option value="/?dr=201001">Jan 2010</option>
+                        <option value="/?dr=200912">Dec 2009</option>
+                        <option value="/?dr=20091011">Oct-Nov 2009</option>
+                        <option value="/?dr=20090605">May-Jun 2009</option>
+                        <option value="/?dr=200904">Apr 2009</option>
+                        <option value="/?dr=200903">Mar 2009</option>
+                        <option value="/?dr=200902">Feb 2009</option>
+                        <option value="/?dr=200901">Jan 2009</option>
+                        <option value="/?dr=200812">Dec 2008</option>
+                        <option value="/?dr=20081011">Oct-Nov 2008</option>
+                        <option value="/?dr=20080605">May-Jun 2008</option>
+                        <option value="/?dr=200804">Apr 2008</option>
+                        <option value="/?dr=200803">Mar 2008</option>
+                        <option value="/?dr=200802">Feb 2008</option>
+                        <option value="/?dr=200801">Jan 2008</option>
+                        <option value="/?dr=200712">Dec 2007</option>
+                        <option value="/?dr=200711">Oct-Nov 2007</option>
+                        <option value="/?dr=20070605">May-Jun 2007</option>
+                        <option value="/?dr=200704">Apr 2007</option>
+                        <option value="/?dr=200703">Mar 2007</option>
+                        <option value="/?dr=200702">Feb 2007</option>
+                        <option value="/?dr=200701">Jan 2007</option>
+                        <option value="/?dr=200612">Dec 2006</option>
+                        <option value="/?dr=200611">Nov 2006</option>
+                    </select>
+                </form>
+            </div>
+        </div>
+        <div class=hbar2></div>
+    </div>
+
+    <div class=homeWrapper>
+        <div class=scoresDiv>
+            <div class=datesection>
+                <div class=today><b>Jan&nbsp;19,&nbsp;2026</b></div>
+                <br><br>
+                <div class=score>Boston 103<br><b>Detroit 104</b><br>
+                    <br><a TARGET="_blank" HREF="gf?date=20260119&game=BOSDET"><b>GameFlow</b></a>&nbsp;&nbsp;
+                    <a TARGET="_blank" HREF="bs?date=20260119&game=BOSDET"><b>BoxScore</b></a>
+                </div>
+                <div class=score><b>Dallas 114</b><br>New York 97<br>
+                    <br><a TARGET="_blank" HREF="gf?date=20260119&game=DALNYK"><b>GameFlow</b></a>&nbsp;&nbsp;
+                    <a TARGET="_blank" HREF="bs?date=20260119&game=DALNYK"><b>BoxScore</b></a>
+                </div>
+                <div class=score>Indiana 104<br><b>Philadelphia 113</b><br>
+                    <br><a TARGET="_blank" HREF="gf?date=20260119&game=INDPHI"><b>GameFlow</b></a>&nbsp;&nbsp;
+                    <a TARGET="_blank" HREF="bs?date=20260119&game=INDPHI"><b>BoxScore</b></a>
+                </div>
+                <div class=score><b>LA Clippers 110</b><br>Washington 106<br>
+                    <br><a TARGET="_blank" HREF="gf?date=20260119&game=LACWAS"><b>GameFlow</b></a>&nbsp;&nbsp;
+                    <a TARGET="_blank" HREF="bs?date=20260119&game=LACWAS"><b>BoxScore</b></a>
+                </div>
+                <div class=score>Miami 112<br><b>Golden State 135</b><br>
+                    <br><a TARGET="_blank" HREF="gf?date=20260119&game=MIAGSW"><b>GameFlow</b></a>&nbsp;&nbsp;
+                    <a TARGET="_blank" HREF="bs?date=20260119&game=MIAGSW"><b>BoxScore</b></a>
+                </div>
+                <div class=score><b>Milwaukee 112</b><br>Atlanta 110<br>
+                    <br><a TARGET="_blank" HREF="gf?date=20260119&game=MILATL"><b>GameFlow</b></a>&nbsp;&nbsp;
+                    <a TARGET="_blank" HREF="bs?date=20260119&game=MILATL"><b>BoxScore</b></a>
+                </div>
+                <div class=score><b>Oklahoma City 136</b><br>Cleveland 104<br>
+                    <br><a TARGET="_blank" HREF="gf?date=20260119&game=OKCCLE"><b>GameFlow</b></a>&nbsp;&nbsp;
+                    <a TARGET="_blank" HREF="bs?date=20260119&game=OKCCLE"><b>BoxScore</b></a>
+                </div>
+                <div class=score><b>Phoenix 126</b><br>Brooklyn 117<br>
+                    <br><a TARGET="_blank" HREF="gf?date=20260119&game=PHOBKN"><b>GameFlow</b></a>&nbsp;&nbsp;
+                    <a TARGET="_blank" HREF="bs?date=20260119&game=PHOBKN"><b>BoxScore</b></a>
+                </div>
+                <div class=score>Utah 110<br><b>San Antonio 123</b><br>
+                    <br><a TARGET="_blank" HREF="gf?date=20260119&game=UTHSAS"><b>GameFlow</b></a>&nbsp;&nbsp;
+                    <a TARGET="_blank" HREF="bs?date=20260119&game=UTHSAS"><b>BoxScore</b></a>
+                </div>
+            </div>
+            <div class=datesection>
+                <div class=today><b>Jan&nbsp;18,&nbsp;2026</b></div>
+                <br><br>
+                <div class=score>Brooklyn 102<br><b>Chicago 124</b><br>
+                    <br><a TARGET="_blank" HREF="gf?date=20260118&game=BKNCHI"><b>GameFlow</b></a>&nbsp;&nbsp;
+                    <a TARGET="_blank" HREF="bs?date=20260118&game=BKNCHI"><b>BoxScore</b></a>
+                </div>
+                <div class=score><b>Charlotte 110</b><br>Denver 87<br>
+                    <br><a TARGET="_blank" HREF="gf?date=20260118&game=CHADEN"><b>GameFlow</b></a>&nbsp;&nbsp;
+                    <a TARGET="_blank" HREF="bs?date=20260118&game=CHADEN"><b>BoxScore</b></a>
+                </div>
+                <div class=score>New Orleans 110<br><b>Houston 119</b><br>
+                    <br><a TARGET="_blank" HREF="gf?date=20260118&game=NORHOU"><b>GameFlow</b></a>&nbsp;&nbsp;
+                    <a TARGET="_blank" HREF="bs?date=20260118&game=NORHOU"><b>BoxScore</b></a>
+                </div>
+                <div class=score>Orlando 109<br><b>Memphis 126</b><br>
+                    <br><a TARGET="_blank" HREF="gf?date=20260118&game=ORLMEM"><b>GameFlow</b></a>&nbsp;&nbsp;
+                    <a TARGET="_blank" HREF="bs?date=20260118&game=ORLMEM"><b>BoxScore</b></a>
+                </div>
+                <div class=score><b>Portland 117</b><br>Sacramento 110<br>
+                    <br><a TARGET="_blank" HREF="gf?date=20260118&game=PORSAC"><b>GameFlow</b></a>&nbsp;&nbsp;
+                    <a TARGET="_blank" HREF="bs?date=20260118&game=PORSAC"><b>BoxScore</b></a>
+                </div>
+                <div class=score>Toronto 93<br><b>LA Lakers 110</b><br>
+                    <br><a TARGET="_blank" HREF="gf?date=20260118&game=TORLAL"><b>GameFlow</b></a>&nbsp;&nbsp;
+                    <a TARGET="_blank" HREF="bs?date=20260118&game=TORLAL"><b>BoxScore</b></a>
+                </div>
+            </div>
+
+            <div class=footer>
+                &copy; 2003-2026 <a target=_top href="http://PopcornMachine.net">PopcornMachine.net</a>. All Rights Reserved.
+                <br>
+                <br>
+            </div>
+
+        </div>
+
+
+        <script type="text/javascript" src="/wz_tooltip.js"></script>
+    </div>
+</body>
+</html>
