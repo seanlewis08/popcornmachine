@@ -39,9 +39,27 @@ export function Layout() {
           </span>
         </Link>
 
-        {!isHome && (
-          <Link
-            to="/"
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {!isHome && (
+            <Link
+              to="/"
+              style={{
+                color: "#E8D5B7",
+                fontSize: 14,
+                textDecoration: "none",
+                padding: "6px 16px",
+                border: "1px solid #5C3A21",
+                borderRadius: 4,
+                background: "rgba(92, 58, 33, 0.5)",
+              }}
+            >
+              All Games
+            </Link>
+          )}
+          <a
+            href="https://seanlewis.github.io"
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
               color: "#E8D5B7",
               fontSize: 14,
@@ -52,9 +70,9 @@ export function Layout() {
               background: "rgba(92, 58, 33, 0.5)",
             }}
           >
-            All Games
-          </Link>
-        )}
+            Blog
+          </a>
+        </div>
       </header>
 
       {/* Main content */}
