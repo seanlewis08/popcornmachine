@@ -29,6 +29,8 @@ def main(date: str | None = None, data_dir: str = "data", cleanup: bool = False)
     scoreboard = fetch_scoreboard(date)
     if scoreboard is None:
         print(f"No scoreboard data for {date}")
+        # Write empty scores file so backfill doesn't retry this date
+        write_scores(date, [], data_dir)
         return
 
     # 2. Transform scores
@@ -36,6 +38,8 @@ def main(date: str | None = None, data_dir: str = "data", cleanup: bool = False)
     scores = transform_scores(scoreboard, date)
     if not scores:
         print(f"No games found for {date}")
+        # Write empty scores file so backfill doesn't retry this date
+        write_scores(date, [], data_dir)
         return
 
     print(f"Found {len(scores)} games")

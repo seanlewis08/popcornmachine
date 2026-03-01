@@ -13,6 +13,21 @@ from nba_api.stats.endpoints.gamerotation import GameRotation
 from nba_api.stats.endpoints.playbyplayv3 import PlayByPlayV3
 from nba_api.stats.endpoints.scoreboardv2 import ScoreboardV2
 
+# Custom headers to avoid NBA API blocking cloud IPs (GitHub Actions, etc.)
+_HEADERS = {
+    "Host": "stats.nba.com",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0",
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "en-US,en;q=0.5",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Connection": "keep-alive",
+    "Referer": "https://www.nba.com/",
+    "Origin": "https://www.nba.com",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-site",
+}
+
 
 def _log_error(msg: str) -> None:
     """Log timestamped error to stderr."""
@@ -31,12 +46,13 @@ def fetch_scoreboard(game_date: str, delay: float = 1.5) -> Optional[dict]:
     Returns:
         Dict with 'game_header' and 'line_score' DataFrames, or None on failure
     """
-    max_retries = 1
+    max_retries = 2
     for attempt in range(max_retries + 1):
         try:
             time.sleep(delay)
             response = ScoreboardV2(
-                game_date=game_date, day_offset=0, league_id="00"
+                game_date=game_date, day_offset=0, league_id="00",
+                headers=_HEADERS, timeout=60,
             )
             return {
                 "game_header": response.get_data_frames()[0],
@@ -141,11 +157,11 @@ def fetch_boxscore(game_id: str, delay: float = 1.5) -> Optional[dict]:
     Returns:
         Dict with 'player_stats' and 'team_stats' DataFrames, or None on failure
     """
-    max_retries = 1
+    max_retries = 2
     for attempt in range(max_retries + 1):
         try:
             time.sleep(delay)
-            response = BoxScoreTraditionalV3(game_id=game_id)
+            response = BoxScoreTraditionalV3(game_id=game_id, headers=_HEADERS, timeout=60)
             dfs = response.get_data_frames()
             # V3 returns: [0] player stats, [1] starter/bench splits, [2] team stats
             player_stats = _map_v3_boxscore_player_stats(dfs[0])
@@ -235,12 +251,13 @@ def fetch_playbyplay(game_id: str, delay: float = 1.5) -> Optional[pd.DataFrame]
     Returns:
         DataFrame with play-by-play events (V2-compatible columns), or None on failure
     """
-    max_retries = 1
+    max_retries = 2
     for attempt in range(max_retries + 1):
         try:
             time.sleep(delay)
             response = PlayByPlayV3(
-                game_id=game_id, start_period=1, end_period=10
+                game_id=game_id, start_period=1, end_period=10,
+                headers=_HEADERS, timeout=60,
             )
             df = response.play_by_play.get_data_frame()
             return _map_v3_to_v2_columns(df)
@@ -267,11 +284,11 @@ def fetch_game_rotation(game_id: str, delay: float = 1.5) -> Optional[dict]:
     Returns:
         Dict with 'away_team' and 'home_team' DataFrames, or None on failure
     """
-    max_retries = 1
+    max_retries = 2
     for attempt in range(max_retries + 1):
         try:
             time.sleep(delay)
-            response = GameRotation(game_id=game_id, league_id="00")
+            response = GameRotation(game_id=game_id, league_id="00", headers=_HEADERS, timeout=60)
             return {
                 "away_team": response.get_data_frames()[0],
                 "home_team": response.get_data_frames()[1],
@@ -300,11 +317,11 @@ def fetch_roster(team_id: str, season: str, delay: float = 1.5) -> Optional[pd.D
     Returns:
         DataFrame with PLAYER_ID and POSITION columns, or None on failure
     """
-    max_retries = 1
+    max_retries = 2
     for attempt in range(max_retries + 1):
         try:
             time.sleep(delay)
-            response = CommonTeamRoster(team_id=team_id, season=season)
+            response = CommonTeamRoster(team_id=team_id, season=season, headers=_HEADERS, timeout=60)
             df = response.common_team_roster.get_data_frame()
             return df
         except requests.exceptions.RequestException as e:
