@@ -28,8 +28,24 @@ jobs:
       - name: Run pipeline
         run: |
           if [ -n "${{ github.event.inputs.date }}" ]; then
+            # Manual run: fetch a specific date
             uv run python -m pipeline.main --date "${{ github.event.inputs.date }}" --cleanup
           else
+            # Scheduled run: backfill any missing dates from the last 30 days
+            YESTERDAY=$(date -u -d "1 day ago" +%Y-%m-%d)
+            START=$(date -u -d "30 days ago" +%Y-%m-%d)
+            echo "Checking for missing dates from $START to $YESTERDAY"
+            CURRENT="$START"
+            while [ "$CURRENT" != "$(date -u -d "$YESTERDAY + 1 day" +%Y-%m-%d)" ]; do
+              if [ ! -f "data/scores/${CURRENT}.json" ]; then
+                echo "Missing $CURRENT — fetching..."
+                uv run python -m pipeline.main --date "$CURRENT" || echo "  Warning: pipeline failed for $CURRENT, continuing..."
+              else
+                echo "Already have $CURRENT — skipping"
+              fi
+              CURRENT=$(date -u -d "$CURRENT + 1 day" +%Y-%m-%d)
+            done
+            # Run cleanup once at the end
             uv run python -m pipeline.main --cleanup
           fi
 
