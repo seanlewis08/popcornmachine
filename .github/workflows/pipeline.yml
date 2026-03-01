@@ -3,7 +3,12 @@ name: Data Pipeline
 on:
   schedule:
     - cron: "0 6,14 * * *"  # 6 AM and 2 PM UTC
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Date to fetch (YYYY-MM-DD). Leave blank for yesterday."
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -21,7 +26,12 @@ jobs:
         run: uv sync
 
       - name: Run pipeline
-        run: uv run python -m pipeline.main --cleanup
+        run: |
+          if [ -n "${{ github.event.inputs.date }}" ]; then
+            uv run python -m pipeline.main --date "${{ github.event.inputs.date }}" --cleanup
+          else
+            uv run python -m pipeline.main --cleanup
+          fi
 
       - name: Check for changes
         id: changes
