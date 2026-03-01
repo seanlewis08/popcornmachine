@@ -249,13 +249,20 @@ def test_main_cleanup_flag_removes_old_data(
     sample_rotation_data
 ):
     """Test that --cleanup flag removes previous month data after successful writes."""
+    from datetime import datetime, timedelta
+
+    # Use current month so cleanup doesn't remove the data we just wrote
+    now = datetime.now()
+    current_month_date = now.strftime("%Y-%m-15")
+    # Old data from 2 months ago (guaranteed to be cleaned up)
+    old_date = (now.replace(day=1) - timedelta(days=60)).strftime("%Y-%m-15")
+
     with tempfile.TemporaryDirectory() as tmpdir:
-        # Setup: Create old data from January
+        # Setup: Create old data
         scores_dir = Path(tmpdir) / "scores"
         scores_dir.mkdir(parents=True)
-        (scores_dir / "2026-01-15.json").write_text("[{}]")
+        (scores_dir / f"{old_date}.json").write_text("[{}]")
 
-        # Mock for February data
         import pandas as pd
         single_game_scoreboard = {
             "game_header": sample_scoreboard_data["game_header"].iloc[[0]].reset_index(drop=True),
@@ -267,14 +274,14 @@ def test_main_cleanup_flag_removes_old_data(
         mock_fetch_pbp.return_value = sample_playbyplay_data
         mock_fetch_rot.return_value = sample_rotation_data
 
-        # Run pipeline with cleanup flag for February date
-        main(date="2026-02-15", data_dir=tmpdir, cleanup=True)
+        # Run pipeline with cleanup flag for current month date
+        main(date=current_month_date, data_dir=tmpdir, cleanup=True)
 
-        # Verify January data removed
-        assert not (scores_dir / "2026-01-15.json").exists()
+        # Verify old data removed
+        assert not (scores_dir / f"{old_date}.json").exists()
 
-        # Verify February data present
-        assert (scores_dir / "2026-02-15.json").exists()
+        # Verify current month data present
+        assert (scores_dir / f"{current_month_date}.json").exists()
 
 
 @patch("pipeline.main.fetch_game_rotation")

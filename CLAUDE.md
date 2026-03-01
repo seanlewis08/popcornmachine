@@ -1,17 +1,17 @@
 # Popcorn Remake: NBA Game Stats Viewer
 
-**Last Updated:** 2026-02-27
+**Last Updated:** 2026-03-01
 
 ## Purpose
 
-Popcorn Remake is a greenfield web application that provides detailed NBA game statistics with a focus on player stint-level analytics. It fetches live NBA game data via the nba_api, transforms it into structured JSON contracts, and displays it through an interactive React single-page application deployed on GitHub Pages.
+Popcorn Remake is a greenfield web application that provides detailed NBA game statistics with a focus on player stint-level analytics. It fetches live NBA game data via the NBA CDN (`cdn.nba.com`), transforms it into structured JSON contracts, and displays it through an interactive React single-page application deployed on GitHub Pages.
 
 ## Architecture Overview
 
 ### Three-Tier System
 
 1. **Data Pipeline** (Python)
-   - Fetches raw NBA data from nba_api
+   - Fetches raw NBA data from NBA CDN (`cdn.nba.com`) endpoints
    - Transforms and validates data according to contracts
    - Writes JSON files to `data/` directory
    - Scheduled via GitHub Actions
@@ -195,8 +195,8 @@ interface PlayByPlayEvent {
 
 ### Module Structure
 
-- `pipeline/fetch.py` - NBA API data fetching with retry logic (1 retry, max 1.5s delay between calls)
-- `pipeline/transform.py` - Contract mapping: NBA API → JSON schemas
+- `pipeline/fetch.py` - NBA CDN data fetching with retry logic (2 retries, 5s backoff); derives rotation from PBP substitution events
+- `pipeline/transform.py` - Contract mapping: CDN data → JSON schemas (receives V2-compatible DataFrames from fetch)
 - `pipeline/write.py` - JSON file writing with atomic operations
 - `pipeline/cleanup.py` - Monthly cleanup (removes data older than 1 month)
 - `pipeline/main.py` - Orchestrator with error handling
@@ -215,12 +215,21 @@ interface PlayByPlayEvent {
 
 **Entry Point:** `python -m pipeline.main [--date YYYY-MM-DD] [--data-dir PATH] [--cleanup]`
 
+### CDN Endpoints
+
+- **Schedule:** `https://cdn.nba.com/static/json/staticData/scheduleLeagueV2.json` — full season schedule, filtered by date
+- **Boxscore:** `https://cdn.nba.com/static/json/liveData/boxscore/boxscore_{game_id}.json` — per-game box scores with player positions
+- **Play-by-play:** `https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_{game_id}.json` — per-game PBP events
+- **No CDN rotation endpoint** — rotation data is derived from PBP substitution events + boxscore starters
+
 ### Key Invariants
 
-- All fetches include 1.5-second delay to respect NBA API rate limits
+- CDN endpoints are used instead of stats.nba.com (which blocks cloud IPs)
+- CDN data is mapped to V2-compatible DataFrame columns so transform.py works unchanged
+- Module-level caches prevent redundant fetches within a pipeline run (schedule, PBP, boxscore)
 - Failed API calls are logged to stderr with ISO timestamps
-- Stint timing uses millisecond precision from rotation data, converted to MM:SS format
-- Each regulation period = 720 seconds (12 minutes)
+- Stint timing uses decisecond precision from derived rotation data, converted to MM:SS format
+- Each regulation period = 720 seconds (12 minutes), 7200 deciseconds
 - Stint-level stats are filtered from play-by-play events
 - Missing data fields are never written (validation before write)
 
@@ -303,9 +312,8 @@ All components:
 ## Dependencies & Versions
 
 ### Python
-- `nba-api` - NBA Stats API client
-- `pandas` - Data manipulation
-- `requests` - HTTP client (for error handling)
+- `requests` - HTTP client for NBA CDN endpoints
+- `pandas` - Data manipulation and DataFrame construction
 
 ### Node.js
 - React 19.2.0, React DOM 19.2.0
@@ -344,8 +352,9 @@ All components:
 
 ### Rate Limiting & Resilience
 
-- **1.5s delay:** Respect NBA API rate limits (all fetch functions)
-- **1 retry:** Single retry with 5s backoff on network failure
+- **CDN endpoints:** Uses `cdn.nba.com` which is not blocked by cloud providers (unlike `stats.nba.com`)
+- **2 retries:** Two retries with 5s backoff on network failure
+- **Module-level caching:** Schedule, PBP, and boxscore data cached per pipeline run
 - **Graceful degradation:** Missing games skip, others continue
 - **Error logging:** Timestamped stderr output for debugging
 
@@ -356,7 +365,7 @@ popcorn-remake/
 ├── pipeline/                    # Python data pipeline
 │   ├── __init__.py
 │   ├── main.py                 # Orchestrator (entry point)
-│   ├── fetch.py                # NBA API client (fetch_*)
+│   ├── fetch.py                # NBA CDN client (fetch_*)
 │   ├── transform.py            # Contract mapping (transform_*)
 │   ├── write.py                # JSON output (write_*)
 │   └── cleanup.py              # Maintenance (cleanup_old_data)

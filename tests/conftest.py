@@ -33,6 +33,7 @@ def sample_boxscore_data() -> dict:
         "PLAYER_ID": [203507, 203999, 2544],
         "PLAYER_NAME": ["C Cunningham", "D Murray", "K Leonard"],
         "TEAM_ABBREVIATION": ["DET", "DET", "BOS"],
+        "TEAM_ID": [1610612765, 1610612765, 1610612738],
         "MIN": [40.3, 35.0, 38.5],
         "FGM": [4, 8, 10],
         "FGA": [17, 20, 22],

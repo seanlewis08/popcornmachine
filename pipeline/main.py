@@ -72,35 +72,38 @@ def main(date: str | None = None, data_dir: str = "data", cleanup: bool = False)
             skipped_games += 1
             continue
 
-        # Fetch rosters for both teams to get specific positions (PG, SG, SF, PF, C)
+        # Add roster positions if not already present (CDN boxscore includes them)
         try:
             import pandas as pd
 
             player_stats = boxscore_raw["player_stats"]
-            team_ids = player_stats["TEAM_ID"].astype(str).unique()
-            for tid in team_ids:
-                if tid not in roster_cache:
-                    print(f"  Fetching roster for team {tid}...")
-                    roster_df = fetch_roster(tid, season_str)
-                    if roster_df is not None:
-                        # Build player_id → position map
-                        roster_cache[tid] = {
-                            str(int(row["PLAYER_ID"])): row.get("POSITION", "")
-                            for _, row in roster_df.iterrows()
-                        }
-                    else:
-                        roster_cache[tid] = {}
 
-            # Merge specific positions into player_stats
-            def _get_roster_position(row):
-                tid = str(int(row["TEAM_ID"]))
-                pid = str(int(row["PLAYER_ID"]))
-                return roster_cache.get(tid, {}).get(pid, "")
+            if "ROSTER_POSITION" not in player_stats.columns:
+                # Fallback: fetch roster from API for position data
+                team_ids = player_stats["TEAM_ID"].astype(str).unique()
+                for tid in team_ids:
+                    if tid not in roster_cache:
+                        print(f"  Fetching roster for team {tid}...")
+                        roster_df = fetch_roster(tid, season_str)
+                        if roster_df is not None:
+                            roster_cache[tid] = {
+                                str(int(row["PLAYER_ID"])): row.get("POSITION", "")
+                                for _, row in roster_df.iterrows()
+                            }
+                        else:
+                            roster_cache[tid] = {}
 
-            boxscore_raw["player_stats"] = player_stats.copy()
-            boxscore_raw["player_stats"]["ROSTER_POSITION"] = player_stats.apply(
-                _get_roster_position, axis=1
-            )
+                def _get_roster_position(row):
+                    tid = str(int(row["TEAM_ID"]))
+                    pid = str(int(row["PLAYER_ID"]))
+                    return roster_cache.get(tid, {}).get(pid, "")
+
+                boxscore_raw["player_stats"] = player_stats.copy()
+                boxscore_raw["player_stats"]["ROSTER_POSITION"] = player_stats.apply(
+                    _get_roster_position, axis=1
+                )
+            else:
+                print("  Using positions from boxscore data (CDN)")
         except Exception as e:
             print(f"  Warning: could not fetch roster positions: {e}")
 

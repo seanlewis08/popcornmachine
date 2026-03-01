@@ -116,9 +116,13 @@ class TestPBPEventType:
         """Test V3 string 'foul'."""
         assert _pbp_event_to_type("foul", "") == "foul"
 
+    def test_pbp_event_v3_substitution(self):
+        """Test V3 substitution string action type."""
+        assert _pbp_event_to_type("substitution", "") == "sub"
+
     def test_pbp_event_v3_unknown(self):
-        """Test V3 unknown string action type."""
-        assert _pbp_event_to_type("substitution", "") == "other"
+        """Test V3 truly unknown string action type."""
+        assert _pbp_event_to_type("xyzunknowntype", "") == "other"
 
 
 class TestParseMinutes:
