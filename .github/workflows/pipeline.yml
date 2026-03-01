@@ -21,7 +21,7 @@ jobs:
         run: uv sync
 
       - name: Run pipeline
-        run: uv run pipeline/main.py --cleanup
+        run: uv run python -m pipeline.main --cleanup
 
       - name: Check for changes
         id: changes
