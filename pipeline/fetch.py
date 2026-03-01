@@ -421,15 +421,20 @@ def _derive_rotation_from_pbp(game_id: str, pbp_df: pd.DataFrame) -> Optional[di
     home_team_id = int(home_team.get("teamId", 0))
     away_team_id = int(away_team.get("teamId", 0))
 
-    # Identify starters from boxscore
+    # Build player name lookup and identify starters from boxscore
+    player_names: dict[int, tuple[str, str]] = {}  # person_id -> (first, last)
     home_starters = set()
     away_starters = set()
     for player in home_team.get("players", []):
+        pid = int(player.get("personId", 0))
+        player_names[pid] = (player.get("firstName", ""), player.get("familyName", ""))
         if player.get("starter") == "1":
-            home_starters.add(int(player.get("personId", 0)))
+            home_starters.add(pid)
     for player in away_team.get("players", []):
+        pid = int(player.get("personId", 0))
+        player_names[pid] = (player.get("firstName", ""), player.get("familyName", ""))
         if player.get("starter") == "1":
-            away_starters.add(int(player.get("personId", 0)))
+            away_starters.add(pid)
 
     # on_court tracks {player_id: (in_decisecs, home_score_str, away_score_str)}
     home_on_court: dict[int, tuple[int, str, str]] = {}
@@ -475,8 +480,11 @@ def _derive_rotation_from_pbp(game_id: str, pbp_df: pd.DataFrame) -> Optional[di
             except (ValueError, TypeError):
                 pt_diff = 0
 
+            first, last = player_names.get(person_id, ("", ""))
             rotation_rows.append({
                 "PERSON_ID": person_id,
+                "PLAYER_FIRST": first,
+                "PLAYER_LAST": last,
                 "IN_TIME_REAL": in_decisecs,
                 "OUT_TIME_REAL": decisecs,
                 "PT_DIFF": pt_diff,
@@ -511,15 +519,18 @@ def _derive_rotation_from_pbp(game_id: str, pbp_df: pd.DataFrame) -> Optional[di
                 except (ValueError, TypeError):
                     pt_diff = 0
 
+                first, last = player_names.get(pid, ("", ""))
                 rotation_rows.append({
                     "PERSON_ID": pid,
+                    "PLAYER_FIRST": first,
+                    "PLAYER_LAST": last,
                     "IN_TIME_REAL": in_decisecs,
                     "OUT_TIME_REAL": end_decisecs,
                     "PT_DIFF": pt_diff,
                     "TEAM_ID": team_id,
                 })
 
-    empty_cols = ["PERSON_ID", "IN_TIME_REAL", "OUT_TIME_REAL", "PT_DIFF", "TEAM_ID"]
+    empty_cols = ["PERSON_ID", "PLAYER_FIRST", "PLAYER_LAST", "IN_TIME_REAL", "OUT_TIME_REAL", "PT_DIFF", "TEAM_ID"]
     return {
         "away_team": pd.DataFrame(away_rotation_rows) if away_rotation_rows else pd.DataFrame(columns=empty_cols),
         "home_team": pd.DataFrame(home_rotation_rows) if home_rotation_rows else pd.DataFrame(columns=empty_cols),
