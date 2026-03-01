@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   fetch-data:
@@ -62,3 +63,9 @@ jobs:
           git add data/
           git commit -m "data: update game data $(date -u +%Y-%m-%d)"
           git push
+
+      - name: Trigger deploy
+        if: steps.changes.outputs.changed == 'true'
+        run: gh workflow run deploy.yml
+        env:
+          GH_TOKEN: ${{ github.token }}
