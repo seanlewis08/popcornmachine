@@ -28,9 +28,9 @@ def main(date: str | None = None, data_dir: str = "data", cleanup: bool = False)
     print(f"Fetching scoreboard for {date}...")
     scoreboard = fetch_scoreboard(date)
     if scoreboard is None:
-        print(f"No scoreboard data for {date}")
-        # Write empty scores file so backfill doesn't retry this date
-        write_scores(date, [], data_dir)
+        # API error (timeout, blocked, etc.) — do NOT write empty file
+        # so backfill will retry this date on the next run
+        print(f"No scoreboard data for {date} (API error — will retry)")
         return
 
     # 2. Transform scores
@@ -38,6 +38,7 @@ def main(date: str | None = None, data_dir: str = "data", cleanup: bool = False)
     scores = transform_scores(scoreboard, date)
     if not scores:
         print(f"No games found for {date}")
+        # Scoreboard responded but had zero games (off day / All-Star break)
         # Write empty scores file so backfill doesn't retry this date
         write_scores(date, [], data_dir)
         return
