@@ -68,9 +68,9 @@ body {
 
 /* ===================================================================
    GAMEFLOW TEAM COLORS
-   GameflowTimeline sets --home-*/--away-* on its root from the matchup's
-   real team colors (src/lib/team-palette.ts). The fallbacks are the fixed
-   palette the site used before team colors existed.
+   GameflowTimeline sets the --home-… and --away-… custom properties on its
+   root from the two teams' real colors (src/lib/team-palette.ts). The
+   fallbacks are the fixed palette the site used before team colors existed.
    =================================================================== */
 .hometeamOUT {
   background-color: var(--home-bench, #EB003C);
