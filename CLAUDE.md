@@ -198,7 +198,8 @@ interface PlayByPlayEvent {
 - `pipeline/fetch.py` - NBA CDN data fetching with retry logic (2 retries, 5s backoff); derives rotation from PBP substitution events
 - `pipeline/transform.py` - Contract mapping: CDN data → JSON schemas (receives V2-compatible DataFrames from fetch)
 - `pipeline/write.py` - JSON file writing with atomic operations
-- `pipeline/cleanup.py` - Monthly cleanup (removes data older than 1 month)
+- `pipeline/season.py` - Season arithmetic: `season_for("2027-01-10") == "2026-27"`, `season_start_date(...)`; also a CLI (`python -m pipeline.season --start-of DATE`) the workflow uses to find the backfill start
+- `pipeline/cleanup.py` - Season retention: deletes score files, game dirs, and index entries from seasons before the one containing the reference date (today). The pure predicate is `is_stale(date, reference_date)`
 - `pipeline/main.py` - Orchestrator with error handling
 
 ### Pipeline Contract
@@ -211,7 +212,7 @@ interface PlayByPlayEvent {
 3. For each game: fetch boxscore + playbyplay + rotation → validate → transform
 4. Skips games with incomplete data (logs error, continues)
 5. On success: writes scores and index to `data/`
-6. Optionally runs monthly cleanup (removes prior month's games)
+6. Optionally runs cleanup (drops every season before the current one — see Scheduling & Cleanup)
 
 **Return value:** `True` if the schedule/scoreboard API responded (including with zero games — an off day writes an empty `[]` scores file). `False` if the API was unreachable; nothing is written so the next backfill retries the date.
 
@@ -293,7 +294,7 @@ All components:
 1. Checkout code
 2. Install `uv` (Python package manager)
 3. Run `uv sync` to install dependencies
-4. Run pipeline: scheduled runs backfill every date in the last 30 days missing a `data/scores/` file, then re-run yesterday with `--cleanup`; manual runs fetch the given date. Every date that exits non-zero is recorded in the `failed_dates` step output with a `::error::` annotation (exit 2 = CDN unreachable, anything else = crash).
+4. Run pipeline: scheduled runs backfill every date since the season started (Oct 1, via `python -m pipeline.season --start-of`) that lacks a `data/scores/` file, then re-run yesterday with `--cleanup`; manual runs fetch the given date. Existing dates are skipped by a file check, so the season-long walk is cheap. Every date that exits non-zero is recorded in the `failed_dates` step output with a `::error::` annotation (exit 2 = CDN unreachable, anything else = crash).
 5. `git add data/` then check the staged diff (catches new untracked files, not just modified ones)
 6. If changed: commit with bot credentials and push
 7. If changed: `gh workflow run deploy.yml`
@@ -349,7 +350,8 @@ All components:
 ### Scheduling & Cleanup
 
 - **Daily updates:** Pipeline runs twice daily (6 AM, 2 PM UTC)
-- **Monthly cleanup:** Removes games older than 1 month (preserves recent data)
+- **Season retention:** The whole current season (regular season, play-in, playoffs) is kept; previous seasons are deleted. A season is Oct 1 → Sep 30 and is named by its start year (`pipeline/season.py`). Because cleanup only runs after a day with games, last season survives the summer and is dropped on the first game day of the new one. ~180 KB per game ≈ 220 MB per season, under GitHub Pages' 1 GB cap for one season at a time.
+- **Game types:** Only regular-season (`002…`), playoff (`004…`), and play-in (`005…`) game IDs are ingested. Preseason (`001…`) and All-Star (`003…`) are filtered in `fetch_scoreboard` (`is_tracked_game_type`).
 - **Idempotent:** Pipeline can re-run same date without corruption
 - **Error-safe:** Individual game failures don't stop other games or break index
 
@@ -378,7 +380,8 @@ popcorn-remake/
 │   ├── fetch.py                # NBA CDN client (fetch_*)
 │   ├── transform.py            # Contract mapping (transform_*)
 │   ├── write.py                # JSON output (write_*)
-│   └── cleanup.py              # Maintenance (cleanup_old_data)
+│   ├── season.py               # Season arithmetic (season_for, season_start_date)
+│   └── cleanup.py              # Season retention (cleanup_old_data, is_stale)
 ├── web/                        # React SPA
 │   ├── src/
 │   │   ├── types/api.ts       # TypeScript contract definitions
@@ -402,6 +405,7 @@ popcorn-remake/
 │   ├── test_transform.py
 │   ├── test_write.py
 │   ├── test_cleanup.py
+│   ├── test_season.py
 │   └── test_main.py
 ├── docs/
 │   └── TROUBLESHOOTING.md     # Runbook: site not updating, CDN 403, disabled schedule

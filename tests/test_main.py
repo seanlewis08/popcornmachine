@@ -92,6 +92,23 @@ def test_main_returns_true_on_off_day(mock_fetch_sb, sample_scoreboard_data):
         assert main(date="2026-01-19", data_dir=tmpdir) is True
 
 
+@patch("pipeline.main.fetch_scoreboard")
+def test_main_logs_season_from_season_for(mock_fetch_sb, sample_scoreboard_data, capsys):
+    """main() derives the season label via pipeline.season, not inline math."""
+    mock_fetch_sb.return_value = sample_scoreboard_data
+
+    with tempfile.TemporaryDirectory() as tmpdir, patch(
+        "pipeline.main.season_for", return_value="SEASON-X"
+    ) as mock_season:
+        with patch("pipeline.main.fetch_boxscore", return_value=None), patch(
+            "pipeline.main.fetch_playbyplay", return_value=None
+        ), patch("pipeline.main.fetch_game_rotation", return_value=None):
+            main(date="2027-01-19", data_dir=tmpdir)
+
+    mock_season.assert_called_once_with("2027-01-19")
+    assert "Using season: SEASON-X" in capsys.readouterr().out
+
+
 def test_cli_exits_2_when_scoreboard_unreachable():
     """`python -m pipeline.main` exits 2 (not 0) when the API is unreachable."""
     import subprocess
@@ -297,14 +314,14 @@ def test_main_cleanup_flag_removes_old_data(
     sample_scoreboard_data, sample_boxscore_data, sample_playbyplay_data,
     sample_rotation_data
 ):
-    """Test that --cleanup flag removes previous month data after successful writes."""
+    """Test that --cleanup flag removes previous-season data after successful writes."""
     from datetime import datetime, timedelta
 
-    # Use current month so cleanup doesn't remove the data we just wrote
+    # Cleanup uses today as its reference, so write "current" data for today's
+    # season and "old" data two seasons back (guaranteed stale on any day).
     now = datetime.now()
     current_month_date = now.strftime("%Y-%m-15")
-    # Old data from 2 months ago (guaranteed to be cleaned up)
-    old_date = (now.replace(day=1) - timedelta(days=60)).strftime("%Y-%m-15")
+    old_date = (now - timedelta(days=800)).strftime("%Y-%m-15")
 
     with tempfile.TemporaryDirectory() as tmpdir:
         # Setup: Create old data

@@ -1,241 +1,169 @@
-"""Tests for the cleanup module."""
+"""Tests for the cleanup module.
+
+Retention rule: keep every game from the season that `reference_date` falls
+in (October → the following September); delete everything from earlier
+seasons. See pipeline/season.py for the season boundary.
+"""
 
 import json
 import tempfile
 from pathlib import Path
 
-import pytest
+from pipeline.cleanup import cleanup_old_data, is_stale
 
-from pipeline.cleanup import cleanup_old_data
+
+def _write_scores(tmpdir: str, dates: list[str]) -> Path:
+    scores_dir = Path(tmpdir) / "scores"
+    scores_dir.mkdir(parents=True, exist_ok=True)
+    for d in dates:
+        (scores_dir / f"{d}.json").write_text("[{}]")
+    return scores_dir
+
+
+def _write_game(tmpdir: str, game_id: str, date: str) -> Path:
+    game_dir = Path(tmpdir) / "games" / game_id
+    game_dir.mkdir(parents=True)
+    (game_dir / "boxscore.json").write_text(json.dumps({"gameId": game_id, "date": date}))
+    (game_dir / "gameflow.json").write_text("{}")
+    return game_dir
+
+
+def _write_index(tmpdir: str, dates: list[str]) -> Path:
+    index_path = Path(tmpdir) / "index.json"
+    index_path.write_text(json.dumps({"dates": [{"date": d, "games": []} for d in dates]}))
+    return index_path
+
+
+class TestIsStale:
+    """Pure retention predicate."""
+
+    def test_same_season_is_kept(self):
+        assert is_stale("2026-10-21", reference_date="2027-04-10") is False
+
+    def test_previous_season_is_stale(self):
+        assert is_stale("2026-04-10", reference_date="2026-10-21") is True
+
+    def test_offseason_reference_keeps_the_season_just_ended(self):
+        # August 2027: the 2026-27 season is still "current".
+        assert is_stale("2026-10-21", reference_date="2027-08-01") is False
+        assert is_stale("2027-06-18", reference_date="2027-08-01") is False
+
+    def test_first_game_day_of_new_season_drops_last_season(self):
+        assert is_stale("2027-06-18", reference_date="2027-10-20") is True
+
+    def test_unparseable_date_is_not_stale(self):
+        # Never delete something we can't classify.
+        assert is_stale("garbage", reference_date="2027-10-20") is False
 
 
 class TestCleanupOldData:
-    """Tests for cleanup_old_data function."""
+    """Filesystem effects of the retention rule."""
 
-    def test_cleanup_removes_old_score_files(self):
-        """Test that cleanup removes score files older than keep_days."""
+    def test_cleanup_removes_previous_season_score_files(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            scores_dir = Path(tmpdir) / "scores"
-            scores_dir.mkdir(parents=True)
+            scores_dir = _write_scores(
+                tmpdir,
+                ["2026-04-10", "2026-06-18", "2026-10-21", "2026-10-22"],
+            )
+            _write_index(tmpdir, ["2026-10-22", "2026-10-21", "2026-06-18", "2026-04-10"])
 
-            # Old scores (>30 days before 2026-02-15 → before 2026-01-16)
-            (scores_dir / "2026-01-10.json").write_text("[{}]")
-            (scores_dir / "2026-01-15.json").write_text("[{}]")
+            deleted = cleanup_old_data(tmpdir, reference_date="2026-10-23")
 
-            # Recent scores (within 30 days of 2026-02-15)
-            (scores_dir / "2026-01-20.json").write_text("[{}]")
-            (scores_dir / "2026-02-01.json").write_text("[{}]")
-            (scores_dir / "2026-02-15.json").write_text("[{}]")
+            assert not (scores_dir / "2026-04-10.json").exists()
+            assert not (scores_dir / "2026-06-18.json").exists()
+            assert (scores_dir / "2026-10-21.json").exists()
+            assert (scores_dir / "2026-10-22.json").exists()
+            assert any("2026-04-10.json" in p for p in deleted)
+            assert any("2026-06-18.json" in p for p in deleted)
 
-            # Create index
-            index_data = {
-                "dates": [
-                    {"date": "2026-02-15", "games": []},
-                    {"date": "2026-02-01", "games": []},
-                    {"date": "2026-01-20", "games": []},
-                    {"date": "2026-01-15", "games": []},
-                    {"date": "2026-01-10", "games": []},
-                ]
-            }
-            (Path(tmpdir) / "index.json").write_text(json.dumps(index_data))
-
-            deleted = cleanup_old_data(tmpdir, reference_date="2026-02-15")
-
-            # Old files deleted
-            assert not (scores_dir / "2026-01-10.json").exists()
-            assert not (scores_dir / "2026-01-15.json").exists()
-
-            # Recent files kept
-            assert (scores_dir / "2026-01-20.json").exists()
-            assert (scores_dir / "2026-02-01.json").exists()
-            assert (scores_dir / "2026-02-15.json").exists()
-
-            assert any("2026-01-10.json" in path for path in deleted)
-            assert any("2026-01-15.json" in path for path in deleted)
-
-    def test_cleanup_removes_old_game_directories(self):
-        """Test that cleanup removes game directories older than keep_days."""
+    def test_cleanup_removes_previous_season_game_directories(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            games_dir = Path(tmpdir) / "games"
-            games_dir.mkdir(parents=True)
+            old_game = _write_game(tmpdir, "0042500405", "2026-06-18")
+            new_game = _write_game(tmpdir, "0022600006", "2026-10-22")
 
-            # Old game (before cutoff)
-            old_game = games_dir / "0022500001"
-            old_game.mkdir()
-            (old_game / "boxscore.json").write_text(
-                json.dumps({"gameId": "0022500001", "date": "2026-01-10"})
-            )
-            (old_game / "gameflow.json").write_text("{}")
-
-            # Recent game (within window)
-            new_game = games_dir / "0022500002"
-            new_game.mkdir()
-            (new_game / "boxscore.json").write_text(
-                json.dumps({"gameId": "0022500002", "date": "2026-02-10"})
-            )
-            (new_game / "gameflow.json").write_text("{}")
-
-            deleted = cleanup_old_data(tmpdir, reference_date="2026-02-15")
+            deleted = cleanup_old_data(tmpdir, reference_date="2026-10-23")
 
             assert not old_game.exists()
             assert new_game.exists()
-            assert any("0022500001" in path for path in deleted)
+            assert any("0042500405" in p for p in deleted)
 
     def test_cleanup_updates_index_json(self):
-        """Test that cleanup updates index.json to remove old entries."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            index_data = {
-                "dates": [
-                    {"date": "2026-02-15", "games": []},
-                    {"date": "2026-01-10", "games": []},
-                ]
-            }
-            (Path(tmpdir) / "index.json").write_text(json.dumps(index_data))
-            (Path(tmpdir) / "scores").mkdir(exist_ok=True)
+            index_path = _write_index(tmpdir, ["2026-10-22", "2026-06-18"])
+            (Path(tmpdir) / "scores").mkdir()
 
-            cleanup_old_data(tmpdir, reference_date="2026-02-15")
+            cleanup_old_data(tmpdir, reference_date="2026-10-23")
 
-            with open(Path(tmpdir) / "index.json") as f:
-                updated_index = json.load(f)
+            dates = [d["date"] for d in json.loads(index_path.read_text())["dates"]]
+            assert dates == ["2026-10-22"]
 
-            dates = [d["date"] for d in updated_index["dates"]]
-            assert "2026-02-15" in dates
-            assert "2026-01-10" not in dates
-
-    def test_cleanup_keeps_data_within_window(self):
-        """Test that cleanup keeps all data within the rolling window."""
+    def test_cleanup_keeps_whole_season_across_new_year(self):
+        """January of a season must not drop October–December."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            scores_dir = Path(tmpdir) / "scores"
-            scores_dir.mkdir(parents=True)
+            season_dates = ["2026-10-21", "2026-11-15", "2026-12-25", "2027-01-10", "2027-03-01"]
+            scores_dir = _write_scores(tmpdir, season_dates)
+            _write_index(tmpdir, season_dates)
 
-            # All within 30 days of 2026-02-15
-            recent_dates = ["2026-01-20", "2026-01-25", "2026-02-01", "2026-02-10", "2026-02-15"]
-            for d in recent_dates:
-                (scores_dir / f"{d}.json").write_text("[{}]")
+            deleted = cleanup_old_data(tmpdir, reference_date="2027-03-02")
 
-            games_dir = Path(tmpdir) / "games"
-            games_dir.mkdir(parents=True)
-            for i, d in enumerate(recent_dates):
-                game_dir = games_dir / f"000250000{i}"
-                game_dir.mkdir()
-                (game_dir / "boxscore.json").write_text(
-                    json.dumps({"gameId": f"000250000{i}", "date": d})
-                )
-
-            deleted = cleanup_old_data(tmpdir, reference_date="2026-02-15")
-
-            # Nothing should be deleted
             assert deleted == []
-            for d in recent_dates:
+            for d in season_dates:
                 assert (scores_dir / f"{d}.json").exists()
-            for i in range(len(recent_dates)):
-                assert (games_dir / f"000250000{i}").exists()
 
-    def test_cleanup_first_day_of_month_keeps_previous_month(self):
-        """Test the exact bug: cleanup on March 1 keeps February data."""
+    def test_cleanup_in_offseason_keeps_finished_season(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            scores_dir = Path(tmpdir) / "scores"
-            scores_dir.mkdir(parents=True)
+            scores_dir = _write_scores(tmpdir, ["2026-10-21", "2027-06-18"])
+            _write_index(tmpdir, ["2027-06-18", "2026-10-21"])
 
-            # February data (within 30 days of March 1)
-            (scores_dir / "2026-02-15.json").write_text("[{}]")
-            (scores_dir / "2026-02-28.json").write_text("[{}]")
+            deleted = cleanup_old_data(tmpdir, reference_date="2027-08-15")
 
-            # Old January data (>30 days before March 1)
-            (scores_dir / "2026-01-15.json").write_text("[{}]")
-
-            deleted = cleanup_old_data(tmpdir, reference_date="2026-03-01")
-
-            # February data kept (within 30-day window)
-            assert (scores_dir / "2026-02-15.json").exists()
-            assert (scores_dir / "2026-02-28.json").exists()
-
-            # Old January data deleted
-            assert not (scores_dir / "2026-01-15.json").exists()
+            assert deleted == []
+            assert (scores_dir / "2026-10-21.json").exists()
+            assert (scores_dir / "2027-06-18.json").exists()
 
     def test_cleanup_handles_empty_data_directory(self):
-        """Test that cleanup handles empty data directory gracefully."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            deleted = cleanup_old_data(tmpdir, reference_date="2026-02-15")
-            assert deleted == []
+            assert cleanup_old_data(tmpdir, reference_date="2026-10-23") == []
+
+    def test_cleanup_handles_missing_data_directory(self):
+        assert cleanup_old_data("/nonexistent/path", reference_date="2026-10-23") == []
 
     def test_cleanup_handles_missing_index_file(self):
-        """Test that cleanup handles missing index.json gracefully."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            scores_dir = Path(tmpdir) / "scores"
-            scores_dir.mkdir(parents=True)
-            (scores_dir / "2026-02-15.json").write_text("[{}]")
-
-            deleted = cleanup_old_data(tmpdir, reference_date="2026-02-15")
-            assert isinstance(deleted, list)
+            _write_scores(tmpdir, ["2026-10-22"])
+            assert isinstance(cleanup_old_data(tmpdir, reference_date="2026-10-23"), list)
 
     def test_cleanup_uses_today_as_default_reference_date(self):
-        """Test that cleanup uses today's date when reference_date is None."""
+        from datetime import datetime, timedelta
+
         with tempfile.TemporaryDirectory() as tmpdir:
-            from datetime import datetime, timedelta
+            today = datetime.now().strftime("%Y-%m-%d")
+            two_seasons_ago = (datetime.now() - timedelta(days=800)).strftime("%Y-%m-%d")
+            scores_dir = _write_scores(tmpdir, [today, two_seasons_ago])
 
-            scores_dir = Path(tmpdir) / "scores"
-            scores_dir.mkdir(parents=True)
+            cleanup_old_data(tmpdir)
 
-            today = datetime.now()
-            # 60 days ago — guaranteed to be outside 30-day window
-            old_date = (today - timedelta(days=60)).strftime("%Y-%m-%d")
-            # Today — guaranteed to be inside window
-            today_str = today.strftime("%Y-%m-%d")
+            assert (scores_dir / f"{today}.json").exists()
+            assert not (scores_dir / f"{two_seasons_ago}.json").exists()
 
-            (scores_dir / f"{old_date}.json").write_text("[{}]")
-            (scores_dir / f"{today_str}.json").write_text("[{}]")
-
-            deleted = cleanup_old_data(tmpdir, reference_date=None)
-
-            assert not (scores_dir / f"{old_date}.json").exists()
-            assert (scores_dir / f"{today_str}.json").exists()
-
-    def test_cleanup_returns_list_of_deleted_paths(self):
-        """Test that cleanup returns list of all deleted file paths."""
+    def test_cleanup_ignores_game_without_date_field(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            scores_dir = Path(tmpdir) / "scores"
-            scores_dir.mkdir(parents=True)
-            (scores_dir / "2025-12-01.json").write_text("[{}]")
-            (scores_dir / "2026-02-15.json").write_text("[{}]")
+            game_dir = Path(tmpdir) / "games" / "0022500001"
+            game_dir.mkdir(parents=True)
+            (game_dir / "boxscore.json").write_text(json.dumps({"gameId": "0022500001"}))
 
-            deleted = cleanup_old_data(tmpdir, reference_date="2026-02-15")
+            deleted = cleanup_old_data(tmpdir, reference_date="2026-10-23")
 
-            assert isinstance(deleted, list)
-            assert len(deleted) > 0
-            assert all(isinstance(path, str) for path in deleted)
-
-    def test_cleanup_handles_boxscore_without_date_field(self):
-        """Test that cleanup handles game directories with no date in boxscore."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            games_dir = Path(tmpdir) / "games"
-            games_dir.mkdir(parents=True)
-
-            game_dir = games_dir / "0022500001"
-            game_dir.mkdir()
-            (game_dir / "boxscore.json").write_text(
-                json.dumps({"gameId": "0022500001"})  # No date field
-            )
-
-            deleted = cleanup_old_data(tmpdir, reference_date="2026-02-15")
-            assert isinstance(deleted, list)
-
-    def test_cleanup_custom_keep_days(self):
-        """Test that keep_days parameter controls the retention window."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            scores_dir = Path(tmpdir) / "scores"
-            scores_dir.mkdir(parents=True)
-
-            # 10 days before reference → kept with keep_days=15, deleted with keep_days=7
-            (scores_dir / "2026-02-05.json").write_text("[{}]")
-            (scores_dir / "2026-02-15.json").write_text("[{}]")
-
-            # With 15-day window: cutoff is 2026-01-31, so Feb 5 is kept
-            deleted = cleanup_old_data(tmpdir, reference_date="2026-02-15", keep_days=15)
-            assert (scores_dir / "2026-02-05.json").exists()
             assert deleted == []
+            assert game_dir.exists()
 
-            # With 7-day window: cutoff is 2026-02-08, so Feb 5 is deleted
-            deleted = cleanup_old_data(tmpdir, reference_date="2026-02-15", keep_days=7)
-            assert not (scores_dir / "2026-02-05.json").exists()
-            assert len(deleted) == 1
+    def test_cleanup_ignores_non_date_score_filenames(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            scores_dir = Path(tmpdir) / "scores"
+            scores_dir.mkdir()
+            (scores_dir / "notes.json").write_text("{}")
+
+            deleted = cleanup_old_data(tmpdir, reference_date="2026-10-23")
+
+            assert deleted == []
+            assert (scores_dir / "notes.json").exists()

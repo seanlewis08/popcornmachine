@@ -393,6 +393,33 @@ class TestFetchScoreboard:
             result = fetch_scoreboard("2026-02-27", delay=0)
             assert len(result["game_header"]) == 0
 
+    @staticmethod
+    def _final_game(game_id: str) -> dict:
+        return {
+            "gameId": game_id,
+            "gameStatus": 3,
+            "gameStatusText": "Final",
+            "homeTeam": {"teamId": 1, "teamName": "A", "teamCity": "X", "teamTricode": "AAA", "score": 100},
+            "awayTeam": {"teamId": 2, "teamName": "B", "teamCity": "Y", "teamTricode": "BBB", "score": 99},
+        }
+
+    def test_fetch_scoreboard_keeps_regular_season_playoff_and_play_in_games(self):
+        """Game-ID prefix encodes type: 002 regular season, 004 playoffs, 005 play-in."""
+        games = [self._final_game(g) for g in ("0022600006", "0042600101", "0052600001")]
+        with patch("pipeline.fetch._fetch_json") as mock_fetch:
+            mock_fetch.return_value = _make_schedule_response(games=games)
+            result = fetch_scoreboard("2026-02-27", delay=0)
+            assert sorted(result["game_header"]["GAME_ID"]) == ["0022600006", "0042600101", "0052600001"]
+
+    def test_fetch_scoreboard_skips_preseason_and_all_star_games(self):
+        """001 = preseason, 003 = All-Star: stat lines are noise for this site."""
+        games = [self._final_game(g) for g in ("0012600012", "0032600001", "0022600006")]
+        with patch("pipeline.fetch._fetch_json") as mock_fetch:
+            mock_fetch.return_value = _make_schedule_response(games=games)
+            result = fetch_scoreboard("2026-02-27", delay=0)
+            assert list(result["game_header"]["GAME_ID"]) == ["0022600006"]
+            assert list(result["line_score"]["GAME_ID"]) == ["0022600006", "0022600006"]
+
 
 class TestFetchBoxscore:
     """Tests for fetch_boxscore function."""

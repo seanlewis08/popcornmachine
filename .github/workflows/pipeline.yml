@@ -51,9 +51,11 @@ jobs:
             # Manual run: fetch a specific date
             run_date "${{ github.event.inputs.date }}" --cleanup
           else
-            # Scheduled run: backfill any missing dates from the last 30 days
+            # Scheduled run: backfill any missing date since the season started.
+            # Dates already on disk are skipped instantly, so this is cheap and
+            # any gap (outage, late-posted game) self-heals however old it is.
             YESTERDAY=$(date -u -d "1 day ago" +%Y-%m-%d)
-            START=$(date -u -d "30 days ago" +%Y-%m-%d)
+            START=$(uv run python -m pipeline.season --start-of "$YESTERDAY")
             echo "Checking for missing dates from $START to $YESTERDAY"
             CURRENT="$START"
             while [ "$CURRENT" != "$(date -u -d "$YESTERDAY + 1 day" +%Y-%m-%d)" ]; do
@@ -65,7 +67,7 @@ jobs:
               fi
               CURRENT=$(date -u -d "$CURRENT + 1 day" +%Y-%m-%d)
             done
-            # Re-run yesterday with cleanup (prunes data older than 30 days)
+            # Re-run yesterday with cleanup (drops seasons before the current one)
             run_date "$YESTERDAY" --cleanup
           fi
 

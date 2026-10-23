@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 
 from .cleanup import cleanup_old_data
 from .fetch import fetch_boxscore, fetch_game_rotation, fetch_playbyplay, fetch_roster, fetch_scoreboard
+from .season import season_for
 from .transform import transform_boxscore, transform_gameflow, transform_scores
 from .write import write_game_data, write_index, write_scores
 
@@ -18,7 +19,7 @@ def main(date: str | None = None, data_dir: str = "data", cleanup: bool = False)
     Args:
         date: Date string in YYYY-MM-DD format (defaults to yesterday)
         data_dir: Base data directory (default "data")
-        cleanup: Whether to run monthly cleanup after successful writes (default False)
+        cleanup: After successful writes, delete data from previous seasons (default False)
 
     Returns:
         True if the schedule/scoreboard API responded (even with zero games).
@@ -52,11 +53,8 @@ def main(date: str | None = None, data_dir: str = "data", cleanup: bool = False)
 
     print(f"Found {len(scores)} games")
 
-    # 3. Derive season string from date (e.g., "2025-26" for Oct 2025 onward)
-    year = int(date[:4])
-    month = int(date[5:7])
-    season_start = year if month >= 10 else year - 1
-    season_str = f"{season_start}-{str(season_start + 1)[-2:]}"
+    # 3. Season label for roster lookups (e.g., "2026-27")
+    season_str = season_for(date)
     print(f"Using season: {season_str}")
 
     # Cache rosters by team_id to avoid re-fetching
@@ -186,7 +184,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--cleanup",
         action="store_true",
-        help="Run monthly cleanup after successful writes (removes previous month data)",
+        help="After successful writes, delete data from seasons before the current one",
     )
 
     args = parser.parse_args()

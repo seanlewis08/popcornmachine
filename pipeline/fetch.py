@@ -135,6 +135,16 @@ def _clock_to_decisecs(period: int, clock_str: str) -> int:
 # Schedule helpers
 # ---------------------------------------------------------------------------
 
+# NBA game IDs encode the game type in their first three digits:
+# 001 preseason, 002 regular season, 003 All-Star, 004 playoffs, 005 play-in.
+# Preseason and All-Star stat lines are noise for stint analytics.
+_TRACKED_GAME_TYPE_PREFIXES = ("002", "004", "005")
+
+
+def is_tracked_game_type(game_id: str) -> bool:
+    """True for regular-season, playoff, and play-in game IDs."""
+    return game_id.startswith(_TRACKED_GAME_TYPE_PREFIXES)
+
 def _normalize_schedule_date(date_str: str) -> str:
     """Normalize CDN schedule date to YYYY-MM-DD format."""
     if not date_str:
@@ -218,6 +228,9 @@ def fetch_scoreboard(game_date: str, delay: float = 1.5) -> Optional[dict]:
         # Only include completed games (gameStatus 3 = Final)
         game_status = game.get("gameStatus", 0)
         if game_status != 3:
+            continue
+
+        if not is_tracked_game_type(game_id):
             continue
 
         game_header_rows.append({

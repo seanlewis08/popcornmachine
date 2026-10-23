@@ -120,11 +120,19 @@ Expect two failure emails a day during an outage. That's the point. If it's genu
 
 ## Backfill and cleanup behaviour
 
-Scheduled runs don't just fetch yesterday. They walk the last 30 days and fetch any date without a `data/scores/YYYY-MM-DD.json` file. So after any outage, the first successful run catches up on everything (as long as the CDN still serves those games; the live endpoints have kept games for well over a year so far).
+Scheduled runs don't just fetch yesterday. They walk every date from the season's start (Oct 1) to yesterday and fetch any date without a `data/scores/YYYY-MM-DD.json` file. Existing dates are skipped by a file check, so this costs nothing extra, and after any outage the first successful run catches up on the whole gap (as long as the CDN still serves those games; the live endpoints have kept games for well over a year so far).
 
 A date with zero games writes an empty `[]` scores file so it isn't retried forever. A date where the API failed writes nothing, so it is retried.
 
-Cleanup (`--cleanup`) deletes data older than 30 days. It only runs on the final "yesterday" invocation, and only if that invocation found games. During the offseason it never runs, so stale data sits in the repo until the first game day of the new season. Harmless, just unexpected.
+Only regular-season, play-in, and playoff games are kept. Preseason and All-Star games are dropped by their game-ID prefix (`001…` and `003…`) in `fetch_scoreboard`.
+
+Cleanup (`--cleanup`) keeps the current season and deletes everything from earlier seasons. A season runs Oct 1 → Sep 30 and is named by its start year (`pipeline/season.py`). Cleanup only runs on the final "yesterday" invocation and only if that day had games, so last season survives the summer and disappears on the first game day of the new one. To check what a date maps to:
+
+```bash
+uv run python -c "from pipeline.season import season_for; print(season_for('2027-07-04'))"   # 2026-27
+```
+
+Size budget: ~180 KB per game, ~220 MB per season. GitHub Pages caps a site at 1 GB, so one season at a time is comfortable; keeping several would not be.
 
 ## Checking the live site's data
 
