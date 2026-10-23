@@ -61,7 +61,30 @@ Error fetching https://cdn.nba.com/static/json/staticData/scheduleLeagueV2.json:
 - Feb 2026: `stats.nba.com` started blocking cloud IPs. Pipeline moved to `cdn.nba.com`.
 - 2026-06-16: `cdn.nba.com` started rejecting our header set over HTTP/1.1 (which is what Python `requests` speaks). Every run from then until 2026-08-15 fetched nothing and reported success. See [Why the job used to stay green](#why-the-job-used-to-stay-green).
 - 2026-10-23 (morning): sending Chrome's client-hint and fetch-metadata headers with Python `requests` worked from a home connection (2 games fetched for 2026-10-22) but **still got 403 from GitHub Actions** (run #348, all 22 dates). Datacenter IPs get a stricter check.
-- 2026-10-23 (afternoon): switched the HTTP client to [`curl_cffi`](https://github.com/lexiforest/curl_cffi) impersonating Chrome — real Chrome TLS handshake and HTTP/2 fingerprint, with the matching identity headers supplied by the library. *Result from GitHub Actions: record it here.*
+- 2026-10-23 (afternoon): switched the HTTP client to [`curl_cffi`](https://github.com/lexiforest/curl_cffi) impersonating Chrome — real Chrome TLS handshake and HTTP/2 fingerprint, with the matching identity headers supplied by the library. Worked immediately from a home IP.
+- 2026-10-23 (later): after ~40 requests from the same home IP in one day, the CDN started **slowing** the impersonated client instead of refusing it — `200` responses, but 5–30+ s before the first byte (plain `curl` still got an instant `403`, so the network was fine). With a 30 s timeout the multi-MB schedule file looked "unreachable". Raised `FETCH_TIMEOUT_S` to 120. Every impersonation target behaved the same (chrome136/146, safari184, firefox147), so this is reputation throttling of the address, not a fingerprint problem. *Result from GitHub Actions with curl_cffi: record it here.*
+
+### Slow responses / timeouts (not 403)
+
+**Symptom:** `curl: (28) Operation timed out ... with 0 bytes received`, or responses that take many seconds for small files, while a plain `curl` to the same URL returns `403` instantly.
+
+**Cause:** Akamai's "slow down" action for a client it finds suspicious — typically after a burst of requests. It clears on its own; the pipeline's normal cadence (a handful of requests per game, twice a day) stays well under it. Testing many dates by hand in one sitting is what trips it.
+
+**What to do:** nothing to the code — `FETCH_TIMEOUT_S` (120 s) absorbs it. If you're testing locally, space your runs out, or probe with the small scoreboard file:
+
+```bash
+uv run python - <<'PY'
+import time
+from curl_cffi import requests as r
+from pipeline.fetch import _HEADERS, IMPERSONATE
+s = time.time()
+resp = r.get("https://cdn.nba.com/static/json/liveData/scoreboard/todaysScoreboard_00.json",
+             headers=_HEADERS, impersonate=IMPERSONATE, timeout=60)
+print(resp.status_code, f"{time.time()-s:.1f}s", len(resp.content), "bytes")
+PY
+```
+
+Under 2 s is normal. 5–30 s means you're being throttled. A `403` means the impersonation itself is being refused — see the next section.
 
 **The fix lives in one place:** `_fetch_json` at the top of `pipeline/fetch.py`, plus the `IMPERSONATE` target and the `_HEADERS` request-context set. `tests/test_fetch.py::TestCdnHeaders` pins all of it, including an end-to-end test through a local echo server that checks what actually goes over the wire.
 
@@ -81,7 +104,7 @@ Akamai may eventually reject the impersonated Chrome as too old.
 3. `uv run pytest tests/test_fetch.py -k TestCdnHeaders`.
 4. Run the pipeline locally for yesterday's date, then push and trigger a workflow run — a home connection passing does not prove GitHub's runners pass (see 2026-10-23 above).
 
-### If impersonation stops working from GitHub Actions
+### If impersonation is refused (403 again)
 
 Then Akamai is scoring the IP itself, and nothing in the request can fix that. The data has to be fetched from somewhere Akamai trusts:
 

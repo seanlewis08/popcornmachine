@@ -34,6 +34,12 @@ _CDN_BASE = "https://cdn.nba.com/static/json"
 # here — they would drift from the fingerprint, which is itself a tell.
 IMPERSONATE = "chrome146"
 
+# Akamai slows down clients it finds suspicious rather than refusing them:
+# measured 5–30+ s before the first byte from a home IP after ~40 requests
+# in a day (2026-10-23). The schedule file is several MB on top of that.
+# A 30 s limit turned those slow successes into false "unreachable".
+FETCH_TIMEOUT_S = 120
+
 # The request context nba.com's page adds to that XHR. These are ours to set
 # because they describe the call, not the browser.
 _HEADERS = {
@@ -63,7 +69,7 @@ def _fetch_json(url: str, delay: float = 1.0, max_retries: int = 2) -> Optional[
     for attempt in range(max_retries + 1):
         try:
             time.sleep(delay)
-            resp = http.get(url, headers=_HEADERS, impersonate=IMPERSONATE, timeout=30)
+            resp = http.get(url, headers=_HEADERS, impersonate=IMPERSONATE, timeout=FETCH_TIMEOUT_S)
             resp.raise_for_status()
             return resp.json()
         except http.exceptions.RequestException as e:

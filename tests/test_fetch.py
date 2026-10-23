@@ -326,7 +326,17 @@ class TestCdnHeaders:
             _, kwargs = mock_get.call_args
             assert kwargs["headers"] is fetch_module._HEADERS
             assert kwargs["impersonate"] == fetch_module.IMPERSONATE
-            assert kwargs["timeout"] == 30
+            assert kwargs["timeout"] == fetch_module.FETCH_TIMEOUT_S
+
+    def test_timeout_tolerates_akamai_slowdown(self):
+        """
+        When Akamai decides a client is suspicious it holds responses for
+        5–30+ s before serving them (measured 2026-10-23 from a home IP after
+        ~40 requests in a day). A 30 s limit turned that into a false
+        'unreachable'. The schedule file is several MB, so allow well over
+        the observed first-byte delay.
+        """
+        assert fetch_module.FETCH_TIMEOUT_S >= 90
 
     def test_fetch_json_retries_then_gives_up_on_curl_cffi_errors(self):
         from curl_cffi.requests.exceptions import HTTPError
