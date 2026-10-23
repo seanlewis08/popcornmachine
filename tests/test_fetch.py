@@ -1,5 +1,6 @@
 """Tests for the CDN fetch module."""
 
+import re
 from unittest.mock import patch
 
 import pandas as pd
@@ -289,54 +290,97 @@ def _make_pbp_response():
 class TestCdnHeaders:
     """
     cdn.nba.com sits behind Akamai Bot Manager. Since mid-June 2026 it
-    returns 403 "Access Denied" to requests that lack Chrome's client-hint
-    (sec-ch-ua*) and fetch-metadata (Sec-Fetch-*) headers, especially over
-    HTTP/1.1 which is what `requests` speaks.
+    returns 403 "Access Denied" to anything that doesn't look like the XHR
+    nba.com's own page makes. Headers alone got through from a residential
+    IP but not from GitHub Actions (2026-10-23), so every request goes out
+    through curl_cffi impersonating a real Chrome: the library supplies the
+    TLS handshake and the matching identity headers (User-Agent, sec-ch-ua*);
+    we add only the request context nba.com would send.
     """
 
-    REQUIRED = [
-        "sec-ch-ua",
-        "sec-ch-ua-mobile",
-        "sec-ch-ua-platform",
-        "Sec-Fetch-Site",
-        "Sec-Fetch-Mode",
-        "Sec-Fetch-Dest",
-        "User-Agent",
-        "Origin",
-        "Referer",
-    ]
+    CONTEXT_HEADERS = ["Accept", "Origin", "Referer", "Sec-Fetch-Site", "Sec-Fetch-Mode", "Sec-Fetch-Dest"]
+    IDENTITY_HEADERS = ["User-Agent", "sec-ch-ua", "sec-ch-ua-mobile", "sec-ch-ua-platform"]
 
-    def test_headers_include_client_hints_and_fetch_metadata(self):
-        for name in self.REQUIRED:
+    def test_context_headers_match_nba_com_xhr(self):
+        for name in self.CONTEXT_HEADERS:
             assert name in fetch_module._HEADERS, f"missing header: {name}"
-
-    def test_fetch_metadata_matches_nba_com_xhr(self):
         assert fetch_module._HEADERS["Sec-Fetch-Site"] == "same-site"
         assert fetch_module._HEADERS["Sec-Fetch-Mode"] == "cors"
         assert fetch_module._HEADERS["Sec-Fetch-Dest"] == "empty"
         assert fetch_module._HEADERS["Origin"] == "https://www.nba.com"
         assert fetch_module._HEADERS["Referer"] == "https://www.nba.com/"
 
-    def test_sec_ch_ua_version_matches_user_agent(self):
-        import re
+    def test_identity_headers_are_left_to_the_impersonation(self):
+        """Overriding them would let the headers drift from the TLS fingerprint."""
+        for name in self.IDENTITY_HEADERS:
+            assert name.lower() not in {k.lower() for k in fetch_module._HEADERS}, name
 
-        ua = fetch_module._HEADERS["User-Agent"]
-        m = re.search(r"Chrome/(\d+)\.", ua)
-        assert m, "User-Agent must be a Chrome UA so sec-ch-ua can match it"
-        major = m.group(1)
-        sec_ch_ua = fetch_module._HEADERS["sec-ch-ua"]
-        assert f'"Chromium";v="{major}"' in sec_ch_ua
-        assert f'"Google Chrome";v="{major}"' in sec_ch_ua
+    def test_impersonation_target_is_a_chrome_release(self):
+        assert re.fullmatch(r"chrome\d+", fetch_module.IMPERSONATE), fetch_module.IMPERSONATE
 
-    def test_fetch_json_sends_headers(self):
-        with patch("pipeline.fetch.requests.get") as mock_get, patch(
-            "pipeline.fetch.time.sleep"
-        ):
+    def test_fetch_json_passes_headers_impersonation_and_timeout(self):
+        with patch("pipeline.fetch.http.get") as mock_get, patch("pipeline.fetch.time.sleep"):
             mock_get.return_value.json.return_value = {"ok": True}
             mock_get.return_value.raise_for_status.return_value = None
-            fetch_module._fetch_json("https://cdn.nba.com/x.json", delay=0)
+            assert fetch_module._fetch_json("https://cdn.nba.com/x.json", delay=0) == {"ok": True}
             _, kwargs = mock_get.call_args
             assert kwargs["headers"] is fetch_module._HEADERS
+            assert kwargs["impersonate"] == fetch_module.IMPERSONATE
+            assert kwargs["timeout"] == 30
+
+    def test_fetch_json_retries_then_gives_up_on_curl_cffi_errors(self):
+        from curl_cffi.requests.exceptions import HTTPError
+
+        with patch("pipeline.fetch.http.get", side_effect=HTTPError("403")) as mock_get, patch(
+            "pipeline.fetch.time.sleep"
+        ):
+            assert fetch_module._fetch_json("https://cdn.nba.com/x.json", delay=0) is None
+            assert mock_get.call_count == 3  # 1 try + 2 retries
+
+    def test_real_request_carries_consistent_chrome_identity(self):
+        """
+        End to end through curl_cffi against a local echo server: the wire
+        request must carry a Chrome User-Agent whose major version matches
+        the sec-ch-ua brands and the impersonation target, plus our context
+        headers. No mocks — this is what Akamai sees.
+        """
+        import threading
+        from http.server import BaseHTTPRequestHandler, HTTPServer
+
+        seen: dict[str, str] = {}
+
+        class Echo(BaseHTTPRequestHandler):
+            def do_GET(self):
+                seen.update({k.lower(): v for k, v in self.headers.items()})
+                body = b'{"ok": true}'
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def log_message(self, *args):
+                pass
+
+        server = HTTPServer(("127.0.0.1", 0), Echo)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            port = server.server_address[1]
+            with patch("pipeline.fetch.time.sleep"):
+                assert fetch_module._fetch_json(f"http://127.0.0.1:{port}/x.json", delay=0) == {"ok": True}
+        finally:
+            server.shutdown()
+
+        major = re.fullmatch(r"chrome(\d+)", fetch_module.IMPERSONATE).group(1)
+        assert f"Chrome/{major}." in seen["user-agent"]
+        assert f'"Chromium";v="{major}"' in seen["sec-ch-ua"]
+        assert f'"Google Chrome";v="{major}"' in seen["sec-ch-ua"]
+        assert seen["sec-ch-ua-mobile"] == "?0"
+        assert seen["origin"] == "https://www.nba.com"
+        assert seen["referer"] == "https://www.nba.com/"
+        assert seen["sec-fetch-mode"] == "cors"
+        assert "accept-encoding" in seen  # the CDN refuses requests without it
 
 
 class TestFetchScoreboard:

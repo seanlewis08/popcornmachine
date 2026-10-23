@@ -195,7 +195,7 @@ interface PlayByPlayEvent {
 
 ### Module Structure
 
-- `pipeline/fetch.py` - NBA CDN data fetching with retry logic (2 retries, 5s backoff); derives rotation from PBP substitution events
+- `pipeline/fetch.py` - NBA CDN data fetching via `curl_cffi` Chrome impersonation, with retry logic (2 retries, 5s backoff); derives rotation from PBP substitution events
 - `pipeline/transform.py` - Contract mapping: CDN data → JSON schemas (receives V2-compatible DataFrames from fetch)
 - `pipeline/write.py` - JSON file writing with atomic operations
 - `pipeline/season.py` - Season arithmetic: `season_for("2027-01-10") == "2026-27"`, `season_start_date(...)`; also a CLI (`python -m pipeline.season --start-of DATE`) the workflow uses to find the backfill start
@@ -227,7 +227,7 @@ interface PlayByPlayEvent {
 - **Play-by-play:** `https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_{game_id}.json` — per-game PBP events
 - **No CDN rotation endpoint** — rotation data is derived from PBP substitution events + boxscore starters
 
-**Access control:** `cdn.nba.com` is behind Akamai Bot Manager. It only serves JSON to requests that look like the XHR calls nba.com's own pages make. The header set in `_HEADERS` (`pipeline/fetch.py`) must include Chrome client hints (`sec-ch-ua*`) and fetch metadata (`Sec-Fetch-*`) with a matching Chrome `User-Agent` — the older UA/Accept/Origin/Referer set has been rejected over HTTP/1.1 since 2026-06-16. `tests/test_fetch.py::TestCdnHeaders` pins this. Procedure for bumping the Chrome version and the next escalation (`curl_cffi`) are in `docs/TROUBLESHOOTING.md`.
+**Access control:** `cdn.nba.com` is behind Akamai Bot Manager and only serves JSON to requests that look like the XHR nba.com's own page makes. Every request goes through `_fetch_json` using `curl_cffi` with `impersonate=IMPERSONATE` (a real Chrome TLS/HTTP2 fingerprint; the library supplies the matching `User-Agent`/`sec-ch-ua*`). `_HEADERS` holds only the request context (Accept, Origin, Referer, Sec-Fetch-*). Browser-like headers over plain `requests` worked from a home IP but were refused from GitHub Actions (2026-10-23); the older UA/Accept/Origin/Referer set has been refused everywhere since 2026-06-16. `tests/test_fetch.py::TestCdnHeaders` pins this, including an echo-server test of the wire request. History, version-bump procedure and the next escalation are in `docs/TROUBLESHOOTING.md`.
 
 ### Key Invariants
 
@@ -330,7 +330,7 @@ All components:
 ## Dependencies & Versions
 
 ### Python
-- `requests` - HTTP client for NBA CDN endpoints
+- `curl-cffi` - HTTP client for NBA CDN endpoints (Chrome impersonation; see Access control)
 - `pandas` - Data manipulation and DataFrame construction
 
 ### Node.js

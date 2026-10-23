@@ -60,33 +60,35 @@ Error fetching https://cdn.nba.com/static/json/staticData/scheduleLeagueV2.json:
 
 - Feb 2026: `stats.nba.com` started blocking cloud IPs. Pipeline moved to `cdn.nba.com`.
 - 2026-06-16: `cdn.nba.com` started rejecting our header set over HTTP/1.1 (which is what Python `requests` speaks). Every run from then until 2026-08-15 fetched nothing and reported success. See [Why the job used to stay green](#why-the-job-used-to-stay-green).
-- 2026-10-23: fixed by sending Chrome's client-hint and fetch-metadata headers. Verified locally the same day: 2 games fetched for 2026-10-22.
+- 2026-10-23 (morning): sending Chrome's client-hint and fetch-metadata headers with Python `requests` worked from a home connection (2 games fetched for 2026-10-22) but **still got 403 from GitHub Actions** (run #348, all 22 dates). Datacenter IPs get a stricter check.
+- 2026-10-23 (afternoon): switched the HTTP client to [`curl_cffi`](https://github.com/lexiforest/curl_cffi) impersonating Chrome — real Chrome TLS handshake and HTTP/2 fingerprint, with the matching identity headers supplied by the library. *Result from GitHub Actions: record it here.*
 
-**The fix lives in one place:** `_HEADERS` at the top of `pipeline/fetch.py`. Four tests in `tests/test_fetch.py::TestCdnHeaders` pin the header set so it can't regress by accident.
+**The fix lives in one place:** `_fetch_json` at the top of `pipeline/fetch.py`, plus the `IMPERSONATE` target and the `_HEADERS` request-context set. `tests/test_fetch.py::TestCdnHeaders` pins all of it, including an end-to-end test through a local echo server that checks what actually goes over the wire.
+
+### How the request is built
+
+Two layers, deliberately separate:
+
+- **Browser identity** (`User-Agent`, `sec-ch-ua`, `sec-ch-ua-mobile`, `sec-ch-ua-platform`, `Accept-Encoding`) comes from `curl_cffi` for the `IMPERSONATE` target. It is generated to match the TLS fingerprint, so it is always internally consistent. Don't add these to `_HEADERS` — a test fails if you do.
+- **Request context** (`Accept`, `Origin`, `Referer`, `Sec-Fetch-Site/Mode/Dest`, `Accept-Language`) is in `_HEADERS` and describes the XHR nba.com's page makes.
 
 ### Bumping the Chrome version
 
-Akamai may eventually reject Chrome 140 as too old. To update:
+Akamai may eventually reject the impersonated Chrome as too old.
 
-1. Open Chrome, go to `https://www.nba.com`, open DevTools → Network, reload, click any request to `cdn.nba.com`.
-2. Copy these request headers **exactly**: `sec-ch-ua`, `sec-ch-ua-mobile`, `sec-ch-ua-platform`, `User-Agent`.
-3. Paste them into `_HEADERS` in `pipeline/fetch.py`.
-4. Run `uv run pytest tests/test_fetch.py -k TestCdnHeaders`. The version test fails if `sec-ch-ua` and `User-Agent` disagree.
-5. Run the pipeline locally for yesterday's date to confirm the CDN accepts it.
+1. `uv run python -c "from curl_cffi.requests.impersonate import BrowserTypeLiteral; print(BrowserTypeLiteral)"` lists the targets your installed `curl_cffi` supports. If the newest is still old, `uv lock --upgrade-package curl-cffi` first.
+2. Set `IMPERSONATE = "chromeNNN"` in `pipeline/fetch.py`.
+3. `uv run pytest tests/test_fetch.py -k TestCdnHeaders`.
+4. Run the pipeline locally for yesterday's date, then push and trigger a workflow run — a home connection passing does not prove GitHub's runners pass (see 2026-10-23 above).
 
-Copy the whole `sec-ch-ua` value. Chromium derives the placeholder brand (`"Not=A?Brand"`) and the brand order from the major version, so editing only the numbers produces a combination no real Chrome ever sends.
+### If impersonation stops working from GitHub Actions
 
-### If headers stop working
+Then Akamai is scoring the IP itself, and nothing in the request can fix that. The data has to be fetched from somewhere Akamai trusts:
 
-Next escalation: Akamai starts checking the TLS fingerprint, which headers can't fake. Plain `curl` already fails this way (it's refused even with the full header set). The fix is to replace `requests` with [`curl_cffi`](https://github.com/lexiforest/curl_cffi), which impersonates Chrome's TLS handshake:
+- **Run the pipeline from your Mac on a schedule** (launchd job, twice a day). It pushes `data/` to GitHub and the deploy workflow takes over exactly as now. The Mac has to be awake; the season-wide backfill catches up any missed days on the next run.
+- **Self-hosted GitHub runner on your Mac.** Keeps logs, annotations and the keepalive step in GitHub, with only `runs-on` changing in the workflow. GitHub advises against self-hosted runners on **public** repos (fork PRs can execute on them), so weigh that first.
 
-```python
-from curl_cffi import requests  # drop-in: requests.get(url, headers=..., impersonate="chrome")
-```
-
-Only `_fetch_json` in `fetch.py` makes HTTP calls, so this is a contained change.
-
-Before doing that, check what the community libraries did. They hit the same walls weeks before we notice, and their fixes have been copyable each time:
+Before any of that, check what the community libraries did. They hit the same walls weeks before we notice, and their fixes have been copyable each time:
 
 - https://github.com/sportsdataverse/hoopR/pulls (R, but documents the exact headers and what was tested)
 - https://github.com/swar/nba_api/pulls (Python)

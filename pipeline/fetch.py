@@ -16,38 +16,34 @@ from datetime import datetime
 from typing import Optional
 
 import pandas as pd
-import requests
+from curl_cffi import requests as http
 
 _CDN_BASE = "https://cdn.nba.com/static/json"
 
-# The headers a Chrome page on www.nba.com sends with its XHR to cdn.nba.com.
-#
 # cdn.nba.com sits behind Akamai Bot Manager. Since mid-June 2026 it answers
-# 403 "Access Denied" to requests that carry only User-Agent/Accept/Origin/
-# Referer over HTTP/1.1 (which is what `requests` speaks). Adding Chrome's
-# client hints (sec-ch-ua*) and fetch metadata (Sec-Fetch-*) restores access.
-# Verified with Python requests by the hoopR maintainers on 2026-09-27:
-# https://github.com/sportsdataverse/hoopR/pull/215
+# 403 "Access Denied" to anything that doesn't look like the XHR nba.com's
+# own page makes. Browser-like headers alone (hoopR#215, nba_api#716) got
+# through from a residential IP but not from GitHub Actions (2026-10-23),
+# so every request goes out through curl_cffi impersonating a real Chrome:
+# it reproduces Chrome's TLS handshake and HTTP/2 fingerprint and sets the
+# matching identity headers (User-Agent, sec-ch-ua*, Accept-Encoding).
 #
-# To bump the Chrome version, copy the WHOLE sec-ch-ua value from a real
-# Chrome of that major version — the placeholder brand ("Not=A?Brand") and
-# brand order are derived from the version, so editing only the numbers is
-# wrong. `requests` adds Accept-Encoding itself; the CDN refuses without it.
+# To move to a newer Chrome, change IMPERSONATE to another target that
+# curl_cffi supports (curl_cffi.requests.impersonate.BrowserTypeLiteral)
+# and bump the package if needed. Do NOT add User-Agent or sec-ch-ua headers
+# here — they would drift from the fingerprint, which is itself a tell.
+IMPERSONATE = "chrome146"
+
+# The request context nba.com's page adds to that XHR. These are ours to set
+# because they describe the call, not the browser.
 _HEADERS = {
-    "sec-ch-ua": '"Chromium";v="140", "Not=A?Brand";v="24", "Google Chrome";v="140"',
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": '"Windows"',
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-        "(KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
-    ),
     "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "en-US,en;q=0.9",
     "Origin": "https://www.nba.com",
+    "Referer": "https://www.nba.com/",
     "Sec-Fetch-Site": "same-site",
     "Sec-Fetch-Mode": "cors",
     "Sec-Fetch-Dest": "empty",
-    "Referer": "https://www.nba.com/",
-    "Accept-Language": "en-US,en;q=0.9",
 }
 
 # Module-level caches to avoid redundant fetches within a pipeline run
@@ -67,10 +63,10 @@ def _fetch_json(url: str, delay: float = 1.0, max_retries: int = 2) -> Optional[
     for attempt in range(max_retries + 1):
         try:
             time.sleep(delay)
-            resp = requests.get(url, headers=_HEADERS, timeout=30)
+            resp = http.get(url, headers=_HEADERS, impersonate=IMPERSONATE, timeout=30)
             resp.raise_for_status()
             return resp.json()
-        except requests.exceptions.RequestException as e:
+        except http.exceptions.RequestException as e:
             _log_error(f"Error fetching {url}: {e}")
             if attempt < max_retries:
                 time.sleep(5)
