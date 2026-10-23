@@ -115,6 +115,28 @@ describe("GameflowTimeline", () => {
     }
   });
 
+  it("draws overtime periods at 90px (5 min × 18px), matching the header and chart", () => {
+    const otData: GameflowData = {
+      ...mockData,
+      players: [
+        {
+          ...mockData.players[0],
+          stints: [
+            ...mockData.players[0].stints,
+            { ...mockData.players[0].stints[0], period: 5, inTime: "5:00", outTime: "0:00", minutes: 5 },
+          ],
+        },
+      ],
+    };
+    const { container } = render(<GameflowTimeline data={otData} />);
+    const otHeader = screen.getByText("OT1") as HTMLElement;
+    expect(otHeader.style.width).toBe("90px");
+    // The player's full-OT stint is one IN segment spanning the whole 90px block.
+    const inSegments = Array.from(container.querySelectorAll(".hometeamIN")) as HTMLElement[];
+    expect(inSegments.map((el) => el.style.width)).toContain("90px");
+    expect(inSegments.map((el) => el.style.width)).not.toContain("216px");
+  });
+
   it("renders OUT segments with team-specific CSS classes", () => {
     const { container } = render(<GameflowTimeline data={mockData} />);
     const homeOut = container.querySelectorAll(".hometeamOUT");

@@ -13,6 +13,20 @@ import {
 } from "react";
 import type { GameflowData, GameflowPlayer, GameflowStint, BoxScoreData, ScoreChange } from "../types/api";
 import { buildTeamPalette, paletteToCssVars } from "../lib/team-palette";
+import {
+  MINUTE_PX,
+  SPACER_PX,
+  periodWidthPx,
+  periodStartMinute,
+  isPeriodStartMinute,
+  totalChartWidthPx,
+  totalRowWidthPx,
+  minuteToRowX,
+  rowXToMinute,
+  minuteToChartX,
+  chartXToMinute,
+  minuteBucket,
+} from "../lib/timeline-geometry";
 
 interface GameflowTimelineProps {
   data: GameflowData;
@@ -31,14 +45,10 @@ function carriedHatch(isHome: boolean): string {
   return `repeating-linear-gradient(45deg, ${strong}, ${strong} 2px, ${faint} 2px, ${faint} 4px)`;
 }
 
-/** Quarter width in pixels (matches original PopcornMachine) */
-const QUARTER_PX = 216;
 /** Player name column width */
 const NAME_COL_PX = 120;
 /** End stat column width */
 const STAT_COL_PX = 35;
-/** Spacer between quarters */
-const SPACER_PX = 1;
 /** Row height */
 const ROW_HEIGHT = 18;
 /** Seconds per regulation quarter */
@@ -47,6 +57,12 @@ const QUARTER_SECONDS = 720;
 const OT_SECONDS = 300;
 /** Canvas height for momentum line */
 const CANVAS_HEIGHT = 90;
+/** The momentum canvas has a 1px CSS border; mouse x is measured from outside it. */
+const CHART_BORDER_PX = 1;
+/** Hover cursor line (gold, translucent). */
+const CURSOR_COLOR = "rgba(201, 168, 76, 0.8)";
+/** Pinned-minute band across the player rows, matching the chart's band. */
+const PINNED_BAND_COLOR = "rgba(201, 168, 76, 0.15)";
 /** Minute selector row height */
 const MINUTE_ROW_HEIGHT = 16;
 
@@ -90,13 +106,13 @@ function buildQuarterSegments(
 
     if (inElapsed > cursor) {
       const gapFraction = (inElapsed - cursor) / periodDuration;
-      segments.push({ type: "out", widthPx: gapFraction * QUARTER_PX });
+      segments.push({ type: "out", widthPx: gapFraction * periodWidthPx(period) });
     }
 
     const stintFraction = Math.max(0, outElapsed - inElapsed) / periodDuration;
     segments.push({
       type: "in",
-      widthPx: Math.max(stintFraction * QUARTER_PX, 1),
+      widthPx: Math.max(stintFraction * periodWidthPx(period), 1),
       stint,
       stintIndex: idx,
     });
@@ -106,7 +122,7 @@ function buildQuarterSegments(
 
   if (cursor < periodDuration) {
     const gapFraction = (periodDuration - cursor) / periodDuration;
-    segments.push({ type: "out", widthPx: gapFraction * QUARTER_PX });
+    segments.push({ type: "out", widthPx: gapFraction * periodWidthPx(period) });
   }
 
   return segments;
@@ -203,7 +219,7 @@ function buildLineupsByMinute(
   for (const player of teamPlayers) {
     for (const stint of player.stints) {
       const periodDuration = stint.period > 4 ? OT_SECONDS : QUARTER_SECONDS;
-      const baseMins = stint.period <= 4 ? (stint.period - 1) * 12 : 48 + (stint.period - 5) * 5;
+      const baseMins = periodStartMinute(stint.period);
       const startMin = baseMins + clockToElapsed(stint.inTime, periodDuration) / 60;
       const endMin = baseMins + clockToElapsed(stint.outTime, periodDuration) / 60;
       stintRanges.push([startMin, endMin, player.playerId]);
@@ -222,15 +238,13 @@ function buildLineupsByMinute(
   let carried = new Set<string>();
 
   for (let minute = 0; minute < maxMinute; minute++) {
-    const period = Math.floor(minute / 12) + 1;
-    const minuteInPeriod = minute % 12;
     const point = minute + 0.5; // midpoint
 
     const stintLineup = onCourtAt(point);
 
-    if (minuteInPeriod === 0) {
+    if (isPeriodStartMinute(minute)) {
       // Period start
-      if (period === 1) {
+      if (minute === 0) {
         carried = new Set(stintLineup);
       } else {
         // Carry over from previous period if rotation data is incomplete
@@ -306,7 +320,8 @@ interface PlayerRowProps {
   periods: number[];
   isHome: boolean;
   boxscore?: BoxScoreData;
-  selectedMinute: number | null;
+  /** Minute bucket to highlight on-court players for (pinned, else hovered). */
+  highlightMinute: number | null;
   lineups: Map<number, Set<string>>;
   position?: string;
   isStarter?: boolean;
@@ -314,7 +329,7 @@ interface PlayerRowProps {
   onPinStint: (pin: PinnedStint | null) => void;
 }
 
-function PlayerRow({ player, periods, isHome, boxscore, selectedMinute, lineups, position, pinnedStint, onPinStint }: PlayerRowProps) {
+function PlayerRow({ player, periods, isHome, boxscore, highlightMinute, lineups, position, pinnedStint, onPinStint }: PlayerRowProps) {
   const inClass = isHome ? "hometeamIN" : "visitorIN";
   const outClass = isHome ? "hometeamOUT" : "visitorOUT";
   const endClass = isHome ? "hometeamENDSTAT" : "visitorENDSTAT";
@@ -322,7 +337,7 @@ function PlayerRow({ player, periods, isHome, boxscore, selectedMinute, lineups,
   const bsTotals = getBoxscoreTotals(player.playerId, boxscore);
   const totals = bsTotals ?? computePlayerTotals(player.stints);
 
-  const isHighlighted = selectedMinute !== null && (lineups.get(selectedMinute)?.has(player.playerId) ?? false);
+  const isHighlighted = highlightMinute !== null && (lineups.get(highlightMinute)?.has(player.playerId) ?? false);
 
   // Compute which minutes per period the player is "on court" (per lineup tracking)
   // but has NO stint data covering that minute — these are carry-over minutes
@@ -343,7 +358,7 @@ function PlayerRow({ player, periods, isHome, boxscore, selectedMinute, lineups,
         let hasStint = false;
         for (const stint of player.stints) {
           const sPd = stint.period > 4 ? OT_SECONDS : QUARTER_SECONDS;
-          const sBase = stint.period <= 4 ? (stint.period - 1) * 12 : 48 + (stint.period - 5) * 5;
+          const sBase = periodStartMinute(stint.period);
           const startMin = sBase + clockToElapsed(stint.inTime, sPd) / 60;
           const endMin = sBase + clockToElapsed(stint.outTime, sPd) / 60;
           if (startMin <= point && point < endMin) { hasStint = true; break; }
@@ -364,7 +379,7 @@ function PlayerRow({ player, periods, isHome, boxscore, selectedMinute, lineups,
         display: "flex",
         height: ROW_HEIGHT,
         lineHeight: "1.6",
-        opacity: selectedMinute !== null && !isHighlighted ? 0.35 : 1,
+        opacity: highlightMinute !== null && !isHighlighted ? 0.35 : 1,
         transition: "opacity 0.2s ease",
       }}
     >
@@ -403,8 +418,7 @@ function PlayerRow({ player, periods, isHome, boxscore, selectedMinute, lineups,
       {periods.map((period, pIdx) => {
         const segments = buildQuarterSegments(player.stints, period);
         const carried = carriedMinutes.get(period) ?? [];
-        const periodDuration = period > 4 ? OT_SECONDS : QUARTER_SECONDS;
-        const minuteWidth = (60 / periodDuration) * QUARTER_PX;
+        const minuteWidth = MINUTE_PX;
         return (
           <div key={pIdx} style={{ display: "flex" }}>
             {pIdx > 0 && <div style={{ width: SPACER_PX, background: "#2C1810" }} />}
@@ -562,14 +576,19 @@ function MomentumLine({
   scoreChanges,
   periods,
   selectedMinute,
+  hoverMinute,
   onMinuteClick,
+  onHoverMinute,
   homeTricode,
   awayTricode,
 }: {
   scoreChanges: ScoreChange[];
   periods: number[];
   selectedMinute: number | null;
+  /** Fractional game minute under the mouse anywhere on the timeline, or null. */
+  hoverMinute: number | null;
   onMinuteClick: (minute: number | null) => void;
+  onHoverMinute: (minute: number | null) => void;
   homeTricode: string;
   awayTricode: string;
 }) {
@@ -578,9 +597,7 @@ function MomentumLine({
     x: number; y: number; homeScore: number; awayScore: number; diff: number;
   } | null>(null);
   const numPeriods = periods.length;
-  const cWidth = numPeriods <= 4
-    ? 4 * QUARTER_PX
-    : 4 * QUARTER_PX + (numPeriods - 4) * Math.floor((QUARTER_PX / 12) * 5);
+  const cWidth = totalChartWidthPx(numPeriods);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -605,8 +622,8 @@ function MomentumLine({
 
     // Draw selected minute highlight
     if (selectedMinute !== null) {
-      const xStart = (selectedMinute / 12) * QUARTER_PX;
-      const xEnd = ((selectedMinute + 1) / 12) * QUARTER_PX;
+      const xStart = minuteToChartX(selectedMinute);
+      const xEnd = minuteToChartX(selectedMinute + 1);
       ctx.fillStyle = "rgba(201, 168, 76, 0.15)";
       ctx.fillRect(xStart, 0, xEnd - xStart, CANVAS_HEIGHT);
     }
@@ -620,7 +637,7 @@ function MomentumLine({
     ctx.lineTo(cWidth, CANVAS_HEIGHT / 2);
     // Period separators
     for (let i = 1; i < numPeriods; i++) {
-      const x = i <= 4 ? QUARTER_PX * i : QUARTER_PX * 4 + Math.floor((QUARTER_PX / 12) * 5) * (i - 4);
+      const x = minuteToChartX(periodStartMinute(i + 1));
       ctx.moveTo(x, 0);
       ctx.lineTo(x, CANVAS_HEIGHT);
     }
@@ -634,7 +651,7 @@ function MomentumLine({
 
     for (let i = 1; i < scoreChanges.length; i++) {
       const sc = scoreChanges[i];
-      const x = (sc.ts / 12) * QUARTER_PX;
+      const x = minuteToChartX(sc.ts);
       const diff = sc.homeScore - sc.awayScore;
       const y = (CANVAS_HEIGHT / 2) - (diff * ((CANVAS_HEIGHT / 2) / biggestLead));
       ctx.lineTo(x, y);
@@ -654,7 +671,7 @@ function MomentumLine({
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
-    const minute = Math.floor((x / QUARTER_PX) * 12);
+    const minute = minuteBucket(chartXToMinute(x - CHART_BORDER_PX), numPeriods);
     if (minute === selectedMinute) {
       onMinuteClick(null); // Deselect
     } else {
@@ -667,7 +684,7 @@ function MomentumLine({
     if (!canvas || scoreChanges.length < 2) return;
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
-    const ts = (x / QUARTER_PX) * 12; // Convert px to game minutes
+    const ts = chartXToMinute(x - CHART_BORDER_PX);
 
     // Find the last scoreChange at or before this timestamp
     let homeScore = 0, awayScore = 0;
@@ -680,11 +697,13 @@ function MomentumLine({
       }
     }
     setHoverInfo({ x: e.clientX - rect.left, y: e.clientY - rect.top, homeScore, awayScore, diff: homeScore - awayScore });
-  }, [scoreChanges]);
+    onHoverMinute(ts);
+  }, [scoreChanges, onHoverMinute]);
 
   const handleCanvasLeave = useCallback(() => {
     setHoverInfo(null);
-  }, []);
+    onHoverMinute(null);
+  }, [onHoverMinute]);
 
   const finalScore = scoreChanges.length > 0 ? scoreChanges[scoreChanges.length - 1] : null;
 
@@ -707,6 +726,20 @@ function MomentumLine({
             borderRadius: 2,
           }}
         />
+        {hoverMinute !== null && selectedMinute === null && (
+          <div
+            data-testid="gf-chart-cursor"
+            style={{
+              position: "absolute",
+              left: CHART_BORDER_PX + minuteToChartX(hoverMinute),
+              top: 0,
+              bottom: 0,
+              width: 1,
+              background: CURSOR_COLOR,
+              pointerEvents: "none",
+            }}
+          />
+        )}
         {hoverInfo && (
           <div style={{
             position: "absolute",
@@ -821,13 +854,13 @@ function MinuteSelector({
       <div style={{ display: "flex" }}>
         {minutes.map((min) => {
           const isSelected = selectedMinute === min;
-          // Width: each minute = QUARTER_PX / 12 pixels (for regulation)
-          const minuteWidth = QUARTER_PX / 12;
+          const minuteWidth = MINUTE_PX;
 
           return (
             <div
               key={min}
               className={`gf-minute-selector ${isSelected ? "gf-minute-selected" : ""}`}
+              data-testid={`gf-minute-${min + 1}`}
               onClick={() => onMinuteClick(isSelected ? null : min)}
               style={{
                 width: minuteWidth,
@@ -859,6 +892,8 @@ function MinuteSelector({
  */
 export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
   const [selectedMinute, setSelectedMinute] = useState<number | null>(null);
+  // Fractional game minute under the mouse (chart or player rows); null when not hovering.
+  const [hoverMinute, setHoverMinute] = useState<number | null>(null);
   const [pinnedStint, setPinnedStint] = useState<PinnedStint | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -966,7 +1001,7 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
     return `OT${p - 4}`;
   };
 
-  const totalTimelineWidth = periods.length * QUARTER_PX + (periods.length - 1) * SPACER_PX;
+  const totalTimelineWidth = totalRowWidthPx(periods.length);
   const totalWidth = NAME_COL_PX + SPACER_PX + totalTimelineWidth + SPACER_PX + NUM_STAT_COLS * STAT_COL_PX + (NUM_STAT_COLS - 1) * SPACER_PX;
 
   const headerStyle: React.CSSProperties = {
@@ -985,6 +1020,19 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
   const handleMinuteClick = useCallback((minute: number | null) => {
     setSelectedMinute(minute);
   }, []);
+
+  // Hover previews, click pins: a pinned minute wins over the hovered one.
+  const highlightMinute =
+    selectedMinute ?? (hoverMinute !== null ? minuteBucket(hoverMinute, periods.length) : null);
+
+  const handleRowsMouseMove = useCallback(
+    (e: ReactMouseEvent<HTMLDivElement>) => {
+      const x = e.clientX - e.currentTarget.getBoundingClientRect().left - NAME_COL_PX;
+      setHoverMinute(rowXToMinute(x, periods.length));
+    },
+    [periods.length],
+  );
+  const handleRowsMouseLeave = useCallback(() => setHoverMinute(null), []);
 
   // Score at selected minute from scoreChanges
   const minuteScore = useMemo(() => {
@@ -1041,7 +1089,7 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
         {periods.map((p, i) => (
           <div key={p} style={{ display: "flex" }}>
             {i > 0 && <div style={{ width: SPACER_PX, background: "#2C1810" }} />}
-            <div style={{ ...headerStyle, width: p > 4 ? (OT_SECONDS / QUARTER_SECONDS) * QUARTER_PX : QUARTER_PX }}>
+            <div style={{ ...headerStyle, width: periodWidthPx(p) }}>
               {quarterLabel(p)}
             </div>
           </div>
@@ -1054,7 +1102,9 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
           scoreChanges={data.scoreChanges}
           periods={periods}
           selectedMinute={selectedMinute}
+          hoverMinute={hoverMinute}
           onMinuteClick={handleMinuteClick}
+          onHoverMinute={setHoverMinute}
           homeTricode={data.homeTeam.tricode}
           awayTricode={data.awayTeam.tricode}
         />
@@ -1102,6 +1152,45 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
         </div>
       )}
 
+      {/* Both team blocks share one hover surface so the cursor spans them. */}
+      <div
+        data-testid="gf-rows"
+        style={{ position: "relative" }}
+        onMouseMove={handleRowsMouseMove}
+        onMouseLeave={handleRowsMouseLeave}
+      >
+      {hoverMinute !== null && selectedMinute === null && (
+        <div
+          data-testid="gf-hover-cursor"
+          style={{
+            position: "absolute",
+            left: NAME_COL_PX + minuteToRowX(hoverMinute, periods.length),
+            top: 0,
+            bottom: 0,
+            width: 1,
+            background: CURSOR_COLOR,
+            pointerEvents: "none",
+            zIndex: 5,
+          }}
+        />
+      )}
+      {selectedMinute !== null && (
+        <div
+          data-testid="gf-pinned-band"
+          style={{
+            position: "absolute",
+            left: NAME_COL_PX + minuteToRowX(selectedMinute, periods.length),
+            top: 0,
+            bottom: 0,
+            width: MINUTE_PX,
+            background: PINNED_BAND_COLOR,
+            borderLeft: `1px solid ${CURSOR_COLOR}`,
+            pointerEvents: "none",
+            zIndex: 5,
+          }}
+        />
+      )}
+
       {/* Home team label + stat headers */}
       <div style={{ display: "flex", height: ROW_HEIGHT, borderTop: "1px solid #5C3A21", borderBottom: "1px solid #5C3A21" }}>
         <div style={{
@@ -1142,7 +1231,7 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
               periods={periods}
               isHome={true}
               boxscore={boxscore}
-              selectedMinute={selectedMinute}
+              highlightMinute={highlightMinute}
               lineups={homeLineups}
               position={pos}
               isStarter={starter}
@@ -1192,7 +1281,7 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
               periods={periods}
               isHome={false}
               boxscore={boxscore}
-              selectedMinute={selectedMinute}
+              highlightMinute={highlightMinute}
               lineups={awayLineups}
               position={pos}
               isStarter={starter}
@@ -1202,6 +1291,7 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
           </div>
         );
       })}
+      </div>
     </div>
   );
 }
