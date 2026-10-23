@@ -269,7 +269,14 @@ Key rendering components:
 - `StintBar.tsx` - Visual stint timeline
 - `StintDetailCard.tsx` - Detailed stint statistics
 - `PlayerStatsTable.tsx` - Per-player box score table
-- `GameflowTimeline.tsx` - Game progression visualization
+- `GameflowTimeline.tsx` - Game progression visualization (stint rows, momentum chart, minute selector, hover cursor)
+- `StintBar.tsx` - Not rendered by any page; only its own test uses it
+
+Pure helpers in `src/lib/` (no React, no I/O — unit-tested directly):
+- `team-palette.ts` - `buildTeamPalette({home, away})` picks on-court/bench/text colors per team from `src/data/teamColors.json`. Home takes its first color that reads against the dark page; away must also be distinct from home's (walks its palette, then tints). `paletteToCssVars()` yields the `--home-on-court`, `--home-bench`, `--home-text`, `--away-*` custom properties that `GameflowTimeline` sets on its root and `index.css` reads in `.hometeamIN` etc. A test checks all 870 real matchups.
+- `timeline-geometry.ts` - Minute ↔ pixel conversions. 18px per game minute everywhere: 216px quarters, 90px overtimes. Player rows have a 1px spacer between periods (`minuteToRowX` / `rowXToMinute`); the chart and minute selector don't (`minuteToChartX` / `chartXToMinute`). Any new timeline positioning must go through these — the OT mismatch bug came from a second copy of the math.
+
+Timeline interaction model: hover previews, click pins. `hoverMinute` (fractional) is set by mouse movement over the chart or the player-row block and drawn as a cursor in each region's own coordinates. `selectedMinute` (0-based bucket) is set by the minute selector or a chart click. `highlightMinute = selectedMinute ?? bucket(hoverMinute)` drives the on-court dimming in `PlayerRow`; while pinned, the hover cursor is hidden and a band marks the pinned minute.
 
 All components:
 - Load JSON data from `data/` at runtime
@@ -386,6 +393,8 @@ popcorn-remake/
 │   ├── src/
 │   │   ├── types/api.ts       # TypeScript contract definitions
 │   │   ├── components/        # React components (tsx)
+│   │   ├── lib/               # Pure helpers: team-palette, timeline-geometry, timeline
+│   │   ├── data/teamColors.json  # 30 teams: name + ordered color list (hex)
 │   │   ├── test/              # Setup + test utilities
 │   │   └── main.tsx           # App entry point
 │   ├── vite.config.ts         # Build configuration (base: './')
