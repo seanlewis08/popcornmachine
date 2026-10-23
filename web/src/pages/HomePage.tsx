@@ -1,3 +1,4 @@
+// pattern: Imperative Shell
 import { useJsonData } from "@/hooks/useJsonData";
 import type { IndexData, ScoreEntry } from "@/types/api";
 import { GameCard } from "@/components/GameCard";
@@ -20,27 +21,25 @@ export default function HomePage() {
       return;
     }
 
+    // One score file per date. A season is ~170 dates, so request them all
+    // at once; a date whose file is missing or fails just contributes nothing.
+    const fetchScoresForDate = async (date: string): Promise<ScoreEntry[]> => {
+      try {
+        const response = await fetch(`data/scores/${date}.json`);
+        if (!response.ok) return [];
+        const scoreData: unknown = await response.json();
+        return Array.isArray(scoreData) ? (scoreData as ScoreEntry[]) : [];
+      } catch (err) {
+        console.warn(`Failed to fetch scores for ${date}:`, err);
+        return [];
+      }
+    };
+
     const fetchAllGames = async () => {
       try {
-        const allGames: ScoreEntry[] = [];
-
-        // Fetch scores for each date
-        for (const dateEntry of indexData.dates) {
-          try {
-            const response = await fetch(
-              `data/scores/${dateEntry.date}.json`
-            );
-            if (response.ok) {
-              const scoreData = await response.json();
-              allGames.push(...scoreData);
-            }
-          } catch (err) {
-            // Silently skip dates that don't have score files
-            console.warn(`Failed to fetch scores for ${dateEntry.date}:`, err);
-          }
-        }
-
-        setGames(allGames);
+        const perDate = await Promise.all(indexData.dates.map((d) => fetchScoresForDate(d.date)));
+        // Index order is most-recent-first; keep it.
+        setGames(perDate.flat());
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err : new Error(String(err)));

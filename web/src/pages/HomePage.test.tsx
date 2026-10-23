@@ -49,17 +49,17 @@ describe("HomePage", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn((url: string) => {
-        if (url === "/data/index.json") {
+        if (url === "data/index.json") {
           return Promise.resolve({
             ok: true,
             json: () => Promise.resolve(indexData),
           } as Response);
-        } else if (url === "/data/scores/2026-01-20.json") {
+        } else if (url === "data/scores/2026-01-20.json") {
           return Promise.resolve({
             ok: true,
             json: () => Promise.resolve(scoresForDate1),
           } as Response);
-        } else if (url === "/data/scores/2026-01-19.json") {
+        } else if (url === "data/scores/2026-01-19.json") {
           return Promise.resolve({
             ok: true,
             json: () => Promise.resolve(scoresForDate2),
@@ -105,12 +105,12 @@ describe("HomePage", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn((url: string) => {
-        if (url === "/data/index.json") {
+        if (url === "data/index.json") {
           return Promise.resolve({
             ok: true,
             json: () => Promise.resolve(indexData),
           } as Response);
-        } else if (url === "/data/scores/2026-01-19.json") {
+        } else if (url === "data/scores/2026-01-19.json") {
           return Promise.resolve({
             ok: true,
             json: () => Promise.resolve(scoresData),
@@ -155,12 +155,12 @@ describe("HomePage", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn((url: string) => {
-        if (url === "/data/index.json") {
+        if (url === "data/index.json") {
           return Promise.resolve({
             ok: true,
             json: () => Promise.resolve(indexData),
           } as Response);
-        } else if (url === "/data/scores/2026-01-19.json") {
+        } else if (url === "data/scores/2026-01-19.json") {
           return Promise.resolve({
             ok: true,
             json: () => Promise.resolve(scoresData),
@@ -195,7 +195,7 @@ describe("HomePage", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn((url: string) => {
-        if (url === "/data/index.json") {
+        if (url === "data/index.json") {
           return Promise.resolve({
             ok: true,
             json: () => Promise.resolve(indexData),
@@ -216,7 +216,7 @@ describe("HomePage", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn((url: string) => {
-        if (url === "/data/index.json") {
+        if (url === "data/index.json") {
           return Promise.resolve({
             ok: false,
             status: 404,
@@ -276,18 +276,18 @@ describe("HomePage", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn((url: string) => {
-        if (url === "/data/index.json") {
+        if (url === "data/index.json") {
           return Promise.resolve({
             ok: true,
             json: () => Promise.resolve(indexData),
           } as Response);
-        } else if (url === "/data/scores/2026-01-20.json") {
+        } else if (url === "data/scores/2026-01-20.json") {
           // This date's file doesn't exist (404)
           return Promise.resolve({
             ok: false,
             status: 404,
           } as Response);
-        } else if (url === "/data/scores/2026-01-19.json") {
+        } else if (url === "data/scores/2026-01-19.json") {
           return Promise.resolve({
             ok: true,
             json: () => Promise.resolve(scoresForDate1),
@@ -309,5 +309,50 @@ describe("HomePage", () => {
     // Only one date should be shown (the one with games)
     const gamesRendered = screen.getAllByText(/Pistons|Celtics/i);
     expect(gamesRendered.length).toBeGreaterThan(0);
+  });
+
+  it("requests every date's score file concurrently, not one after another", async () => {
+    // A full season is ~170 dates; serial fetches take seconds. Hold every
+    // score response until all of them have been requested — serial code
+    // would stall on the first and never request the second.
+    const dates = ["2026-01-21", "2026-01-20", "2026-01-19"];
+    const indexData = { dates: dates.map((date) => ({ date, games: [] })) };
+    const release: Array<() => void> = [];
+    const scoreUrls: Array<string> = [];
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string) => {
+        if (url === "data/index.json") {
+          return Promise.resolve({ ok: true, json: () => Promise.resolve(indexData) } as Response);
+        }
+        scoreUrls.push(url);
+        return new Promise<Response>((resolve) => {
+          release.push(() =>
+            resolve({
+              ok: true,
+              json: () =>
+                Promise.resolve([
+                  {
+                    gameId: `g${scoreUrls.length}`,
+                    date: url.slice("data/scores/".length, -".json".length),
+                    homeTeam: { tricode: "DET", name: "Detroit Pistons", score: 100 },
+                    awayTeam: { tricode: "BOS", name: "Boston Celtics", score: 99 },
+                    status: "Final",
+                  },
+                ]),
+            } as Response),
+          );
+        });
+      }),
+    );
+
+    renderWithRouter(<HomePage />);
+
+    await waitFor(() => expect(scoreUrls).toHaveLength(3));
+    expect(scoreUrls).toEqual(dates.map((d) => `data/scores/${d}.json`));
+
+    for (const r of release) r();
+    await waitFor(() => expect(screen.getAllByText("Detroit Pistons")).toHaveLength(3));
   });
 });
