@@ -20,12 +20,34 @@ import requests
 
 _CDN_BASE = "https://cdn.nba.com/static/json"
 
+# The headers a Chrome page on www.nba.com sends with its XHR to cdn.nba.com.
+#
+# cdn.nba.com sits behind Akamai Bot Manager. Since mid-June 2026 it answers
+# 403 "Access Denied" to requests that carry only User-Agent/Accept/Origin/
+# Referer over HTTP/1.1 (which is what `requests` speaks). Adding Chrome's
+# client hints (sec-ch-ua*) and fetch metadata (Sec-Fetch-*) restores access.
+# Verified with Python requests by the hoopR maintainers on 2026-09-27:
+# https://github.com/sportsdataverse/hoopR/pull/215
+#
+# To bump the Chrome version, copy the WHOLE sec-ch-ua value from a real
+# Chrome of that major version — the placeholder brand ("Not=A?Brand") and
+# brand order are derived from the version, so editing only the numbers is
+# wrong. `requests` adds Accept-Encoding itself; the CDN refuses without it.
 _HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0",
+    "sec-ch-ua": '"Chromium";v="140", "Not=A?Brand";v="24", "Google Chrome";v="140"',
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": '"Windows"',
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+    ),
     "Accept": "application/json, text/plain, */*",
-    "Accept-Language": "en-US,en;q=0.5",
-    "Referer": "https://www.nba.com/",
     "Origin": "https://www.nba.com",
+    "Sec-Fetch-Site": "same-site",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Dest": "empty",
+    "Referer": "https://www.nba.com/",
+    "Accept-Language": "en-US,en;q=0.9",
 }
 
 # Module-level caches to avoid redundant fetches within a pipeline run

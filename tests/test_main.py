@@ -65,6 +65,55 @@ def test_main_handles_missing_scoreboard(mock_fetch_sb):
         assert not index_path.exists()
 
 
+@patch("pipeline.main.fetch_scoreboard")
+def test_main_returns_false_when_scoreboard_unreachable(mock_fetch_sb):
+    """
+    A schedule/scoreboard API failure (e.g. cdn.nba.com 403) must be
+    reported to the caller so the CI workflow can fail loudly instead of
+    silently producing an empty day. See docs/TROUBLESHOOTING.md.
+    """
+    mock_fetch_sb.return_value = None
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        assert main(date="2026-01-19", data_dir=tmpdir) is False
+
+
+@patch("pipeline.main.fetch_scoreboard")
+def test_main_returns_true_on_off_day(mock_fetch_sb, sample_scoreboard_data):
+    """An API that responds with zero games is a success (off day)."""
+    import pandas as pd
+
+    mock_fetch_sb.return_value = {
+        "game_header": sample_scoreboard_data["game_header"].iloc[0:0],
+        "line_score": sample_scoreboard_data["line_score"].iloc[0:0],
+    }
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        assert main(date="2026-01-19", data_dir=tmpdir) is True
+
+
+def test_cli_exits_2_when_scoreboard_unreachable():
+    """`python -m pipeline.main` exits 2 (not 0) when the API is unreachable."""
+    import subprocess
+    import sys
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        code = (
+            "from unittest.mock import patch\n"
+            "import runpy, sys\n"
+            "sys.argv = ['pipeline.main', '--date', '2026-01-19', '--data-dir', sys.argv[1]]\n"
+            "with patch('pipeline.fetch._fetch_json', return_value=None):\n"
+            "    runpy.run_module('pipeline.main', run_name='__main__')\n"
+        )
+        result = subprocess.run(
+            [sys.executable, "-c", code, tmpdir],
+            capture_output=True,
+            text=True,
+            cwd=str(Path(__file__).resolve().parent.parent),
+        )
+        assert result.returncode == 2, result.stderr
+
+
 @patch("pipeline.main.fetch_game_rotation")
 @patch("pipeline.main.fetch_playbyplay")
 @patch("pipeline.main.fetch_boxscore")

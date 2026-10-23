@@ -1,6 +1,6 @@
 # Popcorn Remake: NBA Game Stats Viewer
 
-**Last Updated:** 2026-03-01
+**Last Updated:** 2026-10-23
 
 ## Purpose
 
@@ -203,7 +203,7 @@ interface PlayByPlayEvent {
 
 ### Pipeline Contract
 
-**Signature:** `main(date: str | None = None, data_dir: str = "data", cleanup: bool = False) -> None`
+**Signature:** `main(date: str | None = None, data_dir: str = "data", cleanup: bool = False) -> bool`
 
 **Behavior:**
 1. Defaults to yesterday's date if not specified
@@ -213,7 +213,11 @@ interface PlayByPlayEvent {
 5. On success: writes scores and index to `data/`
 6. Optionally runs monthly cleanup (removes prior month's games)
 
+**Return value:** `True` if the schedule/scoreboard API responded (including with zero games — an off day writes an empty `[]` scores file). `False` if the API was unreachable; nothing is written so the next backfill retries the date.
+
 **Entry Point:** `python -m pipeline.main [--date YYYY-MM-DD] [--data-dir PATH] [--cleanup]`
+
+**Exit codes:** `0` success or off day · `2` (`EXIT_API_UNREACHABLE`) schedule/scoreboard fetch failed · `1` uncaught exception. The workflow relies on `2` to distinguish "NBA blocked us" from "bug in pipeline".
 
 ### CDN Endpoints
 
@@ -222,9 +226,12 @@ interface PlayByPlayEvent {
 - **Play-by-play:** `https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_{game_id}.json` — per-game PBP events
 - **No CDN rotation endpoint** — rotation data is derived from PBP substitution events + boxscore starters
 
+**Access control:** `cdn.nba.com` is behind Akamai Bot Manager. It only serves JSON to requests that look like the XHR calls nba.com's own pages make. The header set in `_HEADERS` (`pipeline/fetch.py`) must include Chrome client hints (`sec-ch-ua*`) and fetch metadata (`Sec-Fetch-*`) with a matching Chrome `User-Agent` — the older UA/Accept/Origin/Referer set has been rejected over HTTP/1.1 since 2026-06-16. `tests/test_fetch.py::TestCdnHeaders` pins this. Procedure for bumping the Chrome version and the next escalation (`curl_cffi`) are in `docs/TROUBLESHOOTING.md`.
+
 ### Key Invariants
 
 - CDN endpoints are used instead of stats.nba.com (which blocks cloud IPs)
+- Every request to cdn.nba.com goes through `_fetch_json` with the full browser header set (see Access control above); do not add a second HTTP call site
 - CDN data is mapped to V2-compatible DataFrame columns so transform.py works unchanged
 - Module-level caches prevent redundant fetches within a pipeline run (schedule, PBP, boxscore)
 - Failed API calls are logged to stderr with ISO timestamps
@@ -286,11 +293,14 @@ All components:
 1. Checkout code
 2. Install `uv` (Python package manager)
 3. Run `uv sync` to install dependencies
-4. Execute `pipeline/main.py --cleanup`
-5. Check if `data/` changed
+4. Run pipeline: scheduled runs backfill every date in the last 30 days missing a `data/scores/` file, then re-run yesterday with `--cleanup`; manual runs fetch the given date. Every date that exits non-zero is recorded in the `failed_dates` step output with a `::error::` annotation (exit 2 = CDN unreachable, anything else = crash).
+5. `git add data/` then check the staged diff (catches new untracked files, not just modified ones)
 6. If changed: commit with bot credentials and push
+7. If changed: `gh workflow run deploy.yml`
+8. Keep schedule enabled: `gh api -X PUT .../actions/workflows/pipeline.yml/enable` on every run. GitHub disables scheduled workflows after 60 days without commits; this reset the clock after the 2026 offseason disabled it.
+9. Fail the job if `failed_dates` is non-empty. Runs last so fetched data is already committed and deployed; a failed scheduled run emails the repo owner.
 
-**Permissions:** `contents: write`
+**Permissions:** `contents: write`, `actions: write` (step 8 and the deploy trigger)
 
 ### Deploy Workflow (`.github/workflows/deploy.yml`)
 
@@ -393,6 +403,8 @@ popcorn-remake/
 │   ├── test_write.py
 │   ├── test_cleanup.py
 │   └── test_main.py
+├── docs/
+│   └── TROUBLESHOOTING.md     # Runbook: site not updating, CDN 403, disabled schedule
 ├── .github/workflows/          # CI/CD automation
 │   ├── pipeline.yml           # Data fetch schedule
 │   └── deploy.yml             # GitHub Pages deployment
@@ -423,7 +435,8 @@ popcorn-remake/
 - Commit to main, GitHub Actions auto-builds and deploys
 
 **Troubleshoot pipeline:**
-- Check workflow logs: GitHub Actions UI → Data Pipeline runs
+- Start with `docs/TROUBLESHOOTING.md` — covers the 30-second diagnosis, running locally, the cdn.nba.com 403 history and fix, the disabled-schedule fix, and the escalation path
+- Check workflow logs: GitHub Actions UI → Data Pipeline runs; read the annotations first
 - Data issues: See stderr timestamps in workflow logs
 - Game skipping: Check pipeline logs for specific game_id errors
 

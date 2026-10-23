@@ -286,6 +286,59 @@ def _make_pbp_response():
     }
 
 
+class TestCdnHeaders:
+    """
+    cdn.nba.com sits behind Akamai Bot Manager. Since mid-June 2026 it
+    returns 403 "Access Denied" to requests that lack Chrome's client-hint
+    (sec-ch-ua*) and fetch-metadata (Sec-Fetch-*) headers, especially over
+    HTTP/1.1 which is what `requests` speaks.
+    """
+
+    REQUIRED = [
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform",
+        "Sec-Fetch-Site",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Dest",
+        "User-Agent",
+        "Origin",
+        "Referer",
+    ]
+
+    def test_headers_include_client_hints_and_fetch_metadata(self):
+        for name in self.REQUIRED:
+            assert name in fetch_module._HEADERS, f"missing header: {name}"
+
+    def test_fetch_metadata_matches_nba_com_xhr(self):
+        assert fetch_module._HEADERS["Sec-Fetch-Site"] == "same-site"
+        assert fetch_module._HEADERS["Sec-Fetch-Mode"] == "cors"
+        assert fetch_module._HEADERS["Sec-Fetch-Dest"] == "empty"
+        assert fetch_module._HEADERS["Origin"] == "https://www.nba.com"
+        assert fetch_module._HEADERS["Referer"] == "https://www.nba.com/"
+
+    def test_sec_ch_ua_version_matches_user_agent(self):
+        import re
+
+        ua = fetch_module._HEADERS["User-Agent"]
+        m = re.search(r"Chrome/(\d+)\.", ua)
+        assert m, "User-Agent must be a Chrome UA so sec-ch-ua can match it"
+        major = m.group(1)
+        sec_ch_ua = fetch_module._HEADERS["sec-ch-ua"]
+        assert f'"Chromium";v="{major}"' in sec_ch_ua
+        assert f'"Google Chrome";v="{major}"' in sec_ch_ua
+
+    def test_fetch_json_sends_headers(self):
+        with patch("pipeline.fetch.requests.get") as mock_get, patch(
+            "pipeline.fetch.time.sleep"
+        ):
+            mock_get.return_value.json.return_value = {"ok": True}
+            mock_get.return_value.raise_for_status.return_value = None
+            fetch_module._fetch_json("https://cdn.nba.com/x.json", delay=0)
+            _, kwargs = mock_get.call_args
+            assert kwargs["headers"] is fetch_module._HEADERS
+
+
 class TestFetchScoreboard:
     """Tests for fetch_scoreboard function."""
 

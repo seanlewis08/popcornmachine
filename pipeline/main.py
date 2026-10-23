@@ -1,6 +1,7 @@
 """Popcorn Remake data pipeline entry point."""
 
 import argparse
+import sys
 import traceback
 from datetime import datetime, timedelta
 
@@ -10,7 +11,7 @@ from .transform import transform_boxscore, transform_gameflow, transform_scores
 from .write import write_game_data, write_index, write_scores
 
 
-def main(date: str | None = None, data_dir: str = "data", cleanup: bool = False) -> None:
+def main(date: str | None = None, data_dir: str = "data", cleanup: bool = False) -> bool:
     """
     Run the pipeline for a given date (defaults to yesterday).
 
@@ -18,6 +19,12 @@ def main(date: str | None = None, data_dir: str = "data", cleanup: bool = False)
         date: Date string in YYYY-MM-DD format (defaults to yesterday)
         data_dir: Base data directory (default "data")
         cleanup: Whether to run monthly cleanup after successful writes (default False)
+
+    Returns:
+        True if the schedule/scoreboard API responded (even with zero games).
+        False if it was unreachable (timeout, 403, etc.) — nothing is written
+        so the next backfill retries the date, and the CLI exits 2 so CI can
+        flag the run. See docs/TROUBLESHOOTING.md.
     """
     if date is None:
         date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
@@ -31,7 +38,7 @@ def main(date: str | None = None, data_dir: str = "data", cleanup: bool = False)
         # API error (timeout, blocked, etc.) — do NOT write empty file
         # so backfill will retry this date on the next run
         print(f"No scoreboard data for {date} (API error — will retry)")
-        return
+        return False
 
     # 2. Transform scores
     print("Transforming scores...")
@@ -41,7 +48,7 @@ def main(date: str | None = None, data_dir: str = "data", cleanup: bool = False)
         # Scoreboard responded but had zero games (off day / All-Star break)
         # Write empty scores file so backfill doesn't retry this date
         write_scores(date, [], data_dir)
-        return
+        return True
 
     print(f"Found {len(scores)} games")
 
@@ -154,6 +161,12 @@ def main(date: str | None = None, data_dir: str = "data", cleanup: bool = False)
             print(f"Cleaned up {len(deleted)} old data files")
 
     print(f"Pipeline complete for {date}. Processed {successful_games} games for {date}. Skipped {skipped_games} games due to errors.")
+    return True
+
+
+# Exit code when the schedule/scoreboard API is unreachable. Distinct from 1
+# (crash) so the workflow can tell "NBA blocked us" from "bug in pipeline".
+EXIT_API_UNREACHABLE = 2
 
 
 if __name__ == "__main__":
@@ -177,4 +190,6 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    main(date=args.date, data_dir=args.data_dir, cleanup=args.cleanup)
+    ok = main(date=args.date, data_dir=args.data_dir, cleanup=args.cleanup)
+    if not ok:
+        sys.exit(EXIT_API_UNREACHABLE)

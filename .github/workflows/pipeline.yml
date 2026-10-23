@@ -26,11 +26,30 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
+      # Runs pipeline.main once per date. Exit code 2 means the NBA CDN was
+      # unreachable (403/timeout) — the date is recorded in `failed_dates` and
+      # the job is failed at the very end, AFTER committing whatever did fetch.
+      # Troubleshooting: docs/TROUBLESHOOTING.md
       - name: Run pipeline
+        id: pipeline
         run: |
+          FAILED_DATES=""
+          run_date() {
+            local d="$1"; shift
+            local rc=0
+            uv run python -m pipeline.main --date "$d" "$@" || rc=$?
+            if [ "$rc" -eq 2 ]; then
+              echo "::error title=NBA CDN unreachable::Schedule fetch failed for $d. If this persists, cdn.nba.com is blocking again — see docs/TROUBLESHOOTING.md"
+              FAILED_DATES="$FAILED_DATES $d"
+            elif [ "$rc" -ne 0 ]; then
+              echo "::error title=Pipeline crashed::pipeline.main exited $rc for $d"
+              FAILED_DATES="$FAILED_DATES $d"
+            fi
+          }
+
           if [ -n "${{ github.event.inputs.date }}" ]; then
             # Manual run: fetch a specific date
-            uv run python -m pipeline.main --date "${{ github.event.inputs.date }}" --cleanup
+            run_date "${{ github.event.inputs.date }}" --cleanup
           else
             # Scheduled run: backfill any missing dates from the last 30 days
             YESTERDAY=$(date -u -d "1 day ago" +%Y-%m-%d)
@@ -40,15 +59,17 @@ jobs:
             while [ "$CURRENT" != "$(date -u -d "$YESTERDAY + 1 day" +%Y-%m-%d)" ]; do
               if [ ! -f "data/scores/${CURRENT}.json" ]; then
                 echo "Missing $CURRENT — fetching..."
-                uv run python -m pipeline.main --date "$CURRENT" || echo "  Warning: pipeline failed for $CURRENT, continuing..."
+                run_date "$CURRENT"
               else
                 echo "Already have $CURRENT — skipping"
               fi
               CURRENT=$(date -u -d "$CURRENT + 1 day" +%Y-%m-%d)
             done
-            # Run cleanup once at the end
-            uv run python -m pipeline.main --cleanup
+            # Re-run yesterday with cleanup (prunes data older than 30 days)
+            run_date "$YESTERDAY" --cleanup
           fi
+
+          echo "failed_dates=${FAILED_DATES# }" >> "$GITHUB_OUTPUT"
 
       - name: Check for changes
         id: changes
@@ -69,3 +90,24 @@ jobs:
         run: gh workflow run deploy.yml
         env:
           GH_TOKEN: ${{ github.token }}
+
+      # GitHub disables scheduled workflows after 60 days with no commits to
+      # the repo. During the NBA offseason there is nothing to commit, so this
+      # happened on 2026-08-15. Re-enabling (even when already enabled) resets
+      # that clock. Needs `permissions: actions: write` (set above).
+      - name: Keep schedule enabled
+        if: always()
+        continue-on-error: true
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/pipeline.yml/enable"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      # Last so that data which DID fetch is already committed and deployed.
+      # A failed job emails the repo owner; a green job with no data does not.
+      - name: Fail if any date could not be fetched
+        if: steps.pipeline.outputs.failed_dates != ''
+        run: |
+          echo "Schedule fetch failed for: ${{ steps.pipeline.outputs.failed_dates }}"
+          echo "These dates will be retried on the next run."
+          echo "If this keeps happening, cdn.nba.com is probably blocking again — see docs/TROUBLESHOOTING.md"
+          exit 1
