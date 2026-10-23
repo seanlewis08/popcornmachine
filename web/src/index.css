@@ -67,29 +67,32 @@ body {
 }
 
 /* ===================================================================
-   GAMEFLOW TEAM COLORS (kept from original)
+   GAMEFLOW TEAM COLORS
+   GameflowTimeline sets --home-*/--away-* on its root from the matchup's
+   real team colors (src/lib/team-palette.ts). The fallbacks are the fixed
+   palette the site used before team colors existed.
    =================================================================== */
 .hometeamOUT {
-  background-color: #EB003C;
+  background-color: var(--home-bench, #EB003C);
 }
 .hometeamIN {
-  color: white;
-  background-color: #00519A;
+  color: var(--home-text, white);
+  background-color: var(--home-on-court, #00519A);
 }
 .hometeamENDSTAT {
-  color: white;
-  background-color: #00519A;
+  color: var(--home-text, white);
+  background-color: var(--home-on-court, #00519A);
 }
 .visitorOUT {
-  background-color: #ECAC88;
+  background-color: var(--away-bench, #ECAC88);
 }
 .visitorIN {
-  color: white;
-  background-color: #008348;
+  color: var(--away-text, white);
+  background-color: var(--away-on-court, #008348);
 }
 .visitorENDSTAT {
-  color: white;
-  background-color: #008348;
+  color: var(--away-text, white);
+  background-color: var(--away-on-court, #008348);
 }
 
 /* ===================================================================

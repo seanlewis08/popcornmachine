@@ -1,9 +1,34 @@
-import { useState, useMemo, useRef, useEffect, useCallback, type MouseEvent as ReactMouseEvent } from "react";
+// pattern: Mixed (needs refactoring)
+// Reason: a 1,200-line component that mixes layout math (pure) with React
+// state and DOM measurement. New pure logic goes in src/lib (team-palette,
+// timeline-geometry); the remainder is being split out incrementally.
+import {
+  useState,
+  useMemo,
+  useRef,
+  useEffect,
+  useCallback,
+  type CSSProperties,
+  type MouseEvent as ReactMouseEvent,
+} from "react";
 import type { GameflowData, GameflowPlayer, GameflowStint, BoxScoreData, ScoreChange } from "../types/api";
+import { buildTeamPalette, paletteToCssVars } from "../lib/team-palette";
 
 interface GameflowTimelineProps {
   data: GameflowData;
   boxscore?: BoxScoreData;
+}
+
+/**
+ * Diagonal hatching for minutes a player is on court without stint data,
+ * in the team's on-court color at two alphas. Reads the CSS variables set
+ * on the timeline root (see team-palette.ts); the fallbacks are the legacy colors.
+ */
+function carriedHatch(isHome: boolean): string {
+  const base = isHome ? "var(--home-on-court, #00519A)" : "var(--away-on-court, #008348)";
+  const strong = `color-mix(in srgb, ${base} 55%, transparent)`;
+  const faint = `color-mix(in srgb, ${base} 25%, transparent)`;
+  return `repeating-linear-gradient(45deg, ${strong}, ${strong} 2px, ${faint} 2px, ${faint} 4px)`;
 }
 
 /** Quarter width in pixels (matches original PopcornMachine) */
@@ -482,9 +507,7 @@ function PlayerRow({ player, periods, isHome, boxscore, selectedMinute, lineups,
                     left: m * minuteWidth,
                     width: minuteWidth,
                     height: ROW_HEIGHT,
-                    background: isHome
-                      ? "repeating-linear-gradient(45deg, rgba(0,81,154,0.55), rgba(0,81,154,0.55) 2px, rgba(0,81,154,0.25) 2px, rgba(0,81,154,0.25) 4px)"
-                      : "repeating-linear-gradient(45deg, rgba(0,131,72,0.55), rgba(0,131,72,0.55) 2px, rgba(0,131,72,0.25) 2px, rgba(0,131,72,0.25) 4px)",
+                    background: carriedHatch(isHome),
                     pointerEvents: "none",
                   }}
                 />
@@ -980,6 +1003,13 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
     return { homeScore, awayScore };
   }, [selectedMinute, data.scoreChanges]);
 
+  // Team colors flow to every segment and stat cell through CSS variables
+  // read by .hometeamIN / .visitorIN etc. in index.css.
+  const teamColorVars = useMemo(
+    () => paletteToCssVars(buildTeamPalette({ home: data.homeTeam.tricode, away: data.awayTeam.tricode })),
+    [data.homeTeam.tricode, data.awayTeam.tricode],
+  );
+
   return (
     <div
       ref={containerRef}
@@ -990,6 +1020,9 @@ export function GameflowTimeline({ data, boxscore }: GameflowTimelineProps) {
         border: "1px solid #5C3A21",
         borderRadius: 4,
         overflow: "hidden",
+        // React.CSSProperties has no slot for custom properties; the values
+        // are plain color strings so the widening is safe.
+        ...(teamColorVars as CSSProperties),
       }}
     >
       {/* Title row */}

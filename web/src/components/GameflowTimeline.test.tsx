@@ -64,8 +64,9 @@ describe("GameflowTimeline", () => {
 
   it("renders player names", () => {
     render(<GameflowTimeline data={mockData} />);
-    expect(screen.getByText("Player A")).toBeInTheDocument();
-    expect(screen.getByText("Player B")).toBeInTheDocument();
+    // Names appear in the row label and again in the hover tooltip.
+    expect(screen.getAllByText("Player A").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Player B").length).toBeGreaterThan(0);
   });
 
   it("shows team section headers", () => {
@@ -85,10 +86,10 @@ describe("GameflowTimeline", () => {
 
   it("shows totals column headers", () => {
     render(<GameflowTimeline data={mockData} />);
-    expect(screen.getByText("Min")).toBeInTheDocument();
-    expect(screen.getByText("Pts")).toBeInTheDocument();
-    expect(screen.getByText("hv")).toBeInTheDocument();
-    expect(screen.getByText("+/-")).toBeInTheDocument();
+    // Each team block has its own header row, so headers appear twice.
+    for (const label of ["Min", "Pts", "+/-"]) {
+      expect(screen.getAllByText(label).length, label).toBe(2);
+    }
   });
 
   it("renders IN segments with team-specific CSS classes", () => {
@@ -101,6 +102,19 @@ describe("GameflowTimeline", () => {
     expect(awayIn.length).toBeGreaterThan(0);
   });
 
+  it("exposes the matchup's team colors as CSS variables on the timeline root", () => {
+    const { container } = render(<GameflowTimeline data={mockData} />);
+    const root = container.firstElementChild;
+    expect(root).not.toBeNull();
+    const style = (root as HTMLElement).style;
+    // DET home → Pistons red; BOS away → Celtics green (see teamColors.json).
+    expect(style.getPropertyValue("--home-on-court")).toBe("#C8102E");
+    expect(style.getPropertyValue("--away-on-court")).toBe("#007A33");
+    for (const name of ["--home-bench", "--home-text", "--away-bench", "--away-text"]) {
+      expect(style.getPropertyValue(name), name).toMatch(/^#[0-9A-F]{6}$/);
+    }
+  });
+
   it("renders OUT segments with team-specific CSS classes", () => {
     const { container } = render(<GameflowTimeline data={mockData} />);
     const homeOut = container.querySelectorAll(".hometeamOUT");
@@ -109,13 +123,11 @@ describe("GameflowTimeline", () => {
     expect(awayOut.length).toBeGreaterThan(0);
   });
 
-  it("shows end stat values (Min, Pts, hv, +/-)", () => {
+  it("renders one end-stat cell per column per player", () => {
     const { container } = render(<GameflowTimeline data={mockData} />);
     const endStats = container.querySelectorAll(".hometeamENDSTAT, .visitorENDSTAT");
-    // Player A: Min=12.0, Pts=8, hv=4, +/-=+3
-    // Player B: Min=4.0, Pts=2, hv=-1, +/-=-1
-    // = 8 total stat cells
-    expect(endStats.length).toBe(8);
+    // 8 stat columns (Min Pts Reb Ast Stl Blk Tov +/-) × 2 players
+    expect(endStats.length).toBe(16);
   });
 
   it("displays stint points inside IN segments", () => {
