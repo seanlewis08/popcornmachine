@@ -635,6 +635,28 @@ class TestFetchPlaybyplay:
             for col in ("_CDN_AREA", "_CDN_AREA_DETAIL", "_CDN_SIDE", "_CDN_DESCRIPTOR"):
                 assert row[col] == "", (eventnum, col)
 
+    def test_fetch_playbyplay_exposes_v3_shot_columns_for_transform(self):
+        """
+        transform's shot/stat classification keys off isFieldGoal, shotResult
+        and shotValue. The CDN feed has the first two; shotValue is derived
+        from actionType. Without these, every attempt was counted as a make
+        (published stint stats showed FGM == FGA for everyone, 2026-10-24).
+        """
+        actions = [
+            {"actionNumber": 1, "actionType": "2pt", "isFieldGoal": 1, "shotResult": "Missed"},
+            {"actionNumber": 2, "actionType": "3pt", "isFieldGoal": 1, "shotResult": "Made"},
+            {"actionNumber": 3, "actionType": "freethrow", "isFieldGoal": 0, "shotResult": "Made"},
+            {"actionNumber": 4, "actionType": "rebound", "subType": "offensive", "isFieldGoal": 0},
+        ]
+        with patch("pipeline.fetch._fetch_json") as mock_fetch:
+            mock_fetch.return_value = {"game": {"actions": actions}}
+            df = fetch_playbyplay("0022600099", delay=0).set_index("EVENTNUM")
+
+        assert list(df["isFieldGoal"]) == [1, 1, 0, 0]
+        assert list(df["shotResult"]) == ["Missed", "Made", "Made", ""]
+        assert list(df["shotValue"]) == [2, 3, 1, 0]
+        assert df.loc[4, "EVENTMSGACTIONTYPE"] == "offensive"
+
     def test_fetch_playbyplay_clock_conversion(self):
         with patch("pipeline.fetch._fetch_json") as mock_fetch:
             mock_fetch.return_value = _make_pbp_response()

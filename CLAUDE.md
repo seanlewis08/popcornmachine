@@ -186,7 +186,9 @@ interface StintStats {
 
 interface PlayByPlayEvent {
   clock: string;                 // MM:SS
-  type: string;                  // Event type identifier
+  type: string;                  // One of: Make2 Make3 miss2 miss3 MakeFT missFT OffReb DefReb
+                                 //   Steal Block Assist TO PF (lowercase V2 names like "make2"/"fta"/"reb"
+                                 //   only appear on legacy stats.nba.com-shaped input)
   description: string;           // Human-readable event description
   shot?: ShotDetail;             // Present on field-goal events only (never on FTs, rebounds, etc.)
 }
@@ -253,7 +255,7 @@ Absent values inside `shot` are written as `null` (numbers) or `""` (strings), n
 
 - CDN endpoints are used instead of stats.nba.com (which blocks cloud IPs)
 - Every request to cdn.nba.com goes through `_fetch_json` with the full browser header set (see Access control above); do not add a second HTTP call site
-- CDN data is mapped to V2-compatible DataFrame columns so transform.py works unchanged
+- CDN data is mapped to V2-compatible DataFrame columns so transform.py works unchanged. Play-by-play rows must also carry `isFieldGoal`, `shotResult`, `shotValue` and the rebound `subType` (as `EVENTMSGACTIONTYPE`): transform's shot/stat classification keys off those, and without them every attempt is counted as a make and every rebound as offensive (shipped that way Feb–Oct 2026)
 - Module-level caches prevent redundant fetches within a pipeline run (schedule, PBP, boxscore)
 - Failed API calls are logged to stderr with ISO timestamps
 - Stint timing uses decisecond precision from derived rotation data, converted to MM:SS format

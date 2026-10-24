@@ -419,6 +419,7 @@ def _cdn_pbp_rows(rows: list[dict]) -> pd.DataFrame:
         "VISITORDESCRIPTION": "", "SCORE_HOME": "0", "SCORE_AWAY": "0",
         "_CDN_CLOCK_RAW": "", "_CDN_PERSON_IDS_FILTER": [], "_CDN_QUALIFIERS": [],
         "_CDN_SHOT_RESULT": "", "_CDN_IS_FIELD_GOAL": 0,
+        "isFieldGoal": 0, "shotResult": "", "shotValue": 0,
         "_CDN_X_LEGACY": None, "_CDN_Y_LEGACY": None, "_CDN_SHOT_DIST": None,
         "_CDN_AREA": "", "_CDN_AREA_DETAIL": "", "_CDN_SIDE": "", "_CDN_DESCRIPTOR": "",
         "_CDN_ASSIST_ID": None,
@@ -442,6 +443,7 @@ class TestGameflowShotDetail:
                 "EVENTMSGTYPE": "2pt", "EVENTMSGACTIONTYPE": "Layup",
                 "HOMEDESCRIPTION": "C. Cunningham driving Layup (2 PTS) (Ivey 1 AST)",
                 "_CDN_IS_FIELD_GOAL": 1, "_CDN_SHOT_RESULT": "Made",
+                "isFieldGoal": 1, "shotResult": "Made", "shotValue": 2,
                 "_CDN_X_LEGACY": -12, "_CDN_Y_LEGACY": 31, "_CDN_SHOT_DIST": 3.3,
                 "_CDN_AREA": "Restricted Area", "_CDN_AREA_DETAIL": "Center", "_CDN_SIDE": "center",
                 "_CDN_DESCRIPTOR": "driving", "_CDN_ASSIST_ID": 1631093,
@@ -452,6 +454,7 @@ class TestGameflowShotDetail:
                 "EVENTMSGTYPE": "3pt", "EVENTMSGACTIONTYPE": "Jump Shot",
                 "HOMEDESCRIPTION": "MISS C. Cunningham 26' step back 3PT",
                 "_CDN_IS_FIELD_GOAL": 1, "_CDN_SHOT_RESULT": "Missed",
+                "isFieldGoal": 1, "shotResult": "Missed", "shotValue": 3,
                 "_CDN_X_LEGACY": 180, "_CDN_Y_LEGACY": 190, "_CDN_SHOT_DIST": float("nan"),
                 "_CDN_AREA": "Above the Break 3", "_CDN_AREA_DETAIL": "Right Side Center", "_CDN_SIDE": "right",
                 "_CDN_DESCRIPTOR": "step back", "_CDN_ASSIST_ID": float("nan"),
@@ -501,3 +504,51 @@ class TestGameflowShotDetail:
         events = self._events(sample_scoreboard_data, sample_rotation_data)
         text = json.dumps(events)
         assert "NaN" not in text and "nan" not in text
+
+
+class TestCdnEventClassification:
+    """
+    With CDN play-by-play, every attempt used to be classified as a make and
+    every rebound as offensive (published data 2026-10-24: FGM == FGA for all
+    players, FTM always 0). Both the event labels and the stint stats must
+    reflect the feed's shotResult and rebound subType.
+    """
+
+    CUNNINGHAM = 203507
+
+    @staticmethod
+    def _stint_rows() -> pd.DataFrame:
+        pid = TestCdnEventClassification.CUNNINGHAM
+        return _cdn_pbp_rows([
+            {"EVENTNUM": 1, "PLAYER1_ID": pid, "PCTIMESTRING": "11:30", "EVENTMSGTYPE": "2pt",
+             "EVENTMSGACTIONTYPE": "Layup", "HOMEDESCRIPTION": "C. Cunningham driving Layup (2 PTS)",
+             "isFieldGoal": 1, "shotResult": "Made", "shotValue": 2, "_CDN_IS_FIELD_GOAL": 1, "_CDN_SHOT_RESULT": "Made"},
+            {"EVENTNUM": 2, "PLAYER1_ID": pid, "PCTIMESTRING": "11:00", "EVENTMSGTYPE": "3pt",
+             "EVENTMSGACTIONTYPE": "Jump Shot", "HOMEDESCRIPTION": "MISS C. Cunningham 26' 3PT",
+             "isFieldGoal": 1, "shotResult": "Missed", "shotValue": 3, "_CDN_IS_FIELD_GOAL": 1, "_CDN_SHOT_RESULT": "Missed"},
+            {"EVENTNUM": 3, "PLAYER1_ID": pid, "PCTIMESTRING": "10:30", "EVENTMSGTYPE": "freethrow",
+             "EVENTMSGACTIONTYPE": "Free Throw 1 of 2", "HOMEDESCRIPTION": "C. Cunningham Free Throw 1 of 2 (3 PTS)",
+             "shotResult": "Made", "shotValue": 1},
+            {"EVENTNUM": 4, "PLAYER1_ID": pid, "PCTIMESTRING": "10:30", "EVENTMSGTYPE": "freethrow",
+             "EVENTMSGACTIONTYPE": "Free Throw 2 of 2", "HOMEDESCRIPTION": "MISS C. Cunningham Free Throw 2 of 2",
+             "shotResult": "Missed", "shotValue": 1},
+            {"EVENTNUM": 5, "PLAYER1_ID": pid, "PCTIMESTRING": "10:00", "EVENTMSGTYPE": "rebound",
+             "EVENTMSGACTIONTYPE": "offensive", "HOMEDESCRIPTION": "C. Cunningham REBOUND (Off:1 Def:0)"},
+            # Running totals in the description still say Off:1 — this one is defensive.
+            {"EVENTNUM": 6, "PLAYER1_ID": pid, "PCTIMESTRING": "9:00", "EVENTMSGTYPE": "rebound",
+             "EVENTMSGACTIONTYPE": "defensive", "HOMEDESCRIPTION": "C. Cunningham REBOUND (Off:1 Def:1)"},
+        ])
+
+    def test_stint_stats_count_misses_as_misses(self):
+        stats = _aggregate_stint_stats(self._stint_rows())
+        assert (stats["fgm"], stats["fga"]) == (1, 2)
+        assert (stats["fg3m"], stats["fg3a"]) == (0, 1)
+        assert (stats["ftm"], stats["fta"]) == (1, 2)
+        assert stats["pts"] == 3
+        assert (stats["oreb"], stats["reb"]) == (1, 2)
+
+    def test_event_types_distinguish_make_miss_and_rebound_kind(self, sample_scoreboard_data, sample_rotation_data):
+        result = transform_gameflow("0022500001", sample_scoreboard_data, sample_rotation_data, self._stint_rows())
+        player = next(p for p in result["players"] if p["playerId"] == str(self.CUNNINGHAM))
+        types = [e["type"] for e in player["stints"][0]["events"]]
+        assert types == ["Make2", "miss3", "MakeFT", "missFT", "OffReb", "DefReb"]

@@ -374,6 +374,23 @@ def fetch_boxscore(game_id: str, delay: float = 1.5) -> Optional[dict]:
     }
 
 
+def _shot_value_for(action_type: str, feed_value) -> int:
+    """Points a made attempt is worth: from the feed if given, else from actionType."""
+    if feed_value is not None:
+        try:
+            return int(feed_value)
+        except (TypeError, ValueError):
+            pass
+    at = action_type.lower().strip()
+    if at == "3pt":
+        return 3
+    if at == "2pt":
+        return 2
+    if at in ("freethrow", "free throw", "ft"):
+        return 1
+    return 0
+
+
 def fetch_playbyplay(game_id: str, delay: float = 1.5) -> Optional[pd.DataFrame]:
     """
     Fetch play-by-play from CDN endpoint.
@@ -407,6 +424,7 @@ def fetch_playbyplay(game_id: str, delay: float = 1.5) -> Optional[pd.DataFrame]
     for action in actions:
         clock_raw = action.get("clock", "")
         clock_v2 = _parse_v3_clock(clock_raw)
+        action_type = str(action.get("actionType", ""))
 
         rows.append({
             "PERIOD": action.get("period", 0),
@@ -422,6 +440,11 @@ def fetch_playbyplay(game_id: str, delay: float = 1.5) -> Optional[pd.DataFrame]
             "VISITORDESCRIPTION": action.get("description", ""),
             "SCORE_HOME": action.get("scoreHome", "0"),
             "SCORE_AWAY": action.get("scoreAway", "0"),
+            # The columns transform's shot/stat classification keys off
+            # (its "V3" path). Without them every attempt counted as a make.
+            "isFieldGoal": action.get("isFieldGoal", 0),
+            "shotResult": action.get("shotResult", ""),
+            "shotValue": _shot_value_for(action_type, action.get("shotValue")),
             # Preserve raw CDN fields needed for rotation derivation
             "_CDN_CLOCK_RAW": clock_raw,
             "_CDN_PERSON_IDS_FILTER": action.get("personIdsFilter", []),

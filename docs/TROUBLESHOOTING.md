@@ -159,6 +159,26 @@ uv run python -c "from pipeline.season import season_for; print(season_for('2027
 
 Size budget: ~180 KB per game, ~220 MB per season. GitHub Pages caps a site at 1 GB, so one season at a time is comfortable; keeping several would not be.
 
+## Checking that the numbers are right
+
+Stint stats are computed from play-by-play; box-score totals come straight from the CDN box score. They are independent, so they cross-check each other. Per player, the stint sums should equal the box totals (small differences are possible when a stint boundary falls mid-possession, but FGM should never equal FGA for everyone):
+
+```bash
+uv run python - <<'PY'
+import json, sys
+gid = sys.argv[1] if len(sys.argv) > 1 else "0022600006"
+gf = json.load(open(f"data/games/{gid}/gameflow.json"))
+bs = {p["playerId"]: p["totals"] for p in json.load(open(f"data/games/{gid}/boxscore.json"))["players"]}
+for p in gf["players"]:
+    s = {k: sum(st["stats"][k] for st in p["stints"]) for k in ("fgm", "fga", "ftm", "fta", "pts")}
+    b = bs[p["playerId"]]
+    flag = "" if all(s[k] == b[k] for k in s) else "   <-- differs"
+    print(f"{p['name']:24} stints {s['fgm']}-{s['fga']} FT {s['ftm']}-{s['fta']} {s['pts']}pts | box {b['fgm']}-{b['fga']} FT {b['ftm']}-{b['fta']} {b['pts']}pts{flag}")
+PY
+```
+
+This is how the Feb–Oct 2026 classification bug was found: every player showed FGM == FGA and FTM == 0 in stints while the box score was right. Cause: the CDN rows lacked the `isFieldGoal`/`shotResult`/`shotValue` columns transform's classification keys off, so a fallback that can't see misses ran instead. `fetch_playbyplay` now emits them; `tests/test_transform.py::TestCdnEventClassification` pins the behaviour.
+
 ## Checking the live site's data
 
 The deployed site reads `data/index.json` relative to itself. The deploy workflow copies `data/` into `web/dist/data/` at build time, so the site shows whatever was in the repo at the last deploy, not the latest commit. If data is committed but the site is stale, check that **Deploy to GitHub Pages** ran after the data commit. The pipeline triggers it with `gh workflow run deploy.yml`; a push to `main` also triggers it.

@@ -441,6 +441,25 @@ def _pbp_event_to_type(event_msg_type, event_msg_action_type) -> str:
         return "other"
 
 
+def _is_offensive_rebound(event) -> bool:
+    """
+    CDN rebound actions say which kind in subType ("offensive"/"defensive"),
+    carried as EVENTMSGACTIONTYPE. Fall back to the description's running
+    totals "(Off:x Def:y)" only when subType is absent — that heuristic
+    counts every rebound after a player's first offensive one as offensive.
+    """
+    sub = str(event.get("EVENTMSGACTIONTYPE", "") or "").strip().lower()
+    if sub in ("offensive", "defensive"):
+        return sub == "offensive"
+    desc = str(event.get("HOMEDESCRIPTION", "") or event.get("VISITORDESCRIPTION", "") or "")
+    if "Off:" in desc:
+        try:
+            return int(desc.split("Off:")[1].split(")")[0].split(" ")[0]) > 0
+        except (IndexError, ValueError):
+            return False
+    return False
+
+
 def _aggregate_stint_stats(pbp_events: pd.DataFrame) -> dict[str, int]:
     """
     Count stat categories from PBP events.
@@ -576,13 +595,8 @@ def _aggregate_stint_stats(pbp_events: pd.DataFrame) -> dict[str, int]:
             ) == "reb"
         ):
             stats["reb"] += 1
-            if "Off:" in desc:
-                try:
-                    off_part = desc.split("Off:")[1].split(")")[0].split(" ")[0]
-                    if int(off_part) > 0:
-                        stats["oreb"] += 1
-                except (IndexError, ValueError):
-                    pass
+            if _is_offensive_rebound(event):
+                stats["oreb"] += 1
         elif action_type == "turnover" or (
             "TURNOVER" in desc_upper and "STEAL" not in desc_upper
         ):
@@ -1433,7 +1447,7 @@ def transform_gameflow(
                                     # Last resort: check PTS in description
                                     evt_type = "MakeFT" if "PTS)" in desc_upper else "missFT"
                             elif action == "rebound":
-                                evt_type = "OffReb" if "Off:" in desc_text else "DefReb"
+                                evt_type = "OffReb" if _is_offensive_rebound(event) else "DefReb"
                             elif action in ("steal",) or "STEAL" in all_desc_upper:
                                 evt_type = "Steal"
                             elif action in ("block",) or "BLOCK" in all_desc_upper:
