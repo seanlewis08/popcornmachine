@@ -428,6 +428,16 @@ def fetch_playbyplay(game_id: str, delay: float = 1.5) -> Optional[pd.DataFrame]
             "_CDN_QUALIFIERS": action.get("qualifiers", []),
             "_CDN_SHOT_RESULT": action.get("shotResult", ""),
             "_CDN_IS_FIELD_GOAL": action.get("isFieldGoal", 0),
+            # Shot location and context (present on shot actions; None/"" otherwise).
+            # transform emits these as the `shot` object on field-goal events.
+            "_CDN_X_LEGACY": action.get("xLegacy"),        # tenths of a foot, basket at origin
+            "_CDN_Y_LEGACY": action.get("yLegacy"),
+            "_CDN_SHOT_DIST": action.get("shotDistance"),  # feet
+            "_CDN_AREA": action.get("area", ""),           # "Restricted Area", "Left Corner 3", …
+            "_CDN_AREA_DETAIL": action.get("areaDetail", ""),  # "Center", "24+ ft", …
+            "_CDN_SIDE": action.get("side", ""),           # "left" / "right" / "center"
+            "_CDN_DESCRIPTOR": action.get("descriptor", ""),   # "driving", "pullup", "step back", …
+            "_CDN_ASSIST_ID": action.get("assistPersonId"),
         })
 
     df = pd.DataFrame(rows)

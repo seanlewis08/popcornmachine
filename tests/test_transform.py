@@ -405,3 +405,99 @@ class TestTransformGameflow:
             required_keys = ["fgm", "fga", "pts", "reb", "ast"]
             for key in required_keys:
                 assert key in stats
+
+
+def _cdn_pbp_rows(rows: list[dict]) -> pd.DataFrame:
+    """
+    Build a play-by-play DataFrame shaped like fetch_playbyplay's CDN output.
+    Every column fetch emits is present; rows only need to override what matters.
+    """
+    base = {
+        "PERIOD": 1, "PLAYER1_ID": 0, "PCTIMESTRING": "12:00", "EVENTMSGTYPE": "",
+        "EVENTMSGACTIONTYPE": "", "EVENTNUM": 0, "PLAYER1_TEAM_ID": 0,
+        "PLAYER1_TEAM_ABBREVIATION": "", "PLAYER1_NAME": "", "HOMEDESCRIPTION": "",
+        "VISITORDESCRIPTION": "", "SCORE_HOME": "0", "SCORE_AWAY": "0",
+        "_CDN_CLOCK_RAW": "", "_CDN_PERSON_IDS_FILTER": [], "_CDN_QUALIFIERS": [],
+        "_CDN_SHOT_RESULT": "", "_CDN_IS_FIELD_GOAL": 0,
+        "_CDN_X_LEGACY": None, "_CDN_Y_LEGACY": None, "_CDN_SHOT_DIST": None,
+        "_CDN_AREA": "", "_CDN_AREA_DETAIL": "", "_CDN_SIDE": "", "_CDN_DESCRIPTOR": "",
+        "_CDN_ASSIST_ID": None,
+    }
+    return pd.DataFrame([{**base, **r} for r in rows])
+
+
+class TestGameflowShotDetail:
+    """
+    Field-goal events in gameflow.json carry a `shot` object with the CDN's
+    court location and context, so downstream shot-zone analysis doesn't
+    have to parse "24'" out of the description. Non-shot events don't get one.
+    """
+
+    CUNNINGHAM = 203507  # home starter in sample_rotation_data, on court 12:00 → ~1:54 of Q1
+
+    def _events(self, sample_scoreboard_data, sample_rotation_data):
+        pbp = _cdn_pbp_rows([
+            {
+                "EVENTNUM": 2, "PLAYER1_ID": self.CUNNINGHAM, "PCTIMESTRING": "11:30",
+                "EVENTMSGTYPE": "2pt", "EVENTMSGACTIONTYPE": "Layup",
+                "HOMEDESCRIPTION": "C. Cunningham driving Layup (2 PTS) (Ivey 1 AST)",
+                "_CDN_IS_FIELD_GOAL": 1, "_CDN_SHOT_RESULT": "Made",
+                "_CDN_X_LEGACY": -12, "_CDN_Y_LEGACY": 31, "_CDN_SHOT_DIST": 3.3,
+                "_CDN_AREA": "Restricted Area", "_CDN_AREA_DETAIL": "Center", "_CDN_SIDE": "center",
+                "_CDN_DESCRIPTOR": "driving", "_CDN_ASSIST_ID": 1631093,
+                "_CDN_QUALIFIERS": ["pointsinthepaint", "fastbreak"],
+            },
+            {
+                "EVENTNUM": 3, "PLAYER1_ID": self.CUNNINGHAM, "PCTIMESTRING": "11:00",
+                "EVENTMSGTYPE": "3pt", "EVENTMSGACTIONTYPE": "Jump Shot",
+                "HOMEDESCRIPTION": "MISS C. Cunningham 26' step back 3PT",
+                "_CDN_IS_FIELD_GOAL": 1, "_CDN_SHOT_RESULT": "Missed",
+                "_CDN_X_LEGACY": 180, "_CDN_Y_LEGACY": 190, "_CDN_SHOT_DIST": float("nan"),
+                "_CDN_AREA": "Above the Break 3", "_CDN_AREA_DETAIL": "Right Side Center", "_CDN_SIDE": "right",
+                "_CDN_DESCRIPTOR": "step back", "_CDN_ASSIST_ID": float("nan"),
+            },
+            {
+                "EVENTNUM": 4, "PLAYER1_ID": self.CUNNINGHAM, "PCTIMESTRING": "10:30",
+                "EVENTMSGTYPE": "rebound", "HOMEDESCRIPTION": "C. Cunningham REBOUND (Off:0 Def:1)",
+            },
+        ])
+        result = transform_gameflow("0022500001", sample_scoreboard_data, sample_rotation_data, pbp)
+        player = next(p for p in result["players"] if p["playerId"] == str(self.CUNNINGHAM))
+        return player["stints"][0]["events"]
+
+    def test_made_shot_carries_full_shot_detail(self, sample_scoreboard_data, sample_rotation_data):
+        events = self._events(sample_scoreboard_data, sample_rotation_data)
+        make = next(e for e in events if "driving Layup" in e["description"])
+        assert make["shot"] == {
+            "x": -12, "y": 31, "dist": 3.3,
+            "area": "Restricted Area", "areaDetail": "Center", "side": "center",
+            "descriptor": "driving",
+            "made": True, "assisted": True,
+            "qualifiers": ["pointsinthepaint", "fastbreak"],
+        }
+        # The three original keys are untouched.
+        assert make["clock"] == "11:30"
+        assert make["description"] == "C. Cunningham driving Layup (2 PTS) (Ivey 1 AST)"
+        assert "type" in make
+
+    def test_missed_shot_reports_unknowns_as_null(self, sample_scoreboard_data, sample_rotation_data):
+        events = self._events(sample_scoreboard_data, sample_rotation_data)
+        miss = next(e for e in events if "step back 3PT" in e["description"])
+        assert miss["shot"]["made"] is False
+        assert miss["shot"]["assisted"] is False
+        assert miss["shot"]["dist"] is None        # NaN from pandas → null, not 0 and not dropped
+        assert miss["shot"]["x"] == 180 and miss["shot"]["y"] == 190
+        assert miss["shot"]["qualifiers"] == []
+        assert isinstance(miss["shot"]["x"], int)
+
+    def test_non_shot_event_has_no_shot_key(self, sample_scoreboard_data, sample_rotation_data):
+        events = self._events(sample_scoreboard_data, sample_rotation_data)
+        reb = next(e for e in events if "REBOUND" in e["description"])
+        assert "shot" not in reb
+        assert set(reb) == {"clock", "type", "description"}
+
+    def test_shot_detail_is_json_serialisable(self, sample_scoreboard_data, sample_rotation_data):
+        import json
+        events = self._events(sample_scoreboard_data, sample_rotation_data)
+        text = json.dumps(events)
+        assert "NaN" not in text and "nan" not in text

@@ -169,6 +169,27 @@ export interface PlayByPlayEvent {
   clock: string;
   type: string;
   description: string;
+  /** Present on field-goal events only. See ShotDetail. */
+  shot?: ShotDetail;
+}
+
+/**
+ * Court location and context for a field goal, from the NBA CDN play-by-play.
+ * x/y are the NBA legacy coordinates in tenths of a foot with the basket at
+ * the origin. Absent values are null / "" — never dropped, never 0.
+ * `assisted` is reliable for makes only; the feed never tags a missed shot.
+ */
+export interface ShotDetail {
+  x: number | null;
+  y: number | null;
+  dist: number | null;
+  area: string;
+  areaDetail: string;
+  side: string;
+  descriptor: string;
+  made: boolean;
+  assisted: boolean;
+  qualifiers: string[];
 }
 
 export interface GameflowStint {

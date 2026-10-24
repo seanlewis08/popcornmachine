@@ -225,8 +225,17 @@ def _make_pbp_response():
                     "scoreAway": "0",
                     "isFieldGoal": 1,
                     "personIdsFilter": [203507],
-                    "qualifiers": [],
+                    "qualifiers": ["pointsinthepaint", "fastbreak"],
                     "shotResult": "Made",
+                    # Shot location/context fields as the CDN feed sends them
+                    "xLegacy": -12,
+                    "yLegacy": 31,
+                    "shotDistance": 3.3,
+                    "area": "Restricted Area",
+                    "areaDetail": "Center",
+                    "side": "center",
+                    "descriptor": "driving",
+                    "assistPersonId": 1629001,
                 },
                 {
                     "actionNumber": 3,
@@ -596,6 +605,35 @@ class TestFetchPlaybyplay:
                         "EVENTNUM", "HOMEDESCRIPTION", "SCORE_HOME", "SCORE_AWAY"]
             for col in required:
                 assert col in result.columns
+
+    def test_fetch_playbyplay_keeps_shot_location_and_context(self):
+        """
+        Every CDN shot action carries court location and context. Keep them
+        as raw _CDN_* columns so transform can emit a `shot` object; absent
+        fields become None / "" rather than breaking non-shot rows.
+        """
+        with patch("pipeline.fetch._fetch_json") as mock_fetch:
+            mock_fetch.return_value = _make_pbp_response()
+            result = fetch_playbyplay("0022500803", delay=0)
+
+        shot = result[result["EVENTNUM"] == 2].iloc[0]
+        assert shot["_CDN_X_LEGACY"] == -12
+        assert shot["_CDN_Y_LEGACY"] == 31
+        assert shot["_CDN_SHOT_DIST"] == 3.3
+        assert shot["_CDN_AREA"] == "Restricted Area"
+        assert shot["_CDN_AREA_DETAIL"] == "Center"
+        assert shot["_CDN_SIDE"] == "center"
+        assert shot["_CDN_DESCRIPTOR"] == "driving"
+        assert shot["_CDN_ASSIST_ID"] == 1629001
+        assert list(shot["_CDN_QUALIFIERS"]) == ["pointsinthepaint", "fastbreak"]
+
+        # Action 3 is a shot the fixture gives no location for; action 1 is a jump ball.
+        for eventnum in (3, 1):
+            row = result[result["EVENTNUM"] == eventnum].iloc[0]
+            for col in ("_CDN_X_LEGACY", "_CDN_Y_LEGACY", "_CDN_SHOT_DIST", "_CDN_ASSIST_ID"):
+                assert pd.isna(row[col]), (eventnum, col)
+            for col in ("_CDN_AREA", "_CDN_AREA_DETAIL", "_CDN_SIDE", "_CDN_DESCRIPTOR"):
+                assert row[col] == "", (eventnum, col)
 
     def test_fetch_playbyplay_clock_conversion(self):
         with patch("pipeline.fetch._fetch_json") as mock_fetch:

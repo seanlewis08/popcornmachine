@@ -262,6 +262,66 @@ def _filter_pbp_for_stint(
     return filtered
 
 
+def _is_missing(value) -> bool:
+    """True for None and pandas/numpy NaN (what a DataFrame hands back for absent values)."""
+    if value is None:
+        return True
+    try:
+        return bool(pd.isna(value))
+    except (TypeError, ValueError):
+        return False  # lists and other non-scalars are "present"
+
+
+def _shot_detail(event) -> dict | None:
+    """
+    Court location and context for a field-goal event, from the raw _CDN_*
+    columns fetch_playbyplay keeps. None for non-field-goal events.
+
+    Absent values are written as None (JSON null), never dropped and never
+    coerced to 0, so a consumer can tell "unknown" from "zero". `assisted`
+    is only reliable for makes: the feed doesn't tag misses with an assister.
+    """
+    is_fg = event.get("_CDN_IS_FIELD_GOAL", 0)
+    if _is_missing(is_fg) or not (is_fg is True or int(is_fg) == 1):
+        return None
+
+    def as_int(v):
+        return None if _is_missing(v) else int(v)
+
+    def as_float(v):
+        return None if _is_missing(v) else float(v)
+
+    def as_str(v):
+        return "" if _is_missing(v) else str(v)
+
+    shot_result = as_str(event.get("_CDN_SHOT_RESULT")).strip().lower()
+    if shot_result in ("made", "missed"):
+        made = shot_result == "made"
+    else:
+        # Older rows without shotResult: the feed prefixes misses with "MISS".
+        desc = as_str(event.get("HOMEDESCRIPTION")) or as_str(event.get("VISITORDESCRIPTION"))
+        made = not desc.upper().startswith("MISS")
+
+    assist_id = event.get("_CDN_ASSIST_ID")
+    assisted = not _is_missing(assist_id) and int(assist_id) != 0
+
+    qualifiers = event.get("_CDN_QUALIFIERS")
+    qualifiers = [str(q) for q in qualifiers] if isinstance(qualifiers, (list, tuple)) else []
+
+    return {
+        "x": as_int(event.get("_CDN_X_LEGACY")),
+        "y": as_int(event.get("_CDN_Y_LEGACY")),
+        "dist": as_float(event.get("_CDN_SHOT_DIST")),
+        "area": as_str(event.get("_CDN_AREA")),
+        "areaDetail": as_str(event.get("_CDN_AREA_DETAIL")),
+        "side": as_str(event.get("_CDN_SIDE")),
+        "descriptor": as_str(event.get("_CDN_DESCRIPTOR")),
+        "made": made,
+        "assisted": assisted,
+        "qualifiers": qualifiers,
+    }
+
+
 def _pbp_event_to_type(event_msg_type, event_msg_action_type) -> str:
     """
     Map EVENTMSGTYPE codes to human-readable event types.
@@ -1413,6 +1473,11 @@ def transform_gameflow(
                         "type": evt_type,
                         "description": desc_text,
                     }
+                    # Field goals carry court location/context for shot-zone analysis
+                    # (see Gameflow Contract → ShotDetail in CLAUDE.md).
+                    shot = _shot_detail(event)
+                    if shot is not None:
+                        event_dict["shot"] = shot
                     events.append(event_dict)
 
                 # Aggregate stint stats

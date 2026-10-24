@@ -188,8 +188,28 @@ interface PlayByPlayEvent {
   clock: string;                 // MM:SS
   type: string;                  // Event type identifier
   description: string;           // Human-readable event description
+  shot?: ShotDetail;             // Present on field-goal events only (never on FTs, rebounds, etc.)
+}
+
+// Court location and context for a field goal, straight from the NBA CDN
+// play-by-play action. Consumed by external shot-zone analysis
+// (crysterbaters.com); keep it additive.
+interface ShotDetail {
+  x: number | null;              // NBA legacy court coords, tenths of a foot, basket at the origin
+  y: number | null;              //   (x: left/right of the basket, y: distance out from the baseline)
+  dist: number | null;           // Shot distance in feet
+  area: string;                  // "Restricted Area", "In The Paint (Non-RA)", "Mid-Range",
+                                 //   "Left Corner 3", "Right Corner 3", "Above the Break 3", … ("" if absent)
+  areaDetail: string;            // "Center", "Left Side Center", "8-16 ft", "24+ ft", … ("" if absent)
+  side: string;                  // "left" | "right" | "center" ("" if absent)
+  descriptor: string;            // "driving", "pullup", "step back", "cutting", … ("" if absent)
+  made: boolean;                 // From the feed's shotResult (falls back to the "MISS" description prefix)
+  assisted: boolean;             // Feed tagged an assister. Reliable for makes only — misses are never tagged
+  qualifiers: string[];          // e.g. ["fastbreak", "pointsinthepaint", "2ndchance"]
 }
 ```
+
+Absent values inside `shot` are written as `null` (numbers) or `""` (strings), never dropped and never coerced to `0`, so a consumer can tell "unknown" from "zero". Adds roughly 150 bytes per shot, ~30 KB per game.
 
 ## Python Data Pipeline
 
