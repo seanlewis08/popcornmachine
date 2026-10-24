@@ -178,6 +178,10 @@ export interface PlayByPlayEvent {
  * x/y are the NBA legacy coordinates in tenths of a foot with the basket at
  * the origin. Absent values are null / "" — never dropped, never 0.
  * `assisted` is reliable for makes only; the feed never tags a missed shot.
+ * `area`/`areaDetail` are derived from x/y/dist (the feed sends them blank):
+ * "Restricted Area" | "In The Paint (Non-RA)" | "Mid-Range" | "Left Corner 3" |
+ * "Right Corner 3" | "Above the Break 3" | "Backcourt", and "<8 ft" | "8-16 ft" |
+ * "16-24 ft" | "24+ ft" | "Backcourt".
  */
 export interface ShotDetail {
   x: number | null;

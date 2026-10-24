@@ -262,6 +262,52 @@ def _filter_pbp_for_stint(
     return filtered
 
 
+# --- Shot zones ------------------------------------------------------------
+# The CDN play-by-play leaves `area`/`areaDetail` blank, so they're derived
+# from the legacy coordinates (tenths of a foot, basket at the origin, y into
+# the court) using the NBA shot-chart zone definitions.
+RESTRICTED_AREA_FT = 5.0          # shot-chart arc is 4 ft, but the feed reports dunks/layups
+                                  #   at 4.1–4.8 ft (measured 0022600001), so 5 keeps them in
+PAINT_HALF_WIDTH_TENTHS = 80      # paint is 16 ft wide
+PAINT_DEPTH_TENTHS = 138          # free-throw line is 13.75 ft from the basket centre
+CORNER_THREE_MAX_Y_TENTHS = 92    # where the straight corner line meets the arc (~8.95 ft)
+BACKCOURT_FT = 40.0
+
+
+def shot_area(x, y, dist, shot_value, side) -> str:
+    """NBA shot-chart zone for a field goal; "" when the location is unknown."""
+    if x is None or y is None:
+        return ""
+    if dist is not None and dist > BACKCOURT_FT:
+        return "Backcourt"
+    if shot_value == 3:
+        if y <= CORNER_THREE_MAX_Y_TENTHS:
+            if side == "left" or (side != "right" and x < 0):
+                return "Left Corner 3"
+            return "Right Corner 3"
+        return "Above the Break 3"
+    if dist is not None and dist <= RESTRICTED_AREA_FT:
+        return "Restricted Area"
+    if abs(x) <= PAINT_HALF_WIDTH_TENTHS and y <= PAINT_DEPTH_TENTHS:
+        return "In The Paint (Non-RA)"
+    return "Mid-Range"
+
+
+def shot_area_detail(dist) -> str:
+    """NBA shot-chart distance band; "" when the distance is unknown."""
+    if dist is None:
+        return ""
+    if dist > BACKCOURT_FT:
+        return "Backcourt"
+    if dist < 8:
+        return "<8 ft"
+    if dist < 16:
+        return "8-16 ft"
+    if dist < 24:
+        return "16-24 ft"
+    return "24+ ft"
+
+
 def _is_missing(value) -> bool:
     """True for None and pandas/numpy NaN (what a DataFrame hands back for absent values)."""
     if value is None:
@@ -308,13 +354,25 @@ def _shot_detail(event) -> dict | None:
     qualifiers = event.get("_CDN_QUALIFIERS")
     qualifiers = [str(q) for q in qualifiers] if isinstance(qualifiers, (list, tuple)) else []
 
+    x = as_int(event.get("_CDN_X_LEGACY"))
+    y = as_int(event.get("_CDN_Y_LEGACY"))
+    dist = as_float(event.get("_CDN_SHOT_DIST"))
+    side = as_str(event.get("_CDN_SIDE"))
+    shot_value = as_int(event.get("shotValue"))
+    if shot_value is None:
+        shot_value = 3 if as_str(event.get("EVENTMSGTYPE")).lower() == "3pt" else 2
+
+    # The feed's own zone wins if it ever starts sending one; derive otherwise.
+    area = as_str(event.get("_CDN_AREA")) or shot_area(x, y, dist, shot_value, side)
+    area_detail = as_str(event.get("_CDN_AREA_DETAIL")) or shot_area_detail(dist)
+
     return {
-        "x": as_int(event.get("_CDN_X_LEGACY")),
-        "y": as_int(event.get("_CDN_Y_LEGACY")),
-        "dist": as_float(event.get("_CDN_SHOT_DIST")),
-        "area": as_str(event.get("_CDN_AREA")),
-        "areaDetail": as_str(event.get("_CDN_AREA_DETAIL")),
-        "side": as_str(event.get("_CDN_SIDE")),
+        "x": x,
+        "y": y,
+        "dist": dist,
+        "area": area,
+        "areaDetail": area_detail,
+        "side": side,
         "descriptor": as_str(event.get("_CDN_DESCRIPTOR")),
         "made": made,
         "assisted": assisted,

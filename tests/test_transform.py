@@ -4,6 +4,9 @@ import pandas as pd
 import pytest
 
 from pipeline.transform import (
+    _shot_detail,
+    shot_area,
+    shot_area_detail,
     _aggregate_stint_stats,
     _compute_stint_minutes,
     _parse_minutes,
@@ -552,3 +555,63 @@ class TestCdnEventClassification:
         player = next(p for p in result["players"] if p["playerId"] == str(self.CUNNINGHAM))
         types = [e["type"] for e in player["stints"][0]["events"]]
         assert types == ["Make2", "miss3", "MakeFT", "missFT", "OffReb", "DefReb"]
+
+
+class TestShotZones:
+    """
+    The CDN play-by-play leaves `area`/`areaDetail` blank (observed on every
+    shot of 0022600001, 2026-10-24), so they're derived from x/y/distance
+    using the NBA's shot-chart zone definitions. Coordinates are legacy
+    tenths of a foot, basket at the origin, y into the court.
+    """
+
+    def test_restricted_area_covers_layups_and_dunks(self):
+        assert shot_area(x=10, y=20, dist=2.2, shot_value=2, side="center") == "Restricted Area"
+        # The feed reports dunks and layups at 4.1–4.8 ft (0022600001: "J. Duren DUNK" at
+        # 4.6 ft, x=46 y=7), so the cutoff is 5 ft, not the shot chart's nominal 4.
+        assert shot_area(x=46, y=7, dist=4.6, shot_value=2, side="right") == "Restricted Area"
+        assert shot_area(x=-2, y=60, dist=6.0, shot_value=2, side="center") == "In The Paint (Non-RA)"
+
+    def test_putbacks_slightly_behind_the_basket_are_restricted_area(self):
+        assert shot_area(x=-21, y=-12, dist=2.5, shot_value=2, side="left") == "Restricted Area"
+
+    def test_paint_outside_restricted_area(self):
+        # Paint is 16 ft wide (±8 ft) and runs to the free-throw line, 13.75 ft from the basket.
+        assert shot_area(x=60, y=110, dist=12.5, shot_value=2, side="right") == "In The Paint (Non-RA)"
+
+    def test_two_pointer_outside_paint_is_mid_range(self):
+        assert shot_area(x=150, y=100, dist=18.0, shot_value=2, side="right") == "Mid-Range"
+        assert shot_area(x=0, y=200, dist=20.0, shot_value=2, side="center") == "Mid-Range"
+
+    def test_corner_threes_use_the_feed_side(self):
+        # D. Robinson 24' 3PT in 0022600001: x=241 y=53 side=right.
+        assert shot_area(x=241, y=53, dist=24.661, shot_value=3, side="right") == "Right Corner 3"
+        assert shot_area(x=-235, y=40, dist=23.8, shot_value=3, side="left") == "Left Corner 3"
+
+    def test_threes_above_the_corner_are_above_the_break(self):
+        # x=100 y=242 (the pullup 26' 3PT in the same game).
+        assert shot_area(x=100, y=242, dist=26.167, shot_value=3, side="right") == "Above the Break 3"
+        assert shot_area(x=0, y=260, dist=26.0, shot_value=3, side="center") == "Above the Break 3"
+
+    def test_heaves_are_backcourt(self):
+        assert shot_area(x=50, y=520, dist=52.0, shot_value=3, side="center") == "Backcourt"
+
+    def test_unknown_when_location_missing(self):
+        assert shot_area(x=None, y=None, dist=None, shot_value=3, side="") == ""
+
+    def test_distance_bands(self):
+        assert shot_area_detail(dist=2.0) == "<8 ft"
+        assert shot_area_detail(dist=8.0) == "8-16 ft"
+        assert shot_area_detail(dist=15.9) == "8-16 ft"
+        assert shot_area_detail(dist=16.0) == "16-24 ft"
+        assert shot_area_detail(dist=24.0) == "24+ ft"
+        assert shot_area_detail(dist=48.0) == "Backcourt"
+        assert shot_area_detail(dist=None) == ""
+
+    def test_shot_detail_uses_feed_values_when_present_and_derives_otherwise(self):
+        base = {"_CDN_IS_FIELD_GOAL": 1, "_CDN_SHOT_RESULT": "Made", "shotValue": 3,
+                "_CDN_X_LEGACY": 241, "_CDN_Y_LEGACY": 53, "_CDN_SHOT_DIST": 24.661, "_CDN_SIDE": "right"}
+        derived = _shot_detail(pd.Series({**base, "_CDN_AREA": "", "_CDN_AREA_DETAIL": ""}))
+        assert (derived["area"], derived["areaDetail"]) == ("Right Corner 3", "24+ ft")
+        from_feed = _shot_detail(pd.Series({**base, "_CDN_AREA": "Feed Zone", "_CDN_AREA_DETAIL": "Feed Range"}))
+        assert (from_feed["area"], from_feed["areaDetail"]) == ("Feed Zone", "Feed Range")

@@ -200,9 +200,11 @@ interface ShotDetail {
   x: number | null;              // NBA legacy court coords, tenths of a foot, basket at the origin
   y: number | null;              //   (x: left/right of the basket, y: distance out from the baseline)
   dist: number | null;           // Shot distance in feet
-  area: string;                  // "Restricted Area", "In The Paint (Non-RA)", "Mid-Range",
-                                 //   "Left Corner 3", "Right Corner 3", "Above the Break 3", … ("" if absent)
-  areaDetail: string;            // "Center", "Left Side Center", "8-16 ft", "24+ ft", … ("" if absent)
+  area: string;                  // "Restricted Area" | "In The Paint (Non-RA)" | "Mid-Range" | "Left Corner 3"
+                                 //   | "Right Corner 3" | "Above the Break 3" | "Backcourt" ("" if location unknown).
+                                 //   Derived from x/y/dist by shot_area() — the CDN feed sends these blank.
+  areaDetail: string;            // Distance band: "<8 ft" | "8-16 ft" | "16-24 ft" | "24+ ft" | "Backcourt"
+                                 //   ("" if dist unknown). Derived by shot_area_detail().
   side: string;                  // "left" | "right" | "center" ("" if absent)
   descriptor: string;            // "driving", "pullup", "step back", "cutting", … ("" if absent)
   made: boolean;                 // From the feed's shotResult (falls back to the "MISS" description prefix)
@@ -212,6 +214,8 @@ interface ShotDetail {
 ```
 
 Absent values inside `shot` are written as `null` (numbers) or `""` (strings), never dropped and never coerced to `0`, so a consumer can tell "unknown" from "zero". Adds roughly 150 bytes per shot, ~30 KB per game.
+
+Zone derivation (`pipeline/transform.py`, `shot_area`): restricted area = within 5 ft (the feed reports dunks and layups at 4.1–4.8 ft, so the shot chart's nominal 4 ft would misfile them); paint = |x| ≤ 8 ft and y ≤ 13.75 ft; corner 3 = a three with y ≤ 9.2 ft, left/right from the feed's `side`; backcourt = over 40 ft. If the feed ever starts sending `area`/`areaDetail`, those win.
 
 ## Python Data Pipeline
 
