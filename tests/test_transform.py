@@ -583,10 +583,37 @@ class TestShotZones:
         assert shot_area(x=150, y=100, dist=18.0, shot_value=2, side="right") == "Mid-Range"
         assert shot_area(x=0, y=200, dist=20.0, shot_value=2, side="center") == "Mid-Range"
 
-    def test_corner_threes_use_the_feed_side(self):
-        # D. Robinson 24' 3PT in 0022600001: x=241 y=53 side=right.
+    def test_corner_threes_come_from_x_sign_not_the_feed_side(self):
+        """
+        The feed's `side` is which end of the floor the team is attacking that
+        half (same value for every shot a team takes in Q1–Q2, mirrored in
+        Q3–Q4; verified on 0022600001/2/3). xLegacy is measured from the
+        basket being attacked and does not flip, and the NBA convention is
+        x < 0 = Left Corner 3, x > 0 = Right Corner 3.
+        """
+        assert shot_area(x=230, y=10, dist=23.0, shot_value=3, side="left") == "Right Corner 3"
+        assert shot_area(x=-230, y=10, dist=23.0, shot_value=3, side="right") == "Left Corner 3"
+        # D. Robinson 24' 3PT in 0022600001: x=241 y=53 (side happened to agree).
         assert shot_area(x=241, y=53, dist=24.661, shot_value=3, side="right") == "Right Corner 3"
-        assert shot_area(x=-235, y=40, dist=23.8, shot_value=3, side="left") == "Left Corner 3"
+        assert shot_area(x=-235, y=40, dist=23.8, shot_value=3, side="") == "Left Corner 3"
+
+    def test_corner_labels_within_a_game_are_not_determined_by_period(self, sample_scoreboard_data, sample_rotation_data):
+        """
+        A team shoots from both corners in the same half. If the label leaked
+        from `side`, every corner three in a half would carry the same label.
+        """
+        pid = TestCdnEventClassification.CUNNINGHAM  # on court all of Q1 in the fixture
+        def corner(num, clock, x):
+            return {"EVENTNUM": num, "PLAYER1_ID": pid, "PERIOD": 1, "PCTIMESTRING": clock,
+                    "EVENTMSGTYPE": "3pt", "HOMEDESCRIPTION": "C. Cunningham 23' 3PT (3 PTS)",
+                    "isFieldGoal": 1, "shotResult": "Made", "shotValue": 3,
+                    "_CDN_IS_FIELD_GOAL": 1, "_CDN_SHOT_RESULT": "Made",
+                    "_CDN_X_LEGACY": x, "_CDN_Y_LEGACY": 20, "_CDN_SHOT_DIST": 23.1, "_CDN_SIDE": "right"}
+        pbp = _cdn_pbp_rows([corner(1, "11:00", 230), corner(2, "10:00", -230), corner(3, "9:00", 225)])
+        result = transform_gameflow("0022500001", sample_scoreboard_data, sample_rotation_data, pbp)
+        player = next(p for p in result["players"] if p["playerId"] == str(pid))
+        labels = {e["shot"]["area"] for e in player["stints"][0]["events"] if "shot" in e}
+        assert labels == {"Left Corner 3", "Right Corner 3"}
 
     def test_threes_above_the_corner_are_above_the_break(self):
         # x=100 y=242 (the pullup 26' 3PT in the same game).

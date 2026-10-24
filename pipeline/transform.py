@@ -274,17 +274,24 @@ CORNER_THREE_MAX_Y_TENTHS = 92    # where the straight corner line meets the arc
 BACKCOURT_FT = 40.0
 
 
-def shot_area(x, y, dist, shot_value, side) -> str:
-    """NBA shot-chart zone for a field goal; "" when the location is unknown."""
+def shot_area(x, y, dist, shot_value, side=None) -> str:
+    """
+    NBA shot-chart zone for a field goal; "" when the location is unknown.
+
+    `side` is accepted for call-site compatibility but deliberately unused:
+    the feed's `side` is which end of the floor the team is attacking that
+    half, not the shooter's left/right. xLegacy is measured from the basket
+    being attacked and never flips, and the NBA convention is x < 0 = Left
+    Corner 3, x > 0 = Right Corner 3.
+    """
+    del side
     if x is None or y is None:
         return ""
     if dist is not None and dist > BACKCOURT_FT:
         return "Backcourt"
     if shot_value == 3:
         if y <= CORNER_THREE_MAX_Y_TENTHS:
-            if side == "left" or (side != "right" and x < 0):
-                return "Left Corner 3"
-            return "Right Corner 3"
+            return "Left Corner 3" if x < 0 else "Right Corner 3"
         return "Above the Break 3"
     if dist is not None and dist <= RESTRICTED_AREA_FT:
         return "Restricted Area"

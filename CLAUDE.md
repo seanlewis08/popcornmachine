@@ -205,7 +205,9 @@ interface ShotDetail {
                                  //   Derived from x/y/dist by shot_area() — the CDN feed sends these blank.
   areaDetail: string;            // Distance band: "<8 ft" | "8-16 ft" | "16-24 ft" | "24+ ft" | "Backcourt"
                                  //   ("" if dist unknown). Derived by shot_area_detail().
-  side: string;                  // "left" | "right" | "center" ("" if absent)
+  side: string;                  // "left" | "right" | "center" ("" if absent). Which END OF THE FLOOR the
+                                 //   team is attacking that half — NOT the shooter's left/right. Same value
+                                 //   for all of a team's shots in a half; never used for zones.
   descriptor: string;            // "driving", "pullup", "step back", "cutting", … ("" if absent)
   made: boolean;                 // From the feed's shotResult (falls back to the "MISS" description prefix)
   assisted: boolean;             // Feed tagged an assister. Reliable for makes only — misses are never tagged
@@ -215,7 +217,7 @@ interface ShotDetail {
 
 Absent values inside `shot` are written as `null` (numbers) or `""` (strings), never dropped and never coerced to `0`, so a consumer can tell "unknown" from "zero". Adds roughly 150 bytes per shot, ~30 KB per game.
 
-Zone derivation (`pipeline/transform.py`, `shot_area`): restricted area = within 5 ft (the feed reports dunks and layups at 4.1–4.8 ft, so the shot chart's nominal 4 ft would misfile them); paint = |x| ≤ 8 ft and y ≤ 13.75 ft; corner 3 = a three with y ≤ 9.2 ft, left/right from the feed's `side`; backcourt = over 40 ft. If the feed ever starts sending `area`/`areaDetail`, those win.
+Zone derivation (`pipeline/transform.py`, `shot_area`): restricted area = within 5 ft (the feed reports dunks and layups at 4.1–4.8 ft, so the shot chart's nominal 4 ft would misfile them); paint = |x| ≤ 8 ft and y ≤ 13.75 ft; corner 3 = a three with y ≤ 9.2 ft, Left if x < 0 else Right (NBA LOC_X convention; the feed's `side` is the attacking end, not the shooter's side, and must not be used); backcourt = over 40 ft. If the feed ever starts sending `area`/`areaDetail`, those win.
 
 ## Python Data Pipeline
 
