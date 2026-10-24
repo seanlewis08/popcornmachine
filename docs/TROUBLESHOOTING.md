@@ -159,6 +159,12 @@ uv run python -c "from pipeline.season import season_for; print(season_for('2027
 
 Size budget: ~180 KB per game, ~220 MB per season. GitHub Pages caps a site at 1 GB, so one season at a time is comfortable; keeping several would not be.
 
+## Regenerating published games
+
+After a change to `transform.py` (new field, fixed stat), already-published games keep their old content until they are regenerated. A manual run always (re)fetches its dates, even if they're on disk, so: Actions → Data Pipeline → **Run workflow** with the date box set to a range, e.g. `2026-10-20..2026-10-23`. One run, every game in the range rewritten, one commit, one deploy. A single `YYYY-MM-DD` still works for one day.
+
+A run uses the code on `main` at the moment it starts — push first, then run.
+
 ## Checking that the numbers are right
 
 Stint stats are computed from play-by-play; box-score totals come straight from the CDN box score. They are independent, so they cross-check each other. Per player, the stint sums should equal the box totals (small differences are possible when a stint boundary falls mid-possession, but FGM should never equal FGA for everyone):

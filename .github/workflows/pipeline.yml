@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       date:
-        description: "Date to fetch (YYYY-MM-DD). Leave blank for yesterday."
+        description: "Date to (re)fetch: YYYY-MM-DD, or a range YYYY-MM-DD..YYYY-MM-DD to regenerate every day in it. Leave blank for the normal scheduled behaviour."
         required: false
         default: ""
 
@@ -48,8 +48,21 @@ jobs:
           }
 
           if [ -n "${{ github.event.inputs.date }}" ]; then
-            # Manual run: fetch a specific date
-            run_date "${{ github.event.inputs.date }}" --cleanup
+            # Manual run: one date, or an inclusive range "START..END". Every
+            # date is (re)fetched even if already on disk — this is how
+            # published games get regenerated after a transform change.
+            INPUT="${{ github.event.inputs.date }}"
+            START="${INPUT%%..*}"
+            END="${INPUT##*..}"
+            CURRENT="$START"
+            while [ "$CURRENT" != "$(date -u -d "$END + 1 day" +%Y-%m-%d)" ]; do
+              if [ "$CURRENT" = "$END" ]; then
+                run_date "$CURRENT" --cleanup
+              else
+                run_date "$CURRENT"
+              fi
+              CURRENT=$(date -u -d "$CURRENT + 1 day" +%Y-%m-%d)
+            done
           else
             # Scheduled run: backfill any missing date since the season started.
             # Dates already on disk are skipped instantly, so this is cheap and

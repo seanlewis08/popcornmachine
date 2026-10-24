@@ -329,7 +329,7 @@ All components:
 1. Checkout code
 2. Install `uv` (Python package manager)
 3. Run `uv sync` to install dependencies
-4. Run pipeline: scheduled runs backfill every date since the season started (Oct 1, via `python -m pipeline.season --start-of`) that lacks a `data/scores/` file, then re-run yesterday with `--cleanup`; manual runs fetch the given date. Existing dates are skipped by a file check, so the season-long walk is cheap. Every date that exits non-zero is recorded in the `failed_dates` step output with a `::error::` annotation (exit 2 = CDN unreachable, anything else = crash).
+4. Run pipeline: scheduled runs backfill every date since the season started (Oct 1, via `python -m pipeline.season --start-of`) that lacks a `data/scores/` file, then re-run yesterday with `--cleanup`; manual runs (re)fetch the given date, or every day of a `START..END` range — the way to regenerate published games after a transform change. Existing dates are skipped by a file check, so the season-long walk is cheap. Every date that exits non-zero is recorded in the `failed_dates` step output with a `::error::` annotation (exit 2 = CDN unreachable, anything else = crash).
 5. `git add data/` then check the staged diff (catches new untracked files, not just modified ones)
 6. If changed: commit with bot credentials and push
 7. If changed: `gh workflow run deploy.yml`
