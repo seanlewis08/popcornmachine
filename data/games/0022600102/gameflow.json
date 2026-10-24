@@ -20,22 +20,48 @@
             {
               "clock": "11:21",
               "description": "Z. Williams STEAL (1 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "9:39",
               "description": "Z. Williams personal FOUL (1 PF)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "8:29",
               "description": "Z. Williams 9' Jump Shot (2 PTS) (W. Kessler 1 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Mid-Range",
+                "areaDetail": "8-16 ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 9.99,
+                "made": true,
+                "qualifiers": [],
+                "side": "left",
+                "x": 100,
+                "y": 8
+              },
+              "type": "Make2"
             },
             {
               "clock": "7:28",
               "description": "Z. Williams reverse Layup (4 PTS) (L. Don\u010di\u0107 2 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "reverse",
+                "dist": 2.568,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": 15,
+                "y": 21
+              },
+              "type": "Make2"
             }
           ],
           "inTime": "12:00",
@@ -65,42 +91,54 @@
             {
               "clock": "9:06",
               "description": "Z. Williams shooting personal FOUL (2 PF) (Wagler 3 FT)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "8:26",
               "description": "Z. Williams REBOUND (Off:1 Def:0)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "6:13",
               "description": "Z. Williams Free Throw 1 of 3 (5 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "6:13",
               "description": "Z. Williams Free Throw 2 of 3 (6 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "6:13",
               "description": "Z. Williams Free Throw 3 of 3 (7 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "5:54",
               "description": "Z. Williams REBOUND (Off:1 Def:1)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "4:12",
               "description": "Z. Williams REBOUND (Off:1 Def:2)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "2:34",
               "description": "Z. Williams 24' 3PT  (10 PTS) (A. Reaves 3 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 24.771,
+                "made": true,
+                "qualifiers": [],
+                "side": "left",
+                "x": -17,
+                "y": 247
+              },
+              "type": "Make3"
             }
           ],
           "inTime": "9:38",
@@ -116,10 +154,10 @@
             "fga": 1,
             "fgm": 1,
             "fta": 3,
-            "ftm": 0,
-            "oreb": 3,
+            "ftm": 3,
+            "oreb": 1,
             "pf": 1,
-            "pts": 3,
+            "pts": 6,
             "reb": 3,
             "stl": 0,
             "tov": 0
@@ -154,17 +192,44 @@
             {
               "clock": "10:56",
               "description": "MISS Z. Williams 26' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 26.974,
+                "made": false,
+                "qualifiers": [],
+                "side": "right",
+                "x": -116,
+                "y": 243
+              },
+              "type": "miss3"
             },
             {
               "clock": "9:19",
               "description": "Z. Williams REBOUND (Off:2 Def:2)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "9:14",
               "description": "Z. Williams driving Layup (12 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving",
+                "dist": 2.146,
+                "made": true,
+                "qualifiers": [
+                  "2ndchance",
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 0,
+                "y": 21
+              },
+              "type": "Make2"
             }
           ],
           "inTime": "12:00",
@@ -176,14 +241,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 1,
-            "fg3m": 1,
+            "fg3m": 0,
             "fga": 2,
-            "fgm": 2,
+            "fgm": 1,
             "fta": 0,
             "ftm": 0,
             "oreb": 1,
             "pf": 0,
-            "pts": 5,
+            "pts": 2,
             "reb": 1,
             "stl": 0,
             "tov": 0
@@ -194,7 +259,22 @@
             {
               "clock": "0:38",
               "description": "Z. Williams running DUNK (14 PTS) (Q. Grimes 2 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "running",
+                "dist": 1.151,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint",
+                  "fastbreak"
+                ],
+                "side": "right",
+                "x": 2,
+                "y": -11
+              },
+              "type": "Make2"
             }
           ],
           "inTime": "2:48",
@@ -224,27 +304,41 @@
             {
               "clock": "7:21",
               "description": "Z. Williams personal FOUL (3 PF)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "2:59",
               "description": "MISS Z. Williams 24' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Right Corner 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 24.058,
+                "made": false,
+                "qualifiers": [
+                  "2ndchance"
+                ],
+                "side": "right",
+                "x": -238,
+                "y": -33
+              },
+              "type": "miss3"
             },
             {
               "clock": "2:12",
               "description": "Z. Williams STEAL (2 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "1:55",
               "description": "Z. Williams BLOCK (1 BLK)",
-              "type": "blk"
+              "type": "Block"
             },
             {
               "clock": "1:49",
               "description": "Z. Williams REBOUND (Off:2 Def:3)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "8:53",
@@ -256,14 +350,14 @@
             "ast": 0,
             "blk": 1,
             "fg3a": 1,
-            "fg3m": 1,
+            "fg3m": 0,
             "fga": 1,
-            "fgm": 1,
+            "fgm": 0,
             "fta": 0,
             "ftm": 0,
-            "oreb": 1,
+            "oreb": 0,
             "pf": 1,
-            "pts": 3,
+            "pts": 0,
             "reb": 1,
             "stl": 1,
             "tov": 0
@@ -283,12 +377,38 @@
             {
               "clock": "9:00",
               "description": "MISS M. Thybulle 24' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Left Corner 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 24.034,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": -238,
+                "y": 34
+              },
+              "type": "miss3"
             },
             {
               "clock": "7:59",
               "description": "M. Thybulle alley-oop Layup (2 PTS) (L. Don\u010di\u0107 1 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "alley-oop",
+                "dist": 2.069,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": -18,
+                "y": 10
+              },
+              "type": "Make2"
             }
           ],
           "inTime": "12:00",
@@ -300,14 +420,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 1,
-            "fg3m": 1,
+            "fg3m": 0,
             "fga": 2,
-            "fgm": 2,
+            "fgm": 1,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 0,
-            "pts": 5,
+            "pts": 2,
             "reb": 0,
             "stl": 0,
             "tov": 0
@@ -318,12 +438,26 @@
             {
               "clock": "8:26",
               "description": "MISS M. Thybulle 27' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 27.722,
+                "made": false,
+                "qualifiers": [
+                  "fromturnover"
+                ],
+                "side": "left",
+                "x": 74,
+                "y": 267
+              },
+              "type": "miss3"
             },
             {
               "clock": "4:12",
               "description": "M. Thybulle BLOCK (1 BLK)",
-              "type": "blk"
+              "type": "Block"
             }
           ],
           "inTime": "9:38",
@@ -335,14 +469,14 @@
             "ast": 0,
             "blk": 1,
             "fg3a": 1,
-            "fg3m": 1,
+            "fg3m": 0,
             "fga": 1,
-            "fgm": 1,
+            "fgm": 0,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 0,
-            "pts": 3,
+            "pts": 0,
             "reb": 0,
             "stl": 0,
             "tov": 0
@@ -377,27 +511,69 @@
             {
               "clock": "10:47",
               "description": "M. Thybulle STEAL (1 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "10:41",
               "description": "M. Thybulle running alley-oop Layup (4 PTS) (W. Kessler 2 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "running alley-oop",
+                "dist": 0.894,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint",
+                  "fastbreak"
+                ],
+                "side": "right",
+                "x": -9,
+                "y": 1
+              },
+              "type": "Make2"
             },
             {
               "clock": "9:42",
               "description": "M. Thybulle 3PT  (7 PTS) (A. Reaves 4 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Right Corner 3",
+                "areaDetail": "16-24 ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 23.589,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover"
+                ],
+                "side": "right",
+                "x": -236,
+                "y": -8
+              },
+              "type": "Make3"
             },
             {
               "clock": "6:56",
               "description": "M. Thybulle 3PT step back (10 PTS) (A. Reaves 6 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Right Corner 3",
+                "areaDetail": "16-24 ft",
+                "assisted": true,
+                "descriptor": "step back",
+                "dist": 23.627,
+                "made": true,
+                "qualifiers": [],
+                "side": "right",
+                "x": -236,
+                "y": -16
+              },
+              "type": "Make3"
             },
             {
               "clock": "6:36",
               "description": "M. Thybulle STEAL (2 STL)",
-              "type": "stl"
+              "type": "Steal"
             }
           ],
           "inTime": "12:00",
@@ -427,22 +603,46 @@
             {
               "clock": "7:58",
               "description": "M. Thybulle personal FOUL (1 PF)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "7:35",
               "description": "M. Thybulle 3PT  (13 PTS) (A. Reaves 8 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Right Corner 3",
+                "areaDetail": "16-24 ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 23.154,
+                "made": true,
+                "qualifiers": [],
+                "side": "right",
+                "x": 232,
+                "y": 4
+              },
+              "type": "Make3"
             },
             {
               "clock": "5:36",
               "description": "MISS M. Thybulle 25' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 25.631,
+                "made": false,
+                "qualifiers": [],
+                "side": "right",
+                "x": 238,
+                "y": 95
+              },
+              "type": "miss3"
             },
             {
               "clock": "4:47",
               "description": "M. Thybulle personal FOUL (2 PF) (Garland 2 FT)",
-              "type": "foul"
+              "type": "PF"
             }
           ],
           "inTime": "8:53",
@@ -454,14 +654,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 2,
-            "fg3m": 2,
+            "fg3m": 1,
             "fga": 2,
-            "fgm": 2,
+            "fgm": 1,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 2,
-            "pts": 6,
+            "pts": 3,
             "reb": 0,
             "stl": 0,
             "tov": 0
@@ -472,7 +672,7 @@
             {
               "clock": "0:33",
               "description": "M. Thybulle REBOUND (Off:0 Def:1)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "0:40",
@@ -511,42 +711,85 @@
             {
               "clock": "11:39",
               "description": "MISS W. Kessler reverse Layup - blocked",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "reverse",
+                "dist": 1.683,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": 9,
+                "y": 14
+              },
+              "type": "miss2"
             },
             {
               "clock": "10:15",
               "description": "W. Kessler REBOUND (Off:0 Def:1)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "9:37",
               "description": "W. Kessler STEAL (1 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "9:33",
               "description": "W. Kessler driving DUNK (2 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving",
+                "dist": 1.043,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": 7,
+                "y": 8
+              },
+              "type": "Make2"
             },
             {
               "clock": "9:11",
               "description": "W. Kessler BLOCK (1 BLK)",
-              "type": "blk"
+              "type": "Block"
             },
             {
               "clock": "7:21",
               "description": "W. Kessler BLOCK (2 BLK)",
-              "type": "blk"
+              "type": "Block"
             },
             {
               "clock": "5:09",
               "description": "W. Kessler Layup (4 PTS) (L. Don\u010di\u0107 3 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 2.568,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": 8,
+                "y": 24
+              },
+              "type": "Make2"
             },
             {
               "clock": "4:57",
               "description": "W. Kessler STEAL (2 STL)",
-              "type": "stl"
+              "type": "Steal"
             }
           ],
           "inTime": "12:00",
@@ -560,12 +803,12 @@
             "fg3a": 0,
             "fg3m": 0,
             "fga": 3,
-            "fgm": 3,
+            "fgm": 2,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 0,
-            "pts": 6,
+            "pts": 4,
             "reb": 1,
             "stl": 2,
             "tov": 0
@@ -576,37 +819,95 @@
             {
               "clock": "11:23",
               "description": "W. Kessler 11' bank Jump Shot (6 PTS) (S. Mamukelashvili 2 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "8-16 ft",
+                "assisted": true,
+                "descriptor": "bank",
+                "dist": 11.565,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": 11,
+                "y": 115
+              },
+              "type": "Make2"
             },
             {
               "clock": "11:08",
               "description": "W. Kessler shooting personal FOUL (1 PF) (Lopez 1 FT)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "10:56",
               "description": "W. Kessler DUNK (8 PTS) (C. Sexton 1 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 3.254,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": -16,
+                "y": 29
+              },
+              "type": "Make2"
             },
             {
               "clock": "10:34",
               "description": "W. Kessler BLOCK (3 BLK)",
-              "type": "blk"
+              "type": "Block"
             },
             {
               "clock": "10:22",
               "description": "W. Kessler reverse Layup (10 PTS) (A. Reaves 1 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "reverse",
+                "dist": 1.746,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": -5,
+                "y": 17
+              },
+              "type": "Make2"
             },
             {
               "clock": "8:23",
               "description": "W. Kessler REBOUND (Off:1 Def:1)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "8:17",
               "description": "W. Kessler tip DUNK (12 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "tip",
+                "dist": 0.0,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "2ndchance",
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": 0,
+                "y": 0
+              },
+              "type": "Make2"
             }
           ],
           "inTime": "12:00",
@@ -660,67 +961,98 @@
             {
               "clock": "8:09",
               "description": "W. Kessler alley-oop DUNK (14 PTS) (A. Reaves 5 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "alley-oop",
+                "dist": 2.268,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": -17,
+                "y": 15
+              },
+              "type": "Make2"
             },
             {
               "clock": "7:48",
               "description": "W. Kessler shooting personal FOUL (2 PF) (Hachimura 2 FT)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "7:48",
               "description": "W. Kessler REBOUND (Off:1 Def:2)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "6:35",
               "description": "MISS W. Kessler Free Throw 1 of 2",
-              "type": "fta"
+              "type": "missFT"
             },
             {
               "clock": "6:35",
               "description": "MISS W. Kessler Free Throw 2 of 2",
-              "type": "fta"
+              "type": "missFT"
             },
             {
               "clock": "6:20",
               "description": "W. Kessler STEAL (3 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "4:28",
               "description": "W. Kessler BLOCK (4 BLK)",
-              "type": "blk"
+              "type": "Block"
             },
             {
               "clock": "4:06",
               "description": "W. Kessler defensive-3-second technical FOUL (1 Tech)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "3:46",
               "description": "W. Kessler REBOUND (Off:2 Def:2)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "3:43",
               "description": "W. Kessler driving reverse Layup (16 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving reverse",
+                "dist": 0.747,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "2ndchance",
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 2,
+                "y": 7
+              },
+              "type": "Make2"
             },
             {
               "clock": "3:43",
               "description": "MISS W. Kessler Free Throw 1 of 1",
-              "type": "fta"
+              "type": "missFT"
             },
             {
               "clock": "3:31",
               "description": "W. Kessler BLOCK (5 BLK)",
-              "type": "blk"
+              "type": "Block"
             },
             {
               "clock": "3:27",
               "description": "W. Kessler REBOUND (Off:2 Def:3)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "12:00",
@@ -737,7 +1069,7 @@
             "fgm": 2,
             "fta": 3,
             "ftm": 0,
-            "oreb": 3,
+            "oreb": 1,
             "pf": 2,
             "pts": 4,
             "reb": 3,
@@ -774,22 +1106,65 @@
             {
               "clock": "11:27",
               "description": "W. Kessler REBOUND (Off:2 Def:4)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "11:16",
               "description": "MISS W. Kessler cutting DUNK - blocked",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "cutting",
+                "dist": 5.379,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": -43,
+                "y": 33
+              },
+              "type": "miss2"
             },
             {
               "clock": "8:59",
               "description": "W. Kessler Layup (18 PTS) (Q. Grimes 4 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 2.062,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 0,
+                "y": 21
+              },
+              "type": "Make2"
             },
             {
               "clock": "8:12",
               "description": "W. Kessler running alley-oop DUNK (20 PTS) (A. Reaves 7 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "running alley-oop",
+                "dist": 3.099,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint",
+                  "fastbreak"
+                ],
+                "side": "right",
+                "x": -23,
+                "y": 21
+              },
+              "type": "Make2"
             }
           ],
           "inTime": "12:00",
@@ -803,12 +1178,12 @@
             "fg3a": 0,
             "fg3m": 0,
             "fga": 3,
-            "fgm": 3,
+            "fgm": 2,
             "fta": 0,
             "ftm": 0,
-            "oreb": 1,
+            "oreb": 0,
             "pf": 0,
-            "pts": 6,
+            "pts": 4,
             "reb": 1,
             "stl": 0,
             "tov": 0
@@ -819,42 +1194,71 @@
             {
               "clock": "2:22",
               "description": "MISS W. Kessler alley-oop Layup",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "alley-oop",
+                "dist": 3.187,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 5,
+                "y": 32
+              },
+              "type": "miss2"
             },
             {
               "clock": "2:22",
               "description": "W. Kessler REBOUND (Off:3 Def:4)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "2:22",
               "description": "W. Kessler Free Throw 1 of 2 (21 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "2:22",
               "description": "W. Kessler Free Throw 2 of 2 (22 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "2:05",
               "description": "MISS W. Kessler alley-oop Layup",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "alley-oop",
+                "dist": 3.539,
+                "made": false,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 26,
+                "y": 24
+              },
+              "type": "miss2"
             },
             {
               "clock": "2:05",
               "description": "W. Kessler REBOUND (Off:4 Def:4)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "1:59",
               "description": "W. Kessler lost ball TURNOVER (1 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "1:21",
               "description": "W. Kessler BLOCK (6 BLK)",
-              "type": "blk"
+              "type": "Block"
             }
           ],
           "inTime": "3:43",
@@ -868,12 +1272,12 @@
             "fg3a": 0,
             "fg3m": 0,
             "fga": 2,
-            "fgm": 2,
+            "fgm": 0,
             "fta": 2,
-            "ftm": 0,
+            "ftm": 2,
             "oreb": 2,
             "pf": 0,
-            "pts": 4,
+            "pts": 2,
             "reb": 2,
             "stl": 0,
             "tov": 1
@@ -893,32 +1297,58 @@
             {
               "clock": "10:45",
               "description": "A. Reaves bad pass TURNOVER (1 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "10:31",
               "description": "A. Reaves driving floating Jump Shot (2 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving floating",
+                "dist": 5.028,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": 12,
+                "y": 49
+              },
+              "type": "Make2"
             },
             {
               "clock": "9:48",
               "description": "A. Reaves lost ball out-of-bounds TURNOVER (2 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "6:26",
               "description": "A. Reaves 26' 3PT pullup (5 PTS)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "pullup",
+                "dist": 26.605,
+                "made": true,
+                "qualifiers": [],
+                "side": "left",
+                "x": 126,
+                "y": 235
+              },
+              "type": "Make3"
             },
             {
               "clock": "5:46",
               "description": "A. Reaves Free Throw 1 of 2 (6 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "5:46",
               "description": "MISS A. Reaves Free Throw 2 of 2",
-              "type": "fta"
+              "type": "missFT"
             }
           ],
           "inTime": "12:00",
@@ -934,10 +1364,10 @@
             "fga": 2,
             "fgm": 2,
             "fta": 2,
-            "ftm": 0,
+            "ftm": 1,
             "oreb": 0,
             "pf": 0,
-            "pts": 5,
+            "pts": 6,
             "reb": 0,
             "stl": 0,
             "tov": 2
@@ -972,32 +1402,44 @@
             {
               "clock": "9:14",
               "description": "MISS A. Reaves 26' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 26.335,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": 48,
+                "y": 259
+              },
+              "type": "miss3"
             },
             {
               "clock": "8:56",
               "description": "A. Reaves Free Throw 1 of 3 (7 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "8:56",
               "description": "A. Reaves Free Throw 2 of 3 (8 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "8:56",
               "description": "A. Reaves Free Throw 3 of 3 (9 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "8:08",
               "description": "A. Reaves STEAL (1 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "6:40",
               "description": "A. Reaves bad pass TURNOVER (3 TO)",
-              "type": "tov"
+              "type": "TO"
             }
           ],
           "inTime": "12:00",
@@ -1009,11 +1451,11 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 1,
-            "fg3m": 1,
+            "fg3m": 0,
             "fga": 1,
-            "fgm": 1,
+            "fgm": 0,
             "fta": 3,
-            "ftm": 0,
+            "ftm": 3,
             "oreb": 0,
             "pf": 0,
             "pts": 3,
@@ -1027,27 +1469,39 @@
             {
               "clock": "3:46",
               "description": "A. Reaves personal FOUL (1 PF)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "2:22",
               "description": "A. Reaves Free Throw 1 of 1 (10 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "1:18",
               "description": "A. Reaves 3PT  (13 PTS) (L. Don\u010di\u0107 6 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Left Corner 3",
+                "areaDetail": "16-24 ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 23.555,
+                "made": true,
+                "qualifiers": [],
+                "side": "left",
+                "x": -234,
+                "y": -28
+              },
+              "type": "Make3"
             },
             {
               "clock": "0:44",
               "description": "A. Reaves REBOUND (Off:0 Def:1)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "0:24",
               "description": "A. Reaves shooting personal FOUL (2 PF) (Hachimura 2 FT)",
-              "type": "foul"
+              "type": "PF"
             }
           ],
           "inTime": "3:51",
@@ -1063,10 +1517,10 @@
             "fga": 1,
             "fgm": 1,
             "fta": 1,
-            "ftm": 0,
+            "ftm": 1,
             "oreb": 0,
             "pf": 2,
-            "pts": 3,
+            "pts": 4,
             "reb": 1,
             "stl": 0,
             "tov": 0
@@ -1077,52 +1531,153 @@
             {
               "clock": "10:13",
               "description": "A. Reaves driving finger roll Layup (15 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving finger roll",
+                "dist": 4.21,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 6,
+                "y": 42
+              },
+              "type": "Make2"
             },
             {
               "clock": "8:39",
               "description": "A. Reaves driving Layup (17 PTS) (W. Kessler 3 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "driving",
+                "dist": 2.836,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": -23,
+                "y": 16
+              },
+              "type": "Make2"
             },
             {
               "clock": "5:54",
               "description": "A. Reaves running Layup (19 PTS) (L. Don\u010di\u0107 7 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "running",
+                "dist": 2.677,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint",
+                  "fastbreak"
+                ],
+                "side": "right",
+                "x": -19,
+                "y": 19
+              },
+              "type": "Make2"
             },
             {
               "clock": "5:38",
               "description": "A. Reaves STEAL (2 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "5:25",
               "description": "A. Reaves driving finger roll Layup (21 PTS) (Q. Grimes 1 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "driving finger roll",
+                "dist": 3.257,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 13,
+                "y": 30
+              },
+              "type": "Make2"
             },
             {
               "clock": "5:15",
               "description": "A. Reaves personal FOUL (3 PF)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "4:49",
               "description": "A. Reaves 6' pullup Jump Shot (23 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "pullup",
+                "dist": 6.281,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 5,
+                "y": 63
+              },
+              "type": "Make2"
             },
             {
               "clock": "4:19",
               "description": "A. Reaves 25' 3PT running pullup (26 PTS)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "running pullup",
+                "dist": 25.99,
+                "made": true,
+                "qualifiers": [
+                  "fastbreak"
+                ],
+                "side": "right",
+                "x": -177,
+                "y": 190
+              },
+              "type": "Make3"
             },
             {
               "clock": "3:46",
               "description": "MISS A. Reaves 25' step back 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "step back",
+                "dist": 25.937,
+                "made": false,
+                "qualifiers": [
+                  "fromturnover"
+                ],
+                "side": "right",
+                "x": -147,
+                "y": 213
+              },
+              "type": "miss3"
             },
             {
               "clock": "3:14",
               "description": "A. Reaves lost ball TURNOVER (4 TO)",
-              "type": "tov"
+              "type": "TO"
             }
           ],
           "inTime": "12:00",
@@ -1134,14 +1689,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 2,
-            "fg3m": 2,
+            "fg3m": 1,
             "fga": 7,
-            "fgm": 7,
+            "fgm": 6,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 1,
-            "pts": 16,
+            "pts": 13,
             "reb": 0,
             "stl": 1,
             "tov": 1
@@ -1152,22 +1707,22 @@
             {
               "clock": "10:20",
               "description": "A. Reaves double dribble TURNOVER (5 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "9:19",
               "description": "A. Reaves lost ball TURNOVER (6 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "5:53",
               "description": "A. Reaves REBOUND (Off:0 Def:2)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "5:28",
               "description": "A. Reaves personal FOUL (4 PF) (Wagler 2 FT)",
-              "type": "foul"
+              "type": "PF"
             }
           ],
           "inTime": "12:00",
@@ -1197,12 +1752,40 @@
             {
               "clock": "3:07",
               "description": "MISS A. Reaves driving floating Shot",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving floating",
+                "dist": 4.471,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": -23,
+                "y": 38
+              },
+              "type": "miss2"
             },
             {
               "clock": "1:29",
               "description": "A. Reaves driving bank Jump Shot (28 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving bank",
+                "dist": 4.264,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": -34,
+                "y": 26
+              },
+              "type": "Make2"
             }
           ],
           "inTime": "4:21",
@@ -1216,12 +1799,12 @@
             "fg3a": 0,
             "fg3m": 0,
             "fga": 2,
-            "fgm": 2,
+            "fgm": 1,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 0,
-            "pts": 4,
+            "pts": 2,
             "reb": 0,
             "stl": 0,
             "tov": 0
@@ -1241,12 +1824,12 @@
             {
               "clock": "3:31",
               "description": "K. Looney REBOUND (Off:1 Def:0)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "2:35",
               "description": "K. Looney shooting personal FOUL (1 PF) (Jones Jr. 2 FT)",
-              "type": "foul"
+              "type": "PF"
             }
           ],
           "inTime": "4:53",
@@ -1285,82 +1868,214 @@
             {
               "clock": "11:13",
               "description": "MISS L. Don\u010di\u0107 28' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 28.304,
+                "made": false,
+                "qualifiers": [
+                  "fromturnover"
+                ],
+                "side": "left",
+                "x": -142,
+                "y": 245
+              },
+              "type": "miss3"
             },
             {
               "clock": "10:39",
               "description": "L. Don\u010di\u0107 REBOUND (Off:0 Def:1)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "9:54",
               "description": "MISS L. Don\u010di\u0107 15' driving floating Shot",
-              "type": "make2"
+              "shot": {
+                "area": "Mid-Range",
+                "areaDetail": "8-16 ft",
+                "assisted": false,
+                "descriptor": "driving floating",
+                "dist": 15.567,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": -7,
+                "y": 156
+              },
+              "type": "miss2"
             },
             {
               "clock": "9:11",
               "description": "L. Don\u010di\u0107 REBOUND (Off:0 Def:2)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "7:03",
               "description": "MISS L. Don\u010di\u0107 13' turnaround fadeaway Shot",
-              "type": "make2"
+              "shot": {
+                "area": "Mid-Range",
+                "areaDetail": "8-16 ft",
+                "assisted": false,
+                "descriptor": "turnaround fadeaway",
+                "dist": 13.285,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": -133,
+                "y": -2
+              },
+              "type": "miss2"
             },
             {
               "clock": "4:53",
               "description": "L. Don\u010di\u0107 running alley-oop Layup (2 PTS) (S. Mamukelashvili 1 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "running alley-oop",
+                "dist": 2.768,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint",
+                  "fastbreak"
+                ],
+                "side": "left",
+                "x": -21,
+                "y": 19
+              },
+              "type": "Make2"
             },
             {
               "clock": "4:27",
               "description": "L. Don\u010di\u0107 offensive FOUL (1 PF)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "4:27",
               "description": "L. Don\u010di\u0107 offensive foul TURNOVER (1 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "4:07",
               "description": "L. Don\u010di\u0107 28' 3PT pullup (5 PTS)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "pullup",
+                "dist": 28.614,
+                "made": true,
+                "qualifiers": [],
+                "side": "left",
+                "x": -179,
+                "y": 224
+              },
+              "type": "Make3"
             },
             {
               "clock": "3:18",
               "description": "MISS L. Don\u010di\u0107 21' step back Shot",
-              "type": "make2"
+              "shot": {
+                "area": "Mid-Range",
+                "areaDetail": "16-24 ft",
+                "assisted": false,
+                "descriptor": "step back",
+                "dist": 21.12,
+                "made": false,
+                "qualifiers": [
+                  "fromturnover",
+                  "2ndchance"
+                ],
+                "side": "left",
+                "x": -155,
+                "y": 143
+              },
+              "type": "miss2"
             },
             {
               "clock": "2:20",
               "description": "MISS L. Don\u010di\u0107 26' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 26.628,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": -179,
+                "y": 198
+              },
+              "type": "miss3"
             },
             {
               "clock": "1:52",
               "description": "MISS L. Don\u010di\u0107 26' step back 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "step back",
+                "dist": 26.688,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": -99,
+                "y": 248
+              },
+              "type": "miss3"
             },
             {
               "clock": "1:08",
               "description": "MISS L. Don\u010di\u0107 Free Throw 1 of 2",
-              "type": "fta"
+              "type": "missFT"
             },
             {
               "clock": "1:08",
               "description": "L. Don\u010di\u0107 Free Throw 2 of 2 (6 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "0:55",
               "description": "MISS L. Don\u010di\u0107 29' running pullup 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "running pullup",
+                "dist": 29.073,
+                "made": false,
+                "qualifiers": [
+                  "fromturnover",
+                  "fastbreak"
+                ],
+                "side": "left",
+                "x": -166,
+                "y": 239
+              },
+              "type": "miss3"
             },
             {
               "clock": "0:30",
               "description": "MISS L. Don\u010di\u0107 15' step back Shot",
-              "type": "make2"
+              "shot": {
+                "area": "Mid-Range",
+                "areaDetail": "8-16 ft",
+                "assisted": false,
+                "descriptor": "step back",
+                "dist": 15.452,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": -140,
+                "y": 66
+              },
+              "type": "miss2"
             }
           ],
           "inTime": "12:00",
@@ -1372,14 +2087,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 5,
-            "fg3m": 5,
+            "fg3m": 1,
             "fga": 10,
-            "fgm": 10,
+            "fgm": 2,
             "fta": 2,
-            "ftm": 0,
+            "ftm": 1,
             "oreb": 0,
             "pf": 1,
-            "pts": 25,
+            "pts": 6,
             "reb": 2,
             "stl": 0,
             "tov": 1
@@ -1390,57 +2105,109 @@
             {
               "clock": "5:41",
               "description": "L. Don\u010di\u0107 9' step back Jump Shot (8 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "8-16 ft",
+                "assisted": false,
+                "descriptor": "step back",
+                "dist": 9.956,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": -32,
+                "y": 94
+              },
+              "type": "Make2"
             },
             {
               "clock": "4:59",
               "description": "L. Don\u010di\u0107 26' 3PT  (11 PTS) (M. Thybulle 1 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 26.069,
+                "made": true,
+                "qualifiers": [],
+                "side": "left",
+                "x": -161,
+                "y": 205
+              },
+              "type": "Make3"
             },
             {
               "clock": "4:16",
               "description": "L. Don\u010di\u0107 bad pass TURNOVER (2 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "3:51",
               "description": "L. Don\u010di\u0107 traveling TURNOVER (3 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "3:20",
               "description": "L. Don\u010di\u0107 Free Throw 1 of 2 (12 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "3:20",
               "description": "L. Don\u010di\u0107 Free Throw 2 of 2 (13 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "2:53",
               "description": "L. Don\u010di\u0107 lost ball TURNOVER (4 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "2:10",
               "description": "L. Don\u010di\u0107 bad pass TURNOVER (5 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "0:32",
               "description": "MISS L. Don\u010di\u0107 19' driving floating Shot",
-              "type": "make2"
+              "shot": {
+                "area": "Mid-Range",
+                "areaDetail": "16-24 ft",
+                "assisted": false,
+                "descriptor": "driving floating",
+                "dist": 19.837,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": 1,
+                "y": 198
+              },
+              "type": "miss2"
             },
             {
               "clock": "0:05",
               "description": "L. Don\u010di\u0107 9' pullup Jump Shot (15 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "8-16 ft",
+                "assisted": false,
+                "descriptor": "pullup",
+                "dist": 9.235,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": -38,
+                "y": 84
+              },
+              "type": "Make2"
             },
             {
               "clock": "0:05",
               "description": "L. Don\u010di\u0107 Free Throw 1 of 1 (16 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             }
           ],
           "inTime": "6:37",
@@ -1454,12 +2221,12 @@
             "fg3a": 1,
             "fg3m": 1,
             "fga": 4,
-            "fgm": 4,
+            "fgm": 3,
             "fta": 3,
-            "ftm": 0,
+            "ftm": 3,
             "oreb": 0,
             "pf": 0,
-            "pts": 9,
+            "pts": 10,
             "reb": 0,
             "stl": 0,
             "tov": 4
@@ -1470,67 +2237,141 @@
             {
               "clock": "11:24",
               "description": "L. Don\u010di\u0107 bad pass TURNOVER (6 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "9:28",
               "description": "L. Don\u010di\u0107 REBOUND (Off:0 Def:3)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "9:19",
               "description": "MISS L. Don\u010di\u0107 25' pullup 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "pullup",
+                "dist": 25.868,
+                "made": false,
+                "qualifiers": [],
+                "side": "right",
+                "x": -169,
+                "y": 196
+              },
+              "type": "miss3"
             },
             {
               "clock": "8:25",
               "description": "L. Don\u010di\u0107 personal FOUL (2 PF)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "7:25",
               "description": "MISS L. Don\u010di\u0107 10' turnaround fadeaway Shot",
-              "type": "make2"
+              "shot": {
+                "area": "Mid-Range",
+                "areaDetail": "8-16 ft",
+                "assisted": false,
+                "descriptor": "turnaround fadeaway",
+                "dist": 10.184,
+                "made": false,
+                "qualifiers": [],
+                "side": "right",
+                "x": -101,
+                "y": 11
+              },
+              "type": "miss2"
             },
             {
               "clock": "6:12",
               "description": "MISS L. Don\u010di\u0107 25' step back 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "step back",
+                "dist": 25.111,
+                "made": false,
+                "qualifiers": [
+                  "fromturnover"
+                ],
+                "side": "right",
+                "x": 10,
+                "y": 251
+              },
+              "type": "miss3"
             },
             {
               "clock": "6:03",
               "description": "L. Don\u010di\u0107 REBOUND (Off:0 Def:4)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "2:49",
               "description": "L. Don\u010di\u0107 16' fadeaway Jump Shot (18 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Mid-Range",
+                "areaDetail": "16-24 ft",
+                "assisted": false,
+                "descriptor": "fadeaway",
+                "dist": 16.198,
+                "made": true,
+                "qualifiers": [],
+                "side": "right",
+                "x": -79,
+                "y": 142
+              },
+              "type": "Make2"
             },
             {
               "clock": "2:07",
               "description": "L. Don\u010di\u0107 16' pullup Jump Shot (20 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Mid-Range",
+                "areaDetail": "16-24 ft",
+                "assisted": false,
+                "descriptor": "pullup",
+                "dist": 16.181,
+                "made": true,
+                "qualifiers": [],
+                "side": "right",
+                "x": -63,
+                "y": 149
+              },
+              "type": "Make2"
             },
             {
               "clock": "1:38",
               "description": "MISS L. Don\u010di\u0107 Free Throw 1 of 2",
-              "type": "fta"
+              "type": "missFT"
             },
             {
               "clock": "1:38",
               "description": "L. Don\u010di\u0107 Free Throw 2 of 2 (21 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "1:09",
               "description": "L. Don\u010di\u0107 bad pass TURNOVER (7 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "0:47",
               "description": "MISS L. Don\u010di\u0107 12' fadeaway bank Shot",
-              "type": "make2"
+              "shot": {
+                "area": "Mid-Range",
+                "areaDetail": "8-16 ft",
+                "assisted": false,
+                "descriptor": "fadeaway bank",
+                "dist": 12.232,
+                "made": false,
+                "qualifiers": [],
+                "side": "right",
+                "x": -97,
+                "y": 74
+              },
+              "type": "miss2"
             }
           ],
           "inTime": "12:00",
@@ -1542,14 +2383,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 2,
-            "fg3m": 2,
+            "fg3m": 0,
             "fga": 6,
-            "fgm": 6,
+            "fgm": 2,
             "fta": 2,
-            "ftm": 0,
+            "ftm": 1,
             "oreb": 0,
             "pf": 1,
-            "pts": 14,
+            "pts": 5,
             "reb": 2,
             "stl": 0,
             "tov": 2
@@ -1560,42 +2401,56 @@
             {
               "clock": "6:13",
               "description": "L. Don\u010di\u0107 driving Layup (23 PTS) (M. Thybulle 2 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "driving",
+                "dist": 2.631,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 21,
+                "y": 16
+              },
+              "type": "Make2"
             },
             {
               "clock": "5:28",
               "description": "L. Don\u010di\u0107 REBOUND (Off:0 Def:5)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "4:40",
               "description": "L. Don\u010di\u0107 lost ball TURNOVER (8 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "3:39",
               "description": "L. Don\u010di\u0107 bad pass out-of-bounds TURNOVER (9 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "2:39",
               "description": "L. Don\u010di\u0107 REBOUND (Off:0 Def:6)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "0:56",
               "description": "L. Don\u010di\u0107 lost ball TURNOVER (10 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "0:33",
               "description": "L. Don\u010di\u0107 BLOCK (1 BLK)",
-              "type": "blk"
+              "type": "Block"
             },
             {
               "clock": "0:25",
               "description": "L. Don\u010di\u0107 traveling TURNOVER (11 TO)",
-              "type": "tov"
+              "type": "TO"
             }
           ],
           "inTime": "6:28",
@@ -1634,22 +2489,51 @@
             {
               "clock": "2:57",
               "description": "S. Mamukelashvili 28' 3PT  (3 PTS) (L. Don\u010di\u0107 4 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 28.445,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover"
+                ],
+                "side": "left",
+                "x": -147,
+                "y": 244
+              },
+              "type": "Make3"
             },
             {
               "clock": "2:35",
               "description": "S. Mamukelashvili REBOUND (Off:0 Def:1)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "1:19",
               "description": "S. Mamukelashvili REBOUND (Off:0 Def:2)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "0:04",
               "description": "S. Mamukelashvili driving finger roll Layup (5 PTS) (L. Don\u010di\u0107 5 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "driving finger roll",
+                "dist": 2.072,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": -5,
+                "y": 20
+              },
+              "type": "Make2"
             }
           ],
           "inTime": "5:46",
@@ -1679,12 +2563,24 @@
             {
               "clock": "10:34",
               "description": "S. Mamukelashvili REBOUND (Off:0 Def:3)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "9:49",
               "description": "MISS S. Mamukelashvili 26' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 26.095,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": -200,
+                "y": 168
+              },
+              "type": "miss3"
             }
           ],
           "inTime": "12:00",
@@ -1696,14 +2592,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 1,
-            "fg3m": 1,
+            "fg3m": 0,
             "fga": 1,
-            "fgm": 1,
+            "fgm": 0,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 0,
-            "pts": 3,
+            "pts": 0,
             "reb": 1,
             "stl": 0,
             "tov": 0
@@ -1714,7 +2610,7 @@
             {
               "clock": "3:03",
               "description": "S. Mamukelashvili REBOUND (Off:0 Def:4)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "5:40",
@@ -1744,17 +2640,17 @@
             {
               "clock": "2:34",
               "description": "S. Mamukelashvili shooting personal FOUL (1 PF) (Lopez 2 FT)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "2:17",
               "description": "S. Mamukelashvili shooting personal FOUL (2 PF) (Lopez 1 FT)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "0:33",
               "description": "S. Mamukelashvili shooting personal FOUL (3 PF) (Wagler 2 FT)",
-              "type": "foul"
+              "type": "PF"
             }
           ],
           "inTime": "5:25",
@@ -1784,7 +2680,7 @@
             {
               "clock": "9:37",
               "description": "S. Mamukelashvili REBOUND (Off:0 Def:5)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "12:00",
@@ -1814,12 +2710,26 @@
             {
               "clock": "5:01",
               "description": "S. Mamukelashvili reverse Layup (7 PTS) (A. Reaves 9 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "reverse",
+                "dist": 2.055,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": -8,
+                "y": 19
+              },
+              "type": "Make2"
             },
             {
               "clock": "3:43",
               "description": "S. Mamukelashvili shooting personal FOUL (4 PF) (Garland 2 FT)",
-              "type": "foul"
+              "type": "PF"
             }
           ],
           "inTime": "5:28",
@@ -1858,7 +2768,7 @@
             {
               "clock": "0:00",
               "description": "Q. Grimes STEAL (1 STL)",
-              "type": "stl"
+              "type": "Steal"
             }
           ],
           "inTime": "5:46",
@@ -1912,37 +2822,75 @@
             {
               "clock": "7:55",
               "description": "Q. Grimes 3PT  (3 PTS) (A. Reaves 2 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Left Corner 3",
+                "areaDetail": "16-24 ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 23.617,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover"
+                ],
+                "side": "left",
+                "x": -236,
+                "y": -12
+              },
+              "type": "Make3"
             },
             {
               "clock": "7:22",
               "description": "Q. Grimes 25' 3PT pullup (6 PTS)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "pullup",
+                "dist": 25.187,
+                "made": true,
+                "qualifiers": [],
+                "side": "left",
+                "x": -171,
+                "y": 185
+              },
+              "type": "Make3"
             },
             {
               "clock": "7:11",
               "description": "Q. Grimes REBOUND (Off:0 Def:1)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "7:00",
               "description": "Q. Grimes bad pass out-of-bounds TURNOVER (1 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "6:48",
               "description": "Q. Grimes REBOUND (Off:0 Def:2)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "6:37",
               "description": "Q. Grimes shooting personal FOUL (1 PF) (Wagler 2 FT)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "1:45",
               "description": "MISS Q. Grimes 27' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 27.342,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": -153,
+                "y": 227
+              },
+              "type": "miss3"
             }
           ],
           "inTime": "8:03",
@@ -1954,14 +2902,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 3,
-            "fg3m": 3,
+            "fg3m": 2,
             "fga": 3,
-            "fgm": 3,
+            "fgm": 2,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 1,
-            "pts": 9,
+            "pts": 6,
             "reb": 2,
             "stl": 0,
             "tov": 1
@@ -1972,32 +2920,44 @@
             {
               "clock": "4:28",
               "description": "Q. Grimes REBOUND (Off:0 Def:3)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "2:25",
               "description": "Q. Grimes 24' 3PT  (9 PTS) (C. Sexton 2 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Right Corner 3",
+                "areaDetail": "24+ ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 24.375,
+                "made": true,
+                "qualifiers": [],
+                "side": "right",
+                "x": -242,
+                "y": 25
+              },
+              "type": "Make3"
             },
             {
               "clock": "0:42",
               "description": "Q. Grimes REBOUND (Off:0 Def:4)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "0:18",
               "description": "Q. Grimes Free Throw 1 of 2 (10 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "0:18",
               "description": "Q. Grimes Free Throw 2 of 2 (11 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "0:00",
               "description": "Q. Grimes REBOUND (Off:0 Def:5)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "6:35",
@@ -2013,10 +2973,10 @@
             "fga": 1,
             "fgm": 1,
             "fta": 2,
-            "ftm": 0,
+            "ftm": 2,
             "oreb": 0,
             "pf": 0,
-            "pts": 3,
+            "pts": 5,
             "reb": 3,
             "stl": 0,
             "tov": 0
@@ -2027,17 +2987,31 @@
             {
               "clock": "11:36",
               "description": "MISS Q. Grimes 7' cutting Layup - blocked",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "cutting",
+                "dist": 7.155,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 14,
+                "y": 70
+              },
+              "type": "miss2"
             },
             {
               "clock": "11:06",
               "description": "Q. Grimes REBOUND (Off:0 Def:6)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "8:53",
               "description": "Q. Grimes personal FOUL (2 PF)",
-              "type": "foul"
+              "type": "PF"
             }
           ],
           "inTime": "12:00",
@@ -2051,12 +3025,12 @@
             "fg3a": 0,
             "fg3m": 0,
             "fga": 1,
-            "fgm": 1,
+            "fgm": 0,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 1,
-            "pts": 2,
+            "pts": 0,
             "reb": 1,
             "stl": 0,
             "tov": 0
@@ -2067,32 +3041,46 @@
             {
               "clock": "4:23",
               "description": "Q. Grimes bad pass TURNOVER (2 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "4:08",
               "description": "MISS Q. Grimes 25' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 25.393,
+                "made": false,
+                "qualifiers": [
+                  "fromturnover"
+                ],
+                "side": "right",
+                "x": 156,
+                "y": 200
+              },
+              "type": "miss3"
             },
             {
               "clock": "3:07",
               "description": "Q. Grimes REBOUND (Off:1 Def:6)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "0:40",
               "description": "Q. Grimes Free Throw 1 of 2 (12 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "0:40",
               "description": "Q. Grimes Free Throw 2 of 2 (13 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "0:22",
               "description": "Q. Grimes REBOUND (Off:1 Def:7)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "4:47",
@@ -2104,14 +3092,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 1,
-            "fg3m": 1,
+            "fg3m": 0,
             "fga": 1,
-            "fgm": 1,
+            "fgm": 0,
             "fta": 2,
-            "ftm": 0,
-            "oreb": 2,
+            "ftm": 2,
+            "oreb": 1,
             "pf": 0,
-            "pts": 3,
+            "pts": 2,
             "reb": 2,
             "stl": 0,
             "tov": 1
@@ -2131,27 +3119,54 @@
             {
               "clock": "3:41",
               "description": "C. Sexton STEAL (1 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "3:31",
               "description": "MISS C. Sexton 7' driving Hook",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving",
+                "dist": 7.204,
+                "made": false,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": -30,
+                "y": 66
+              },
+              "type": "miss2"
             },
             {
               "clock": "1:29",
               "description": "MISS C. Sexton 26' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 26.386,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": -78,
+                "y": 252
+              },
+              "type": "miss3"
             },
             {
               "clock": "1:19",
               "description": "C. Sexton shooting personal FOUL (1 PF) (Lopez 1 FT)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "1:03",
               "description": "C. Sexton STEAL (2 STL)",
-              "type": "stl"
+              "type": "Steal"
             }
           ],
           "inTime": "3:52",
@@ -2163,14 +3178,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 1,
-            "fg3m": 1,
+            "fg3m": 0,
             "fga": 2,
-            "fgm": 2,
+            "fgm": 0,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 1,
-            "pts": 5,
+            "pts": 0,
             "reb": 0,
             "stl": 2,
             "tov": 0
@@ -2181,7 +3196,23 @@
             {
               "clock": "8:23",
               "description": "MISS C. Sexton 11' cutting Layup - blocked",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "8-16 ft",
+                "assisted": false,
+                "descriptor": "cutting",
+                "dist": 11.005,
+                "made": false,
+                "qualifiers": [
+                  "fromturnover",
+                  "2ndchance",
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": 30,
+                "y": 106
+              },
+              "type": "miss2"
             }
           ],
           "inTime": "12:00",
@@ -2195,12 +3226,12 @@
             "fg3a": 0,
             "fg3m": 0,
             "fga": 1,
-            "fgm": 1,
+            "fgm": 0,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 0,
-            "pts": 2,
+            "pts": 0,
             "reb": 0,
             "stl": 0,
             "tov": 0
@@ -2235,37 +3266,77 @@
             {
               "clock": "10:56",
               "description": "C. Sexton traveling TURNOVER (1 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "10:07",
               "description": "C. Sexton STEAL (3 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "9:50",
               "description": "C. Sexton 29' 3PT  (3 PTS) (Q. Grimes 3 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 29.257,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover"
+                ],
+                "side": "right",
+                "x": 143,
+                "y": 255
+              },
+              "type": "Make3"
             },
             {
               "clock": "8:34",
               "description": "C. Sexton driving Layup (5 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving",
+                "dist": 3.298,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 10,
+                "y": 32
+              },
+              "type": "Make2"
             },
             {
               "clock": "8:19",
               "description": "C. Sexton REBOUND (Off:0 Def:1)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "7:14",
               "description": "C. Sexton personal FOUL (2 PF)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "6:41",
               "description": "MISS C. Sexton 25' pullup 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "pullup",
+                "dist": 25.137,
+                "made": false,
+                "qualifiers": [],
+                "side": "right",
+                "x": 152,
+                "y": 200
+              },
+              "type": "miss3"
             }
           ],
           "inTime": "12:00",
@@ -2277,14 +3348,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 2,
-            "fg3m": 2,
+            "fg3m": 1,
             "fga": 3,
-            "fgm": 3,
+            "fgm": 2,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 1,
-            "pts": 8,
+            "pts": 5,
             "reb": 1,
             "stl": 1,
             "tov": 1
@@ -2304,32 +3375,84 @@
             {
               "clock": "10:15",
               "description": "MISS K. Dunn 26' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 26.717,
+                "made": false,
+                "qualifiers": [],
+                "side": "right",
+                "x": 105,
+                "y": 246
+              },
+              "type": "miss3"
             },
             {
               "clock": "9:11",
               "description": "MISS K. Dunn driving Layup - blocked",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving",
+                "dist": 3.045,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": -26,
+                "y": 16
+              },
+              "type": "miss2"
             },
             {
               "clock": "8:49",
               "description": "K. Dunn driving floating Jump Shot (2 PTS) (R. Hachimura 1 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "driving floating",
+                "dist": 4.685,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 41,
+                "y": 23
+              },
+              "type": "Make2"
             },
             {
               "clock": "8:11",
               "description": "K. Dunn 26' 3PT  (5 PTS) (D. Garland 1 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 26.606,
+                "made": true,
+                "qualifiers": [],
+                "side": "right",
+                "x": -156,
+                "y": 216
+              },
+              "type": "Make3"
             },
             {
               "clock": "7:03",
               "description": "K. Dunn REBOUND (Off:0 Def:1)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "7:03",
               "description": "K. Dunn REBOUND (Off:0 Def:2)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "12:00",
@@ -2341,14 +3464,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 2,
-            "fg3m": 2,
+            "fg3m": 1,
             "fga": 4,
-            "fgm": 4,
+            "fgm": 2,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 0,
-            "pts": 10,
+            "pts": 5,
             "reb": 2,
             "stl": 0,
             "tov": 0
@@ -2359,12 +3482,12 @@
             {
               "clock": "1:08",
               "description": "K. Dunn shooting personal FOUL (1 PF) (Don\u010di\u0107 2 FT)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "0:55",
               "description": "K. Dunn REBOUND (Off:0 Def:3)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "2:35",
@@ -2394,7 +3517,7 @@
             {
               "clock": "8:56",
               "description": "K. Dunn shooting personal FOUL (2 PF) (Reaves 3 FT)",
-              "type": "foul"
+              "type": "PF"
             }
           ],
           "inTime": "12:00",
@@ -2424,17 +3547,17 @@
             {
               "clock": "2:22",
               "description": "K. Dunn offensive FOUL (3 PF)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "2:22",
               "description": "K. Dunn offensive foul TURNOVER (1 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "2:22",
               "description": "K. Dunn technical technical FOUL (1 Tech)",
-              "type": "foul"
+              "type": "PF"
             }
           ],
           "inTime": "5:40",
@@ -2464,17 +3587,17 @@
             {
               "clock": "10:56",
               "description": "K. Dunn REBOUND (Off:0 Def:4)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "10:47",
               "description": "K. Dunn bad pass TURNOVER (2 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "7:25",
               "description": "K. Dunn REBOUND (Off:0 Def:5)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "12:00",
@@ -2528,7 +3651,19 @@
             {
               "clock": "9:37",
               "description": "MISS K. Dunn 26' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 26.298,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": 20,
+                "y": 262
+              },
+              "type": "miss3"
             }
           ],
           "inTime": "12:00",
@@ -2540,14 +3675,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 1,
-            "fg3m": 1,
+            "fg3m": 0,
             "fga": 1,
-            "fgm": 1,
+            "fgm": 0,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 0,
-            "pts": 3,
+            "pts": 0,
             "reb": 0,
             "stl": 0,
             "tov": 0
@@ -2558,27 +3693,43 @@
             {
               "clock": "4:23",
               "description": "K. Dunn STEAL (1 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "4:21",
               "description": "K. Dunn lost ball out-of-bounds TURNOVER (3 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "2:38",
               "description": "K. Dunn personal FOUL (4 PF)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "0:56",
               "description": "K. Dunn STEAL (2 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "0:53",
               "description": "K. Dunn running Layup (7 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "running",
+                "dist": 3.326,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint",
+                  "fastbreak"
+                ],
+                "side": "left",
+                "x": -5,
+                "y": 33
+              },
+              "type": "Make2"
             }
           ],
           "inTime": "5:16",
@@ -2617,32 +3768,58 @@
             {
               "clock": "11:21",
               "description": "R. Hachimura lost ball TURNOVER (1 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "10:59",
               "description": "R. Hachimura lost ball out-of-bounds TURNOVER (2 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "9:00",
               "description": "R. Hachimura REBOUND (Off:0 Def:1)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "6:47",
               "description": "R. Hachimura 26' 3PT  (3 PTS) (I. Jackson 1 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 26.48,
+                "made": true,
+                "qualifiers": [],
+                "side": "right",
+                "x": 235,
+                "y": 122
+              },
+              "type": "Make3"
             },
             {
               "clock": "6:00",
               "description": "MISS R. Hachimura driving Layup",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving",
+                "dist": 3.405,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": -31,
+                "y": 15
+              },
+              "type": "miss2"
             },
             {
               "clock": "5:46",
               "description": "R. Hachimura REBOUND (Off:0 Def:2)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "12:00",
@@ -2656,12 +3833,12 @@
             "fg3a": 1,
             "fg3m": 1,
             "fga": 2,
-            "fgm": 2,
+            "fgm": 1,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 0,
-            "pts": 5,
+            "pts": 3,
             "reb": 2,
             "stl": 0,
             "tov": 2
@@ -2672,57 +3849,140 @@
             {
               "clock": "7:39",
               "description": "R. Hachimura REBOUND (Off:1 Def:2)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "7:36",
               "description": "R. Hachimura tip Layup (5 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "tip",
+                "dist": 0.0,
+                "made": true,
+                "qualifiers": [
+                  "2ndchance",
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 0,
+                "y": 0
+              },
+              "type": "Make2"
             },
             {
               "clock": "5:17",
               "description": "R. Hachimura 14' step back Jump Shot (7 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "8-16 ft",
+                "assisted": false,
+                "descriptor": "step back",
+                "dist": 14.222,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 42,
+                "y": 136
+              },
+              "type": "Make2"
             },
             {
               "clock": "4:42",
               "description": "R. Hachimura 3PT  (10 PTS) (K. Dunn 5 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Right Corner 3",
+                "areaDetail": "16-24 ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 23.797,
+                "made": true,
+                "qualifiers": [],
+                "side": "right",
+                "x": 235,
+                "y": 38
+              },
+              "type": "Make3"
             },
             {
               "clock": "4:16",
               "description": "R. Hachimura STEAL (1 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "4:12",
               "description": "MISS R. Hachimura running Layup - blocked",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "running",
+                "dist": 3.011,
+                "made": false,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint",
+                  "fastbreak"
+                ],
+                "side": "right",
+                "x": -8,
+                "y": 29
+              },
+              "type": "miss2"
             },
             {
               "clock": "3:03",
               "description": "MISS R. Hachimura driving reverse Layup",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving reverse",
+                "dist": 3.828,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": -38,
+                "y": 1
+              },
+              "type": "miss2"
             },
             {
               "clock": "2:10",
               "description": "R. Hachimura STEAL (2 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "0:51",
               "description": "MISS R. Hachimura 19' pullup Shot",
-              "type": "make2"
+              "shot": {
+                "area": "Mid-Range",
+                "areaDetail": "16-24 ft",
+                "assisted": false,
+                "descriptor": "pullup",
+                "dist": 19.101,
+                "made": false,
+                "qualifiers": [],
+                "side": "right",
+                "x": 175,
+                "y": 76
+              },
+              "type": "miss2"
             },
             {
               "clock": "0:24",
               "description": "R. Hachimura Free Throw 1 of 2 (11 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "0:24",
               "description": "R. Hachimura Free Throw 2 of 2 (12 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             }
           ],
           "inTime": "8:33",
@@ -2736,12 +3996,12 @@
             "fg3a": 1,
             "fg3m": 1,
             "fga": 6,
-            "fgm": 6,
+            "fgm": 3,
             "fta": 2,
-            "ftm": 0,
+            "ftm": 2,
             "oreb": 1,
             "pf": 0,
-            "pts": 13,
+            "pts": 9,
             "reb": 1,
             "stl": 2,
             "tov": 0
@@ -2752,27 +4012,51 @@
             {
               "clock": "11:37",
               "description": "MISS R. Hachimura 25' step back 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "step back",
+                "dist": 25.739,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": -129,
+                "y": 223
+              },
+              "type": "miss3"
             },
             {
               "clock": "10:24",
               "description": "R. Hachimura 3PT  (15 PTS) (D. Jones Jr. 1 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Left Corner 3",
+                "areaDetail": "16-24 ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 23.756,
+                "made": true,
+                "qualifiers": [],
+                "side": "left",
+                "x": 237,
+                "y": 8
+              },
+              "type": "Make3"
             },
             {
               "clock": "7:48",
               "description": "R. Hachimura Free Throw 1 of 2 (16 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "7:48",
               "description": "MISS R. Hachimura Free Throw 2 of 2",
-              "type": "fta"
+              "type": "missFT"
             },
             {
               "clock": "6:12",
               "description": "R. Hachimura REBOUND (Off:1 Def:3)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "12:00",
@@ -2784,14 +4068,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 2,
-            "fg3m": 2,
+            "fg3m": 1,
             "fga": 2,
-            "fgm": 2,
+            "fgm": 1,
             "fta": 2,
-            "ftm": 0,
-            "oreb": 1,
+            "ftm": 1,
+            "oreb": 0,
             "pf": 0,
-            "pts": 6,
+            "pts": 4,
             "reb": 1,
             "stl": 0,
             "tov": 0
@@ -2802,37 +4086,94 @@
             {
               "clock": "8:19",
               "description": "MISS R. Hachimura cutting Layup",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "cutting",
+                "dist": 3.605,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": 7,
+                "y": 35
+              },
+              "type": "miss2"
             },
             {
               "clock": "6:41",
               "description": "R. Hachimura REBOUND (Off:1 Def:4)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "2:59",
               "description": "R. Hachimura REBOUND (Off:1 Def:5)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "1:55",
               "description": "MISS R. Hachimura running 3PT - blocked",
-              "type": "make3"
+              "shot": {
+                "area": "Left Corner 3",
+                "areaDetail": "16-24 ft",
+                "assisted": false,
+                "descriptor": "running",
+                "dist": 23.526,
+                "made": false,
+                "qualifiers": [
+                  "fromturnover",
+                  "fastbreak"
+                ],
+                "side": "left",
+                "x": -235,
+                "y": 13
+              },
+              "type": "miss3"
             },
             {
               "clock": "1:21",
               "description": "MISS R. Hachimura turnaround Shot - blocked",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "turnaround",
+                "dist": 5.626,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": -56,
+                "y": -5
+              },
+              "type": "miss2"
             },
             {
               "clock": "0:40",
               "description": "R. Hachimura personal FOUL (1 PF) (Grimes 2 FT)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "0:22",
               "description": "MISS R. Hachimura 28' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 28.199,
+                "made": false,
+                "qualifiers": [
+                  "fromturnover"
+                ],
+                "side": "left",
+                "x": -200,
+                "y": 199
+              },
+              "type": "miss3"
             }
           ],
           "inTime": "8:53",
@@ -2844,14 +4185,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 2,
-            "fg3m": 2,
+            "fg3m": 0,
             "fga": 4,
-            "fgm": 4,
+            "fgm": 0,
             "fta": 0,
             "ftm": 0,
-            "oreb": 2,
+            "oreb": 0,
             "pf": 1,
-            "pts": 10,
+            "pts": 0,
             "reb": 2,
             "stl": 0,
             "tov": 0
@@ -2871,42 +4212,86 @@
             {
               "clock": "11:39",
               "description": "I. Jackson BLOCK (1 BLK)",
-              "type": "blk"
+              "type": "Block"
             },
             {
               "clock": "10:45",
               "description": "I. Jackson STEAL (1 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "7:40",
               "description": "I. Jackson REBOUND (Off:1 Def:0)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "7:37",
               "description": "I. Jackson putback Layup (2 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "putback",
+                "dist": 1.978,
+                "made": true,
+                "qualifiers": [
+                  "2ndchance",
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 0,
+                "y": 20
+              },
+              "type": "Make2"
             },
             {
               "clock": "6:00",
               "description": "I. Jackson REBOUND (Off:2 Def:0)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "5:56",
               "description": "I. Jackson putback DUNK (4 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "putback",
+                "dist": 1.641,
+                "made": true,
+                "qualifiers": [
+                  "2ndchance",
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 0,
+                "y": 16
+              },
+              "type": "Make2"
             },
             {
               "clock": "3:53",
               "description": "MISS I. Jackson driving floating Shot",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving floating",
+                "dist": 4.471,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": -23,
+                "y": 38
+              },
+              "type": "miss2"
             },
             {
               "clock": "3:18",
               "description": "I. Jackson REBOUND (Off:2 Def:1)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "12:00",
@@ -2920,12 +4305,12 @@
             "fg3a": 0,
             "fg3m": 0,
             "fga": 3,
-            "fgm": 3,
+            "fgm": 2,
             "fta": 0,
             "ftm": 0,
-            "oreb": 3,
+            "oreb": 2,
             "pf": 0,
-            "pts": 6,
+            "pts": 4,
             "reb": 3,
             "stl": 1,
             "tov": 0
@@ -2936,32 +4321,63 @@
             {
               "clock": "6:48",
               "description": "MISS I. Jackson turnaround Hook",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "turnaround",
+                "dist": 3.257,
+                "made": false,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": -19,
+                "y": 27
+              },
+              "type": "miss2"
             },
             {
               "clock": "6:40",
               "description": "I. Jackson STEAL (2 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "3:20",
               "description": "I. Jackson shooting personal FOUL (1 PF) (Don\u010di\u0107 2 FT)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "2:50",
               "description": "I. Jackson running DUNK (6 PTS) (D. Garland 4 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "running",
+                "dist": 3.151,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint",
+                  "fastbreak"
+                ],
+                "side": "right",
+                "x": 7,
+                "y": 31
+              },
+              "type": "Make2"
             },
             {
               "clock": "1:45",
               "description": "I. Jackson REBOUND (Off:2 Def:2)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "0:51",
               "description": "I. Jackson REBOUND (Off:3 Def:2)",
-              "type": "reb"
+              "type": "OffReb"
             }
           ],
           "inTime": "7:00",
@@ -2975,12 +4391,12 @@
             "fg3a": 0,
             "fg3m": 0,
             "fga": 2,
-            "fgm": 2,
+            "fgm": 1,
             "fta": 0,
             "ftm": 0,
-            "oreb": 2,
+            "oreb": 1,
             "pf": 1,
-            "pts": 4,
+            "pts": 2,
             "reb": 2,
             "stl": 1,
             "tov": 0
@@ -2991,22 +4407,22 @@
             {
               "clock": "10:05",
               "description": "I. Jackson offensive FOUL (2 PF)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "10:05",
               "description": "I. Jackson offensive foul TURNOVER (1 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "8:21",
               "description": "I. Jackson bad pass out-of-bounds TURNOVER (2 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "6:35",
               "description": "I. Jackson REBOUND (Off:3 Def:3)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "12:00",
@@ -3023,7 +4439,7 @@
             "fgm": 0,
             "fta": 0,
             "ftm": 0,
-            "oreb": 1,
+            "oreb": 0,
             "pf": 1,
             "pts": 0,
             "reb": 1,
@@ -3036,17 +4452,17 @@
             {
               "clock": "5:16",
               "description": "I. Jackson personal FOUL (3 PF)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "2:22",
               "description": "I. Jackson personal FOUL (4 PF) (Kessler 2 FT)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "1:59",
               "description": "I. Jackson STEAL (3 STL)",
-              "type": "stl"
+              "type": "Steal"
             }
           ],
           "inTime": "5:28",
@@ -3085,37 +4501,76 @@
             {
               "clock": "10:39",
               "description": "MISS D. Garland 25' running pullup 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "running pullup",
+                "dist": 25.58,
+                "made": false,
+                "qualifiers": [
+                  "fromturnover",
+                  "fastbreak"
+                ],
+                "side": "right",
+                "x": 35,
+                "y": 253
+              },
+              "type": "miss3"
             },
             {
               "clock": "9:37",
               "description": "D. Garland bad pass TURNOVER (1 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "7:40",
               "description": "MISS D. Garland 10' pullup Shot",
-              "type": "make2"
+              "shot": {
+                "area": "Mid-Range",
+                "areaDetail": "8-16 ft",
+                "assisted": false,
+                "descriptor": "pullup",
+                "dist": 10.924,
+                "made": false,
+                "qualifiers": [],
+                "side": "right",
+                "x": 109,
+                "y": -10
+              },
+              "type": "miss2"
             },
             {
               "clock": "5:32",
               "description": "D. Garland 26' 3PT pullup (3 PTS)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "pullup",
+                "dist": 26.122,
+                "made": true,
+                "qualifiers": [],
+                "side": "right",
+                "x": 93,
+                "y": 244
+              },
+              "type": "Make3"
             },
             {
               "clock": "4:57",
               "description": "D. Garland lost ball TURNOVER (2 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "3:41",
               "description": "D. Garland lost ball TURNOVER (3 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "3:13",
               "description": "D. Garland bad pass out-of-bounds TURNOVER (4 TO)",
-              "type": "tov"
+              "type": "TO"
             }
           ],
           "inTime": "12:00",
@@ -3127,14 +4582,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 2,
-            "fg3m": 2,
+            "fg3m": 1,
             "fga": 3,
-            "fgm": 3,
+            "fgm": 1,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 0,
-            "pts": 8,
+            "pts": 3,
             "reb": 0,
             "stl": 0,
             "tov": 4
@@ -3145,37 +4600,106 @@
             {
               "clock": "7:11",
               "description": "MISS D. Garland 26' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 26.54,
+                "made": false,
+                "qualifiers": [],
+                "side": "right",
+                "x": 150,
+                "y": 219
+              },
+              "type": "miss3"
             },
             {
               "clock": "6:13",
               "description": "D. Garland shooting personal FOUL (1 PF) (Williams 3 FT)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "5:54",
               "description": "MISS D. Garland 6' driving Hook",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving",
+                "dist": 6.259,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 28,
+                "y": 56
+              },
+              "type": "miss2"
             },
             {
               "clock": "3:30",
               "description": "D. Garland driving Layup (5 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving",
+                "dist": 2.399,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": -15,
+                "y": 19
+              },
+              "type": "Make2"
             },
             {
               "clock": "2:53",
               "description": "D. Garland STEAL (1 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "2:06",
               "description": "D. Garland running Layup (7 PTS) (K. Sanders 3 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "running",
+                "dist": 3.828,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint",
+                  "fastbreak"
+                ],
+                "side": "right",
+                "x": -1,
+                "y": 38
+              },
+              "type": "Make2"
             },
             {
               "clock": "0:00",
               "description": "MISS D. Garland 25' fadeaway bank 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "fadeaway bank",
+                "dist": 25.955,
+                "made": false,
+                "qualifiers": [],
+                "side": "right",
+                "x": -232,
+                "y": 117
+              },
+              "type": "miss3"
             }
           ],
           "inTime": "8:33",
@@ -3187,14 +4711,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 2,
-            "fg3m": 2,
+            "fg3m": 0,
             "fga": 5,
-            "fgm": 5,
+            "fgm": 2,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 1,
-            "pts": 12,
+            "pts": 4,
             "reb": 0,
             "stl": 1,
             "tov": 0
@@ -3205,47 +4729,88 @@
             {
               "clock": "11:14",
               "description": "D. Garland 6' driving bank Jump Shot (9 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving bank",
+                "dist": 6.274,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": -13,
+                "y": 61
+              },
+              "type": "Make2"
             },
             {
               "clock": "9:28",
               "description": "MISS D. Garland 15' step back Shot",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "8-16 ft",
+                "assisted": false,
+                "descriptor": "step back",
+                "dist": 15.379,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": 76,
+                "y": 134
+              },
+              "type": "miss2"
             },
             {
               "clock": "9:01",
               "description": "D. Garland 28' 3PT  (12 PTS) (I. Jackson 2 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 28.699,
+                "made": true,
+                "qualifiers": [],
+                "side": "left",
+                "x": -63,
+                "y": 280
+              },
+              "type": "Make3"
             },
             {
               "clock": "6:36",
               "description": "D. Garland bad pass TURNOVER (5 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "6:35",
               "description": "D. Garland shooting personal FOUL (2 PF) (Kessler 2 FT)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "6:20",
               "description": "D. Garland bad pass TURNOVER (6 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "5:38",
               "description": "D. Garland bad pass TURNOVER (7 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "4:06",
               "description": "D. Garland Free Throw 1 of 1 (13 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "3:57",
               "description": "D. Garland bad pass out-of-bounds TURNOVER (8 TO)",
-              "type": "tov"
+              "type": "TO"
             }
           ],
           "inTime": "12:00",
@@ -3259,12 +4824,12 @@
             "fg3a": 1,
             "fg3m": 1,
             "fga": 3,
-            "fgm": 3,
+            "fgm": 2,
             "fta": 1,
-            "ftm": 0,
+            "ftm": 1,
             "oreb": 0,
             "pf": 1,
-            "pts": 7,
+            "pts": 6,
             "reb": 0,
             "stl": 0,
             "tov": 4
@@ -3275,67 +4840,176 @@
             {
               "clock": "7:53",
               "description": "D. Garland 26' 3PT step back (16 PTS)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "step back",
+                "dist": 26.226,
+                "made": true,
+                "qualifiers": [],
+                "side": "left",
+                "x": 88,
+                "y": 247
+              },
+              "type": "Make3"
             },
             {
               "clock": "7:28",
               "description": "MISS D. Garland 27' pullup 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "pullup",
+                "dist": 27.01,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": 25,
+                "y": 269
+              },
+              "type": "miss3"
             },
             {
               "clock": "6:58",
               "description": "D. Garland 9' driving floating Jump Shot (18 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "8-16 ft",
+                "assisted": false,
+                "descriptor": "driving floating",
+                "dist": 9.901,
+                "made": true,
+                "qualifiers": [
+                  "2ndchance",
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": -11,
+                "y": 98
+              },
+              "type": "Make2"
             },
             {
               "clock": "5:53",
               "description": "MISS D. Garland 29' step back 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "step back",
+                "dist": 29.716,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": -109,
+                "y": 277
+              },
+              "type": "miss3"
             },
             {
               "clock": "4:47",
               "description": "D. Garland Free Throw 1 of 2 (19 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "4:47",
               "description": "D. Garland Free Throw 2 of 2 (20 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "3:43",
               "description": "MISS D. Garland Free Throw 1 of 2",
-              "type": "fta"
+              "type": "missFT"
             },
             {
               "clock": "3:43",
               "description": "D. Garland Free Throw 2 of 2 (21 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "3:21",
               "description": "D. Garland 26' 3PT pullup (24 PTS)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "pullup",
+                "dist": 26.799,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover"
+                ],
+                "side": "left",
+                "x": 208,
+                "y": 169
+              },
+              "type": "Make3"
             },
             {
               "clock": "2:12",
               "description": "D. Garland bad pass TURNOVER (9 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "1:49",
               "description": "MISS D. Garland 26' pullup 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "pullup",
+                "dist": 26.486,
+                "made": false,
+                "qualifiers": [
+                  "fromturnover",
+                  "2ndchance"
+                ],
+                "side": "left",
+                "x": -100,
+                "y": 245
+              },
+              "type": "miss3"
             },
             {
               "clock": "1:14",
               "description": "D. Garland 13' driving floating Jump Shot (26 PTS) (I. Jackson 3 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "8-16 ft",
+                "assisted": true,
+                "descriptor": "driving floating",
+                "dist": 13.904,
+                "made": true,
+                "qualifiers": [
+                  "2ndchance",
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": 57,
+                "y": 127
+              },
+              "type": "Make2"
             },
             {
               "clock": "0:33",
               "description": "MISS D. Garland driving Layup - blocked",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving",
+                "dist": 4.702,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": 42,
+                "y": 20
+              },
+              "type": "miss2"
             }
           ],
           "inTime": "8:53",
@@ -3347,14 +5021,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 5,
-            "fg3m": 5,
+            "fg3m": 2,
             "fga": 8,
-            "fgm": 8,
+            "fgm": 4,
             "fta": 4,
-            "ftm": 0,
+            "ftm": 3,
             "oreb": 0,
             "pf": 0,
-            "pts": 21,
+            "pts": 13,
             "reb": 0,
             "stl": 0,
             "tov": 1
@@ -3374,37 +5048,79 @@
             {
               "clock": "11:13",
               "description": "D. Jones Jr. REBOUND (Off:0 Def:1)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "7:21",
               "description": "MISS D. Jones Jr. driving Layup - blocked",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving",
+                "dist": 3.992,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": -36,
+                "y": 18
+              },
+              "type": "miss2"
             },
             {
               "clock": "5:46",
               "description": "D. Jones Jr. shooting personal FOUL (1 PF) (Reaves 2 FT)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "4:37",
               "description": "D. Jones Jr. cutting Layup (2 PTS) (D. Garland 2 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "cutting",
+                "dist": 1.781,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": 17,
+                "y": -5
+              },
+              "type": "Make2"
             },
             {
               "clock": "4:16",
               "description": "D. Jones Jr. 26' 3PT  (5 PTS) (D. Garland 3 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 26.955,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover"
+                ],
+                "side": "right",
+                "x": -90,
+                "y": 254
+              },
+              "type": "Make3"
             },
             {
               "clock": "2:35",
               "description": "D. Jones Jr. Free Throw 1 of 2 (6 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "2:35",
               "description": "MISS D. Jones Jr. Free Throw 2 of 2",
-              "type": "fta"
+              "type": "missFT"
             }
           ],
           "inTime": "12:00",
@@ -3418,12 +5134,12 @@
             "fg3a": 1,
             "fg3m": 1,
             "fga": 3,
-            "fgm": 3,
+            "fgm": 2,
             "fta": 2,
-            "ftm": 0,
+            "ftm": 1,
             "oreb": 0,
             "pf": 1,
-            "pts": 7,
+            "pts": 6,
             "reb": 1,
             "stl": 0,
             "tov": 0
@@ -3458,17 +5174,43 @@
             {
               "clock": "1:34",
               "description": "D. Jones Jr. 24' 3PT  (9 PTS) (D. Garland 5 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Right Corner 3",
+                "areaDetail": "24+ ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 24.754,
+                "made": true,
+                "qualifiers": [],
+                "side": "right",
+                "x": 240,
+                "y": 61
+              },
+              "type": "Make3"
             },
             {
               "clock": "0:44",
               "description": "MISS D. Jones Jr. 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Right Corner 3",
+                "areaDetail": "16-24 ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 23.196,
+                "made": false,
+                "qualifiers": [
+                  "2ndchance"
+                ],
+                "side": "right",
+                "x": -232,
+                "y": -14
+              },
+              "type": "miss3"
             },
             {
               "clock": "0:05",
               "description": "D. Jones Jr. shooting personal FOUL (2 PF) (Don\u010di\u0107 1 FT)",
-              "type": "foul"
+              "type": "PF"
             }
           ],
           "inTime": "7:08",
@@ -3480,14 +5222,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 2,
-            "fg3m": 2,
+            "fg3m": 1,
             "fga": 2,
-            "fgm": 2,
+            "fgm": 1,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 1,
-            "pts": 6,
+            "pts": 3,
             "reb": 0,
             "stl": 0,
             "tov": 0
@@ -3498,42 +5240,106 @@
             {
               "clock": "11:37",
               "description": "D. Jones Jr. REBOUND (Off:1 Def:1)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "11:24",
               "description": "D. Jones Jr. STEAL (1 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "7:53",
               "description": "MISS D. Jones Jr. 25' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 25.622,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": 139,
+                "y": 215
+              },
+              "type": "miss3"
             },
             {
               "clock": "7:53",
               "description": "D. Jones Jr. REBOUND (Off:2 Def:1)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "7:18",
               "description": "D. Jones Jr. 3PT pullup (12 PTS) (D. Garland 6 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Left Corner 3",
+                "areaDetail": "16-24 ft",
+                "assisted": true,
+                "descriptor": "pullup",
+                "dist": 23.762,
+                "made": true,
+                "qualifiers": [],
+                "side": "left",
+                "x": 237,
+                "y": 9
+              },
+              "type": "Make3"
             },
             {
               "clock": "6:03",
               "description": "MISS D. Jones Jr. 26' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 26.053,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": -210,
+                "y": 155
+              },
+              "type": "miss3"
             },
             {
               "clock": "4:28",
               "description": "MISS D. Jones Jr. Layup - blocked",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 5.179,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": 7,
+                "y": 51
+              },
+              "type": "miss2"
             },
             {
               "clock": "3:27",
               "description": "MISS D. Jones Jr. 27' pullup 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "pullup",
+                "dist": 27.112,
+                "made": false,
+                "qualifiers": [
+                  "2ndchance"
+                ],
+                "side": "left",
+                "x": 151,
+                "y": 225
+              },
+              "type": "miss3"
             }
           ],
           "inTime": "12:00",
@@ -3545,14 +5351,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 4,
-            "fg3m": 4,
+            "fg3m": 1,
             "fga": 5,
-            "fgm": 5,
+            "fgm": 1,
             "fta": 0,
             "ftm": 0,
             "oreb": 2,
             "pf": 0,
-            "pts": 14,
+            "pts": 3,
             "reb": 2,
             "stl": 1,
             "tov": 0
@@ -3563,32 +5369,74 @@
             {
               "clock": "6:31",
               "description": "D. Jones Jr. REBOUND (Off:3 Def:1)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "6:28",
               "description": "D. Jones Jr. tip Layup (14 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "tip",
+                "dist": 0.0,
+                "made": true,
+                "qualifiers": [
+                  "2ndchance",
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": 0,
+                "y": 0
+              },
+              "type": "Make2"
             },
             {
               "clock": "4:40",
               "description": "D. Jones Jr. STEAL (2 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "4:37",
               "description": "D. Jones Jr. driving DUNK (16 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "driving",
+                "dist": 3.079,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": -16,
+                "y": 26
+              },
+              "type": "Make2"
             },
             {
               "clock": "2:39",
               "description": "MISS D. Jones Jr. 26' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 26.313,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": 192,
+                "y": 180
+              },
+              "type": "miss3"
             },
             {
               "clock": "2:33",
               "description": "D. Jones Jr. personal FOUL (3 PF)",
-              "type": "foul"
+              "type": "PF"
             }
           ],
           "inTime": "8:12",
@@ -3600,14 +5448,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 1,
-            "fg3m": 1,
+            "fg3m": 0,
             "fga": 3,
-            "fgm": 3,
+            "fgm": 2,
             "fta": 0,
             "ftm": 0,
             "oreb": 1,
             "pf": 1,
-            "pts": 7,
+            "pts": 4,
             "reb": 1,
             "stl": 1,
             "tov": 0
@@ -3627,32 +5475,73 @@
             {
               "clock": "2:01",
               "description": "B. Lopez 24' 3PT  (3 PTS) (K. Wagler 1 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 24.775,
+                "made": true,
+                "qualifiers": [],
+                "side": "right",
+                "x": 51,
+                "y": 242
+              },
+              "type": "Make3"
             },
             {
               "clock": "1:19",
               "description": "B. Lopez Hook (5 PTS) (K. Sanders 2 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 2.486,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": -14,
+                "y": 21
+              },
+              "type": "Make2"
             },
             {
               "clock": "1:19",
               "description": "MISS B. Lopez Free Throw 1 of 1",
-              "type": "fta"
+              "type": "missFT"
             },
             {
               "clock": "0:50",
               "description": "B. Lopez running Layup (7 PTS) (K. Dunn 1 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "running",
+                "dist": 1.334,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint",
+                  "fastbreak"
+                ],
+                "side": "right",
+                "x": 13,
+                "y": 3
+              },
+              "type": "Make2"
             },
             {
               "clock": "0:20",
               "description": "B. Lopez offensive FOUL (1 PF)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "0:20",
               "description": "B. Lopez offensive foul TURNOVER (1 TO)",
-              "type": "tov"
+              "type": "TO"
             }
           ],
           "inTime": "3:13",
@@ -3682,27 +5571,65 @@
             {
               "clock": "11:45",
               "description": "B. Lopez 14' floating Jump Shot (9 PTS) (K. Dunn 2 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Mid-Range",
+                "areaDetail": "8-16 ft",
+                "assisted": true,
+                "descriptor": "floating",
+                "dist": 14.894,
+                "made": true,
+                "qualifiers": [],
+                "side": "right",
+                "x": 34,
+                "y": 145
+              },
+              "type": "Make2"
             },
             {
               "clock": "11:08",
               "description": "B. Lopez 13' Hook (11 PTS) (K. Dunn 3 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "8-16 ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 13.279,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": -18,
+                "y": 132
+              },
+              "type": "Make2"
             },
             {
               "clock": "11:08",
               "description": "B. Lopez Free Throw 1 of 1 (12 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "10:06",
               "description": "B. Lopez 24' 3PT  (15 PTS) (K. Dunn 4 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 24.837,
+                "made": true,
+                "qualifiers": [],
+                "side": "right",
+                "x": 0,
+                "y": 248
+              },
+              "type": "Make3"
             },
             {
               "clock": "8:23",
               "description": "B. Lopez BLOCK (1 BLK)",
-              "type": "blk"
+              "type": "Block"
             }
           ],
           "inTime": "12:00",
@@ -3718,10 +5645,10 @@
             "fga": 3,
             "fgm": 3,
             "fta": 1,
-            "ftm": 0,
+            "ftm": 1,
             "oreb": 0,
             "pf": 0,
-            "pts": 7,
+            "pts": 8,
             "reb": 0,
             "stl": 0,
             "tov": 0
@@ -3732,47 +5659,76 @@
             {
               "clock": "3:43",
               "description": "B. Lopez shooting personal FOUL (2 PF) (Kessler 1 FT)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "3:43",
               "description": "B. Lopez REBOUND (Off:0 Def:1)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "3:31",
               "description": "B. Lopez REBOUND (Off:1 Def:1)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "2:34",
               "description": "B. Lopez Free Throw 1 of 2 (16 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "2:34",
               "description": "B. Lopez Free Throw 2 of 2 (17 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "2:17",
               "description": "B. Lopez Layup (19 PTS) (K. Sanders 4 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 3.749,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": -15,
+                "y": 34
+              },
+              "type": "Make2"
             },
             {
               "clock": "2:17",
               "description": "B. Lopez Free Throw 1 of 1 (20 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "1:26",
               "description": "B. Lopez REBOUND (Off:2 Def:1)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "1:21",
               "description": "B. Lopez putback Layup (22 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "putback",
+                "dist": 1.697,
+                "made": true,
+                "qualifiers": [
+                  "2ndchance",
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": -11,
+                "y": 13
+              },
+              "type": "Make2"
             }
           ],
           "inTime": "5:25",
@@ -3788,10 +5744,10 @@
             "fga": 2,
             "fgm": 2,
             "fta": 3,
-            "ftm": 0,
+            "ftm": 3,
             "oreb": 2,
             "pf": 1,
-            "pts": 4,
+            "pts": 7,
             "reb": 3,
             "stl": 0,
             "tov": 0
@@ -3802,27 +5758,42 @@
             {
               "clock": "11:36",
               "description": "B. Lopez BLOCK (2 BLK)",
-              "type": "blk"
+              "type": "Block"
             },
             {
               "clock": "11:16",
               "description": "B. Lopez BLOCK (3 BLK)",
-              "type": "blk"
+              "type": "Block"
             },
             {
               "clock": "10:07",
               "description": "B. Lopez lost ball TURNOVER (2 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "7:28",
               "description": "B. Lopez REBOUND (Off:3 Def:1)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "7:25",
               "description": "MISS B. Lopez tip Layup",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "tip",
+                "dist": 0.0,
+                "made": false,
+                "qualifiers": [
+                  "2ndchance",
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": 0,
+                "y": 0
+              },
+              "type": "miss2"
             }
           ],
           "inTime": "12:00",
@@ -3836,12 +5807,12 @@
             "fg3a": 0,
             "fg3m": 0,
             "fga": 1,
-            "fgm": 1,
+            "fgm": 0,
             "fta": 0,
             "ftm": 0,
             "oreb": 1,
             "pf": 0,
-            "pts": 2,
+            "pts": 0,
             "reb": 1,
             "stl": 0,
             "tov": 1
@@ -3861,7 +5832,7 @@
             {
               "clock": "0:30",
               "description": "K. Sanders REBOUND (Off:0 Def:1)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "5:46",
@@ -3891,12 +5862,24 @@
             {
               "clock": "10:40",
               "description": "MISS K. Sanders 28' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 28.474,
+                "made": false,
+                "qualifiers": [],
+                "side": "right",
+                "x": 191,
+                "y": 211
+              },
+              "type": "miss3"
             },
             {
               "clock": "8:42",
               "description": "K. Sanders lost ball out-of-bounds TURNOVER (1 TO)",
-              "type": "tov"
+              "type": "TO"
             }
           ],
           "inTime": "12:00",
@@ -3908,14 +5891,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 1,
-            "fg3m": 1,
+            "fg3m": 0,
             "fga": 1,
-            "fgm": 1,
+            "fgm": 0,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 0,
-            "pts": 3,
+            "pts": 0,
             "reb": 0,
             "stl": 0,
             "tov": 1
@@ -3926,7 +5909,7 @@
             {
               "clock": "0:32",
               "description": "K. Sanders REBOUND (Off:0 Def:2)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "2:22",
@@ -3956,27 +5939,54 @@
             {
               "clock": "3:31",
               "description": "MISS K. Sanders 3PT - blocked",
-              "type": "make3"
+              "shot": {
+                "area": "Left Corner 3",
+                "areaDetail": "16-24 ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 23.42,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": 231,
+                "y": 36
+              },
+              "type": "miss3"
             },
             {
               "clock": "3:10",
               "description": "K. Sanders 26' 3PT running pullup (3 PTS)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "running pullup",
+                "dist": 26.894,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "fastbreak"
+                ],
+                "side": "left",
+                "x": -214,
+                "y": 163
+              },
+              "type": "Make3"
             },
             {
               "clock": "1:51",
               "description": "K. Sanders lost ball out-of-bounds TURNOVER (2 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "1:38",
               "description": "K. Sanders shooting personal FOUL (1 PF) (Don\u010di\u0107 2 FT)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "0:47",
               "description": "K. Sanders REBOUND (Off:0 Def:3)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "3:43",
@@ -3988,14 +5998,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 2,
-            "fg3m": 2,
+            "fg3m": 1,
             "fga": 2,
-            "fgm": 2,
+            "fgm": 1,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 1,
-            "pts": 6,
+            "pts": 3,
             "reb": 1,
             "stl": 0,
             "tov": 1
@@ -4006,12 +6016,28 @@
             {
               "clock": "9:19",
               "description": "K. Sanders STEAL (1 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "9:15",
               "description": "K. Sanders running Layup (5 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "running",
+                "dist": 4.006,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint",
+                  "fastbreak"
+                ],
+                "side": "left",
+                "x": -17,
+                "y": 36
+              },
+              "type": "Make2"
             }
           ],
           "inTime": "12:00",
@@ -4050,12 +6076,12 @@
             {
               "clock": "1:52",
               "description": "G. Dick REBOUND (Off:0 Def:1)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "1:29",
               "description": "G. Dick REBOUND (Off:0 Def:2)",
-              "type": "reb"
+              "type": "DefReb"
             }
           ],
           "inTime": "2:15",
@@ -4085,12 +6111,41 @@
             {
               "clock": "10:34",
               "description": "MISS G. Dick turnaround Hook - blocked",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "turnaround",
+                "dist": 4.752,
+                "made": false,
+                "qualifiers": [
+                  "2ndchance",
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": -38,
+                "y": 28
+              },
+              "type": "miss2"
             },
             {
               "clock": "9:38",
               "description": "G. Dick cutting Layup (2 PTS) (K. Wagler 2 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "cutting",
+                "dist": 3.465,
+                "made": true,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "right",
+                "x": -29,
+                "y": 19
+              },
+              "type": "Make2"
             }
           ],
           "inTime": "12:00",
@@ -4104,12 +6159,12 @@
             "fg3a": 0,
             "fg3m": 0,
             "fga": 2,
-            "fgm": 2,
+            "fgm": 1,
             "fta": 0,
             "ftm": 0,
             "oreb": 0,
             "pf": 0,
-            "pts": 4,
+            "pts": 2,
             "reb": 0,
             "stl": 0,
             "tov": 0
@@ -4120,32 +6175,63 @@
             {
               "clock": "1:09",
               "description": "G. Dick STEAL (1 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "1:04",
               "description": "G. Dick running Layup (4 PTS)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "running",
+                "dist": 2.956,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint",
+                  "fastbreak"
+                ],
+                "side": "left",
+                "x": 12,
+                "y": 27
+              },
+              "type": "Make2"
             },
             {
               "clock": "0:42",
               "description": "MISS G. Dick running Layup",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": false,
+                "descriptor": "running",
+                "dist": 3.204,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint",
+                  "fastbreak"
+                ],
+                "side": "left",
+                "x": 2,
+                "y": 32
+              },
+              "type": "miss2"
             },
             {
               "clock": "0:33",
               "description": "G. Dick REBOUND (Off:1 Def:2)",
-              "type": "reb"
+              "type": "OffReb"
             },
             {
               "clock": "0:28",
               "description": "G. Dick bad pass out-of-bounds TURNOVER (1 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "0:18",
               "description": "G. Dick personal FOUL (1 PF) (Grimes 2 FT)",
-              "type": "foul"
+              "type": "PF"
             }
           ],
           "inTime": "2:48",
@@ -4159,12 +6245,12 @@
             "fg3a": 0,
             "fg3m": 0,
             "fga": 2,
-            "fgm": 2,
+            "fgm": 1,
             "fta": 0,
             "ftm": 0,
             "oreb": 1,
             "pf": 1,
-            "pts": 4,
+            "pts": 2,
             "reb": 1,
             "stl": 1,
             "tov": 1
@@ -4175,12 +6261,27 @@
             {
               "clock": "11:36",
               "description": "G. Dick REBOUND (Off:1 Def:3)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "10:43",
               "description": "G. Dick driving bank Hook (6 PTS) (K. Wagler 3 AST)",
-              "type": "make2"
+              "shot": {
+                "area": "Restricted Area",
+                "areaDetail": "<8 ft",
+                "assisted": true,
+                "descriptor": "driving bank",
+                "dist": 3.894,
+                "made": true,
+                "qualifiers": [
+                  "fromturnover",
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": -16,
+                "y": 35
+              },
+              "type": "Make2"
             }
           ],
           "inTime": "12:00",
@@ -4197,7 +6298,7 @@
             "fgm": 1,
             "fta": 0,
             "ftm": 0,
-            "oreb": 1,
+            "oreb": 0,
             "pf": 0,
             "pts": 2,
             "reb": 1,
@@ -4219,17 +6320,31 @@
             {
               "clock": "1:41",
               "description": "K. Wagler 25' 3PT running (3 PTS) (K. Sanders 1 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": true,
+                "descriptor": "running",
+                "dist": 25.619,
+                "made": true,
+                "qualifiers": [
+                  "fastbreak"
+                ],
+                "side": "right",
+                "x": -231,
+                "y": 111
+              },
+              "type": "Make3"
             },
             {
               "clock": "1:03",
               "description": "K. Wagler lost ball TURNOVER (1 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "0:00",
               "description": "K. Wagler bad pass TURNOVER (2 TO)",
-              "type": "tov"
+              "type": "TO"
             }
           ],
           "inTime": "4:27",
@@ -4259,57 +6374,69 @@
             {
               "clock": "11:26",
               "description": "K. Wagler personal FOUL (1 PF)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "9:49",
               "description": "K. Wagler REBOUND (Off:0 Def:1)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "9:14",
               "description": "K. Wagler REBOUND (Off:0 Def:2)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "9:06",
               "description": "K. Wagler Free Throw 1 of 3 (4 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "9:06",
               "description": "K. Wagler Free Throw 2 of 3 (5 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "9:06",
               "description": "K. Wagler Free Throw 3 of 3 (6 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "8:08",
               "description": "K. Wagler bad pass TURNOVER (3 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "8:03",
               "description": "K. Wagler personal FOUL (2 PF)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "7:39",
               "description": "MISS K. Wagler 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Right Corner 3",
+                "areaDetail": "16-24 ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 23.439,
+                "made": false,
+                "qualifiers": [],
+                "side": "right",
+                "x": 229,
+                "y": 50
+              },
+              "type": "miss3"
             },
             {
               "clock": "6:37",
               "description": "K. Wagler Free Throw 1 of 2 (7 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "6:37",
               "description": "K. Wagler Free Throw 2 of 2 (8 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             }
           ],
           "inTime": "12:00",
@@ -4321,14 +6448,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 1,
-            "fg3m": 1,
+            "fg3m": 0,
             "fga": 1,
-            "fgm": 1,
+            "fgm": 0,
             "fta": 5,
-            "ftm": 0,
+            "ftm": 5,
             "oreb": 0,
             "pf": 2,
-            "pts": 3,
+            "pts": 5,
             "reb": 2,
             "stl": 0,
             "tov": 1
@@ -4339,32 +6466,58 @@
             {
               "clock": "5:06",
               "description": "K. Wagler traveling TURNOVER (4 TO)",
-              "type": "tov"
+              "type": "TO"
             },
             {
               "clock": "3:14",
               "description": "K. Wagler STEAL (1 STL)",
-              "type": "stl"
+              "type": "Steal"
             },
             {
               "clock": "1:26",
               "description": "MISS K. Wagler 12' pullup Shot",
-              "type": "make2"
+              "shot": {
+                "area": "In The Paint (Non-RA)",
+                "areaDetail": "8-16 ft",
+                "assisted": false,
+                "descriptor": "pullup",
+                "dist": 12.209,
+                "made": false,
+                "qualifiers": [
+                  "pointsinthepaint"
+                ],
+                "side": "left",
+                "x": 26,
+                "y": 119
+              },
+              "type": "miss2"
             },
             {
               "clock": "0:33",
               "description": "K. Wagler Free Throw 1 of 2 (9 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "0:33",
               "description": "MISS K. Wagler Free Throw 2 of 2",
-              "type": "fta"
+              "type": "missFT"
             },
             {
               "clock": "0:00",
               "description": "MISS K. Wagler 20' step back Shot",
-              "type": "make2"
+              "shot": {
+                "area": "Mid-Range",
+                "areaDetail": "16-24 ft",
+                "assisted": false,
+                "descriptor": "step back",
+                "dist": 20.691,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": 132,
+                "y": 160
+              },
+              "type": "miss2"
             }
           ],
           "inTime": "5:25",
@@ -4378,12 +6531,12 @@
             "fg3a": 0,
             "fg3m": 0,
             "fga": 2,
-            "fgm": 2,
+            "fgm": 0,
             "fta": 2,
-            "ftm": 0,
+            "ftm": 1,
             "oreb": 0,
             "pf": 0,
-            "pts": 4,
+            "pts": 1,
             "reb": 0,
             "stl": 1,
             "tov": 1
@@ -4394,42 +6547,90 @@
             {
               "clock": "11:27",
               "description": "MISS K. Wagler 28' pullup 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "pullup",
+                "dist": 28.961,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": -130,
+                "y": 259
+              },
+              "type": "miss3"
             },
             {
               "clock": "11:06",
               "description": "MISS K. Wagler 26' 3PT",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": false,
+                "descriptor": "",
+                "dist": 26.868,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": 180,
+                "y": 199
+              },
+              "type": "miss3"
             },
             {
               "clock": "10:01",
               "description": "K. Wagler personal FOUL (3 PF)",
-              "type": "foul"
+              "type": "PF"
             },
             {
               "clock": "8:46",
               "description": "K. Wagler 26' 3PT  (12 PTS) (K. Sanders 5 AST)",
-              "type": "make3"
+              "shot": {
+                "area": "Above the Break 3",
+                "areaDetail": "24+ ft",
+                "assisted": true,
+                "descriptor": "",
+                "dist": 26.362,
+                "made": true,
+                "qualifiers": [],
+                "side": "left",
+                "x": 184,
+                "y": 189
+              },
+              "type": "Make3"
             },
             {
               "clock": "6:31",
               "description": "MISS K. Wagler 14' turnaround fadeaway Shot",
-              "type": "make2"
+              "shot": {
+                "area": "Mid-Range",
+                "areaDetail": "8-16 ft",
+                "assisted": false,
+                "descriptor": "turnaround fadeaway",
+                "dist": 14.499,
+                "made": false,
+                "qualifiers": [],
+                "side": "left",
+                "x": -137,
+                "y": 49
+              },
+              "type": "miss2"
             },
             {
               "clock": "5:36",
               "description": "K. Wagler REBOUND (Off:0 Def:3)",
-              "type": "reb"
+              "type": "DefReb"
             },
             {
               "clock": "5:28",
               "description": "K. Wagler Free Throw 1 of 2 (13 PTS)",
-              "type": "fta"
+              "type": "MakeFT"
             },
             {
               "clock": "5:28",
               "description": "MISS K. Wagler Free Throw 2 of 2",
-              "type": "fta"
+              "type": "missFT"
             }
           ],
           "inTime": "12:00",
@@ -4441,14 +6642,14 @@
             "ast": 0,
             "blk": 0,
             "fg3a": 3,
-            "fg3m": 3,
+            "fg3m": 1,
             "fga": 4,
-            "fgm": 4,
+            "fgm": 1,
             "fta": 2,
-            "ftm": 0,
+            "ftm": 1,
             "oreb": 0,
             "pf": 1,
-            "pts": 11,
+            "pts": 4,
             "reb": 1,
             "stl": 0,
             "tov": 0
